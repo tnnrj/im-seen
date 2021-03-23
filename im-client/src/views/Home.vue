@@ -16,3 +16,11 @@ export default defineComponent({
   }
 });
 </script>
+
+<style lang="scss">
+.home {
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+}
+</style>
