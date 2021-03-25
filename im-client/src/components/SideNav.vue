@@ -8,6 +8,9 @@
         <i class="pi" v-bind:class="item.iconStyle"></i>
         {{ item.title }}
       </router-link>
+      <div v-if="$route.matched.some(({ name }) => name === item.link)" class="active-marker">
+        active
+      </div>
     </div>
   </div>
 </template>
@@ -64,6 +67,7 @@ export default defineComponent({
   overflow-x: hidden;
   padding-top: 20px;
   text-align: left;
+  box-shadow: inset -2px 0 var(--surface-300);
 }
 
 #nav a {
@@ -90,7 +94,15 @@ export default defineComponent({
   color: var(--bluegray-800);
 
   i {
-    color: var(--blue-800);
+    color: var(--blue-600);
+  }
+
+  &::after {
+    content: "";
+    border: 1px solid var(--blue-600);
+    position: relative;
+    left: 68px;
+    border-radius: 1px;
   }
 }
 
