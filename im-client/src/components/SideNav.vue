@@ -1,16 +1,17 @@
 <template>
   <div id="nav" class="p-d-flex p-flex-column">
-    <div class="p-mb-6 p-d-flex p-jc-center">
-      <img src="../assets/school.png" class="logo" />
+    <div class="logo p-d-flex p-jc-center">
+      <img src="../assets/school.png" />
     </div>
-    <div class="link" v-for="item in items" :key="item.title">
-      <router-link class="p-mb-3" v-bind:to="item.link">
+    <div v-for="item in items" :key="item.title">
+      <router-link class="p-mb-5" v-bind:to="item.link">
         <i class="pi" v-bind:class="item.iconStyle"></i>
         {{ item.title }}
       </router-link>
-      <div v-if="$route.matched.some(({ name }) => name === item.link)" class="active-marker">
-        active
-      </div>
+    </div>
+    <div class="account p-d-flex p-flex-column p-jc-end">
+      <i class="pi pi-user p-mb-3"></i>
+      <span>Test User</span>
     </div>
   </div>
 </template>
@@ -58,59 +59,71 @@ export default defineComponent({
 <style lang="scss">
 #nav {
   height: 100%;
-  width: 250px;
+  width: 14em;
   position: fixed;
   z-index: 1;
   top: 0;
   left: 0;
   background-color: white;
   overflow-x: hidden;
-  padding-top: 20px;
   text-align: left;
   box-shadow: inset -2px 0 var(--surface-300);
-}
 
-#nav a {
-  display: block;
-  color: var(--bluegray-300);
-  text-decoration: none;
-  font-weight: 600;
-  padding-left: 20px;
-  border-radius: 5px;
-  padding: 10px;
-  margin: 0 30px 0 30px;
-  transition: 0.3s;
-}
+  a {
+    display: block;
+    color: var(--bluegray-300);
+    text-decoration: none;
+    font-weight: 600;
+    padding-left: 2em;
+    transition: 0.3s;
 
-#nav a:hover:not(.router-link-exact-active) {
-  color: var(--bluegray-500);
-}
+    &:hover:not(.router-link-exact-active) {
+      color: var(--bluegray-500);
+    }
 
-#nav a i {
-  padding: 0 30px 0 10px;
-}
+    i {
+      padding-right: 1em;
+    }
 
-#nav a.router-link-exact-active {
-  color: var(--bluegray-800);
+    &.router-link-exact-active {
+      color: var(--bluegray-800);
+      border-right: 2px solid var(--blue-600);
 
-  i {
-    color: var(--blue-600);
+      i {
+        color: var(--blue-600);
+      }
+    }
   }
 
-  &::after {
-    content: "";
-    border: 1px solid var(--blue-600);
-    position: relative;
-    left: 68px;
-    border-radius: 1px;
-  }
-}
+  .logo {
+    margin-top: 10vh;
+    margin-bottom: 10vh;
 
-.logo {
-  border-radius: 10px;
-  height: 100px;
-  width: 100px;
-  margin-top: 100px;
-  margin-bottom: 150px;
+    img {
+      border-radius: 10px;
+      height: 100px;
+      width: 100px;
+    }
+  }
+
+  .account {
+    height: 100%;
+    margin-bottom: 7vh;
+
+    i {
+      font-size: 2em;
+      margin: 0 auto;
+      color: var(--bluegray-700);
+      border: 3px solid var(--bluegray-700);
+      border-radius: 2em;
+      padding: .25em;
+    }
+
+    span {
+      margin: 0 auto;
+      color: var(--bluegray-700);
+      font-weight: 600;
+    }
+  }
 }
 </style>

@@ -5,6 +5,7 @@ import PrimeVue from 'primevue/config';
 import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
+import Tooltip from 'primevue/tooltip';
 
 // primevue theming
 import 'primevue/resources/themes/saga-blue/theme.css';
@@ -22,5 +23,6 @@ app.use(PrimeVue);
 app.component('Dialog', Dialog);
 app.component('Button', Button);
 app.component('InputText', InputText);
+app.directive('tooltip', Tooltip);
 
 app.mount('#app');
