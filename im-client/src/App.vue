@@ -70,6 +70,6 @@ body {
 }
 
 .text-small {
-  font-size: 13px;
+  font-size: .75em;
 }
 </style>
