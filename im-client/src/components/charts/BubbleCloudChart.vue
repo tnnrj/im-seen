@@ -28,7 +28,7 @@ export default {
    init() {
      //We are accessing the div with the id chart using d3's select method and appending svg
      const svg = d3
-       .select("#chart")
+       .select("#chart-" + this.id)
        .append("svg")
          .attr("width", this.width)
          .attr("height", this.height)
