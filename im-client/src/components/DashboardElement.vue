@@ -1,7 +1,7 @@
 <template>
   <div class="element-content p-d-flex p-flex-column p-jc-center">
     <template v-if="data.length">
-      <BubbleCloudChart v-if="type == ChartType.BubbleCloud" :chartData="data" />
+      <BubbleCloudChart v-if="chartType == ChartType.BubbleCloud" :chartData="data" :id="idx"/>
     </template>
   </div>
 </template>
@@ -23,12 +23,13 @@ export default defineComponent({
     queryId: {
       type: String,
       required: true
-    }
+    },
+    idx: Number
   },
   setup(props) {
     const data = getChartData(props.queryId);
 
-    return { type: props.chartType, data, ChartType }
+    return { data, ChartType }
   }
 });
 </script>

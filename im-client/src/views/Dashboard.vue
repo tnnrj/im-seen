@@ -1,9 +1,9 @@
 <template>
   <div class="dashboard-content p-d-flex" v-if="!showConfigurator">
     <div class="dashboard-elements p-d-flex" :class="{'p-flex-column': pages[curPage].layout.indexOf('LR') !== -1}">
-      <div class="element" v-for="element in pages[curPage].elements"
+      <div class="element" v-for="(element, index) in pages[curPage].elements"
         :style="{ width: element.width + '%', height: element.height + '%' }">
-        <DashboardElement :chartType="element.chartType" :queryId="element.queryId"></DashboardElement>
+        <DashboardElement :chartType="element.chartType" :queryId="element.queryId" :idx="index"></DashboardElement>
       </div>
     </div>
     <div class="sidebar p-d-flex p-flex-column p-ai-end">
