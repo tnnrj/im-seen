@@ -10,18 +10,18 @@
       <i class="pi pi-table p-mb-3" v-tooltip="'Configure'" @click="showLayoutDialog = true" />
       <div class="page-buttons p-d-flex p-flex-column p-jc-center">
         <i class="pi" :class="[curPage === index ? 'pi-circle-on' : 'pi-circle-off']" 
-          v-for="(page, index) in pages" @click="curPage = index"/>
-        <i class="pi pi-plus-circle" @click="addNewPage()"/>
+          v-for="(page, index) in pages" @click="curPage = index" />
+        <i class="pi pi-plus-circle" @click="addNewPage()" />
         <div style="height:5vh"></div>
       </div>
     </div>
   </div>
   <Dialog class="layout-dialog" header="Configure" v-model:visible="showLayoutDialog" :modal="true" :contentStyle="{'height':'30em', 'width':'31em'}">
     <span>Choose a page preset:</span>
-    <Accordion :activeIndex="dashLayoutToPanelNumber(pages[curPage].layout) - 1">
+    <Accordion :activeIndex="dashLayoutToPanelCount(pages[curPage].layout) - 1">
       <AccordionTab v-for="(opt, index) in layoutOptions" :header="(index + 1) + (index ? ' panels' : ' panel')" :key="index">
         <div class="p-d-flex p-flex-wrap">
-          <div class="p-m-3" v-for="layout in opt" :key="layout">
+          <div class="p-m-3" v-for="layout in opt">
             <label>
               <input type="radio" :value="layout" v-model="pages[curPage].layout" />
               <img :src="require('../assets/layouts/'+layout+'.png')" />
@@ -39,7 +39,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
-import { getDashPages, dashLayoutToPanelNumber, dashLayoutToDefaultPage } from "@/services/dashboard.service";
+import { getDashPages, dashLayoutToPanelCount, dashLayoutToDefaultPage } from "@/services/dashboard.service";
 import { DashPage } from "@/model/dashboard.model";
 import DashboardElement from "@/components/DashboardElement.vue";
 import { DashLayout } from "@/model/enums.model";
@@ -64,22 +64,10 @@ export default defineComponent({
     // layout dialog setup
     const showLayoutDialog = ref(false);
     const layoutOptions: string[][] = [[], [], [], [], []];
-    Object.keys(DashLayout).forEach(k => {
-      if (k.startsWith('One')) {
-        layoutOptions[0].push(k);
-      }
-      else if (k.startsWith('Two')) {
-        layoutOptions[1].push(k);
-      }
-      else if (k.startsWith('Three')) {
-        layoutOptions[2].push(k);
-      }
-      else if (k.startsWith('Four')) {
-        layoutOptions[3].push(k);
-      }
-      else if (k.startsWith('Five')) {
-        layoutOptions[4].push(k);
-      }
+    Object.values(DashLayout).forEach(v => {
+      if (v == DashLayout.None) { return; }
+      const panelNum = dashLayoutToPanelCount(v);
+      layoutOptions[panelNum - 1].push(v);
     });
     const onLayoutDialogClose = () => {
       if (pages.value[curPage.value].elements.length === 0) {
@@ -103,7 +91,7 @@ export default defineComponent({
 
 
     return { curPage, pages, addNewPage,
-      showLayoutDialog, layoutOptions, dashLayoutToPanelNumber, onLayoutDialogClose, onLayoutDialogContinue,
+      showLayoutDialog, layoutOptions, dashLayoutToPanelCount, onLayoutDialogClose, onLayoutDialogContinue,
       showConfigurator };
   }
 });

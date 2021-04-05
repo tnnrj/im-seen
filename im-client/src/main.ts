@@ -21,7 +21,7 @@ const app = createApp(App);
 // vue-router
 app.use(router);
 
-// primefaces
+// prime
 //app.use(PrimeVue);
 app.component('Dialog', Dialog);
 app.component('Button', Button);

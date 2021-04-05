@@ -83,7 +83,7 @@ function dashElementRow(count: number, col = false): DashElement[] {
   return elements;
 }
 
-export function dashLayoutToPanelNumber(layout: DashLayout): number {
+export function dashLayoutToPanelCount(layout: DashLayout): number {
   switch(layout) {
     case DashLayout.One:
       return 1;
