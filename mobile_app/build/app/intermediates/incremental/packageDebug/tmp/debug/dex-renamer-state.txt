@@ -1,4 +1,0 @@
-#Mon Mar 29 10:50:39 MDT 2021
-base.0=D\:\\DATA\\Study\\CS4000_capstone\\mobile_app_prototype\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\out\\classes.dex
-path.0=classes.dex
-renamed.0=classes.dex
