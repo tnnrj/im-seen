@@ -12,7 +12,7 @@ export default {
   data() {
    return {
      // we will use an actual method to get data rather than having this static input
-     data : [
+     students : [
        {Name: "John Doe", Severity: 125},
        {Name: "Casey Smith", Severity: 30},
        {Name: "Adam Jenkins", Severity: 24},
@@ -41,49 +41,30 @@ export default {
  },
  methods: {
    main() { 
-     //d3 = require("d3@6")
-//TODO: change back to this.id from 0
+// these need to not be static, but this.width/this.height does not return pixel values
+     const width = 250;
+     const height =  250;
      //We are accessing the div with the id chart using d3's select method and appending svg
      const svg = d3
        .select("#chart-" + this.id)
        .append("svg")
-       .attr("width", this.width)
-       .attr("height", this.height)
-       .attr("viewBox", [this.x, this.y, this.width, this.height])
-       .attr("font-size", 14)
+       .attr("width", width)
+       .attr("height", height)
+       // I added these!
+       .attr("viewBox", [0, 0, width, height])
+       .attr("font-size", 0.05 * width)
        .attr("font-family", "sans-serif")
        .attr("text-anchor", "middle");
-    data = [
-       {Name: "John Doe", Severity: 125},
-       {Name: "Casey Smith", Severity: 30},
-       {Name: "Adam Jenkins", Severity: 24},
-       {Name: "Sarah Hopkins", Severity: 35},
-       {Name: "Taylor Write", Severity: 40},
-       {Name: "Sam Johnson", Severity: 10},
-       {Name: "Porter Weatherly", Severity: 50},
-       {Name: "Michaela Brown", Severity: 49},
-       {Name: "Ryan Huntsman", Severity: 17},
-       {Name: "Tanya Merril", Severity: 28},
-       {Name: "Brandon Welker", Severity: 36}
-     ];
 
 ////////////////////////////////////
+      const data = this.students;
       const color = d3.scaleOrdinal(data.map(d=>d), d3.schemeSpectral[10]);
-      
-      pack = data => d3.pack(data)
-        .size([this.width - 2, this.height - 2])
-        .padding(3)
+    
+      const root = d3.pack()
+        .size([width-2, height-2])
+        .padding(4)
         (d3.hierarchy({children: data})
         .sum(d => d.Severity));
-    
-      const root = pack(data);
-      /*
-      svg = d3.create("svg")
-        .attr("viewBox", [0, 0, width, height])
-        .attr("font-size", 18)
-        .attr("font-family", "sans-serif")
-        .attr("text-anchor", "middle");
-      */
 
       const leaf = svg.selectAll("g")
         .data(root.leaves())
@@ -91,13 +72,13 @@ export default {
         .attr("transform", d => `translate(${d.x + 1},${d.y + 1})`);
 
       leaf.append("circle")
-        .attr("id", d => (d.leafUid = DOM.uid("leaf")).id)
+        .attr("id", d => (d.leafUid = Date.now()))
         .attr("r", d => d.r)
         .attr("fill-opacity", 0.7)
         .attr("fill", d => color(Math.random()*11));
 
       leaf.append("clipPath")
-        .attr("id", d => (d.clipUid = DOM.uid("clip")).id)
+        .attr("id", d => (d.clipUid = Date.now()))
         .append("use")
         .attr("xlink:href", d => d.leafUid.href);
 
@@ -112,8 +93,6 @@ export default {
 
       leaf.append("title")
         .text(d => d.data.name === undefined ? "" : d.data.name);
-    
-      //return svg.node();
    }
 /////////////////////////////////////
   }
