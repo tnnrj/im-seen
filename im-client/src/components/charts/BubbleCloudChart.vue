@@ -53,6 +53,19 @@ export default {
        .attr("font-size", 14)
        .attr("font-family", "sans-serif")
        .attr("text-anchor", "middle");
+    data = [
+       {Name: "John Doe", Severity: 125},
+       {Name: "Casey Smith", Severity: 30},
+       {Name: "Adam Jenkins", Severity: 24},
+       {Name: "Sarah Hopkins", Severity: 35},
+       {Name: "Taylor Write", Severity: 40},
+       {Name: "Sam Johnson", Severity: 10},
+       {Name: "Porter Weatherly", Severity: 50},
+       {Name: "Michaela Brown", Severity: 49},
+       {Name: "Ryan Huntsman", Severity: 17},
+       {Name: "Tanya Merril", Severity: 28},
+       {Name: "Brandon Welker", Severity: 36}
+     ];
 
 ////////////////////////////////////
       const color = d3.scaleOrdinal(data.map(d=>d), d3.schemeSpectral[10]);
