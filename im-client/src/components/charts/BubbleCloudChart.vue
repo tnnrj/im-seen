@@ -12,7 +12,7 @@ export default {
   data() {
    return {
      // we will use an actual method to get data rather than having this static input
-     students : [
+     data : [
        {Name: "John Doe", Severity: 125},
        {Name: "Casey Smith", Severity: 30},
        {Name: "Adam Jenkins", Severity: 24},
@@ -37,61 +37,68 @@ export default {
    };
  },
  mounted() {
-   this.init();
+   this.main();
  },
  methods: {
-   init() {
+   main() { 
      //We are accessing the div with the id chart using d3's select method and appending svg
-     const svg = d3.create("svg")
+     const svg = d3
        .select("#chart-" + this.id)
        .append("svg")
-         .attr("width", this.width)
-         .attr("height", this.height)
-       .append("g")
-       .style(
-         "transform",
-         `translate(${this.margin.left}em, ${this.margin.top}em)`
-       )
-      .attr("viewBox", [0, 0, width, height])
-      .attr("font-size", 10)
-      .attr("font-family", "sans-serif")
-      .attr("text-anchor", "middle");
+       .attr("width", this.width)
+       .attr("height", this.height);
 
-    const root = pack(totalReports);
+////////////////////////////////////
+      const color = d3.scaleOrdinal(d3.range(11), d3.schemeSpectral[11])
+      d3 = require("d3@6")
 
-    const leaf = svg.selectAll("g")
-      .data(root.leaves())
-      .join("g")
-      .attr("transform", d => `translate(${d.x + 1},${d.y + 1})`);
+      const root = d3.pack()
+        .size([this.width - 2, this.height - 2])
+        .padding(3)
+        (d3.hierarchy({children: data})
+        .sum(d => d.Severity))
+    
+      /*
+      svg = d3.create("svg")
+        .attr("viewBox", [0, 0, width, height])
+        .attr("font-size", 18)
+        .attr("font-family", "sans-serif")
+        .attr("text-anchor", "middle");
+      */
 
-    leaf.append("circle")
-      .attr("id", d => (d.leafUid = DOM.uid("leaf")).id)
-      .attr("r", d => d.r)
-      .attr("fill-opacity", 0.7)
-      .attr("fill", d => color(Math.random()*11));
+      const leaf = svg.selectAll("g")
+        .data(root.leaves())
+        .join("g")
+        .attr("transform", d => `translate(${d.x + 1},${d.y + 1})`);
 
-    leaf.append("clipPath")
-      .attr("id", d => (d.clipUid = DOM.uid("clip")).id)
-      .append("use")
-      .attr("xlink:href", d => d.leafUid.href);
+      leaf.append("circle")
+        .attr("id", d => (d.leafUid = DOM.uid("leaf")).id)
+        .attr("r", d => d.r)
+        .attr("fill-opacity", 0.7)
+        .attr("fill", d => color(Math.random()*11));
 
-    leaf.append("text")
-      .attr("clip-path", d => d.clipUid)
-      .selectAll("tspan")
-      .data(d => d.data.Name.split(/(?=[A-Z][a-z])|\s+/g))
-      .join("tspan")
-      .attr("x", 0)
-      .attr("y", (d, i, nodes) => `${i - nodes.length / 2 + 0.8}em`)
-      .text(d => d);
+      leaf.append("clipPath")
+        .attr("id", d => (d.clipUid = DOM.uid("clip")).id)
+        .append("use")
+        .attr("xlink:href", d => d.leafUid.href);
 
-    leaf.append("title")
-      .text(d => `${d.data.name === undefined ? "" : `${d.data.name}
-                `}${format(d.value)}${d.data.date}`);
-   
-    return svg.node();
+      leaf.append("text")
+        .attr("clip-path", d => d.clipUid)
+        .selectAll("tspan")
+        .data(d => d.data.Name.split(/(?=[A-Z][a-z])|\s+/g))
+        .join("tspan")
+        .attr("x", 0)
+        .attr("y", (d, i, nodes) => `${i - nodes.length / 2 + 0.8}em`)
+        .text(d => d);
+
+      leaf.append("title")
+        .text(d => d.data.name === undefined ? "" : d.data.name);
+    
+      return svg.node();
    }
+/////////////////////////////////////
   }
-}
+};
 </script>
 
 <style>
