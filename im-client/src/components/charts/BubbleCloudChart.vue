@@ -41,7 +41,7 @@ export default {
  },
  methods: {
    main() { 
-     d3 = require("d3@6")
+     //d3 = require("d3@6")
 //TODO: change back to this.id from 0
      //We are accessing the div with the id chart using d3's select method and appending svg
      const svg = d3
