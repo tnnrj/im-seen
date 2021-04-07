@@ -24,8 +24,8 @@ export default {
        {Name: "Ryan Huntsman", Severity: 17},
        {Name: "Tanya Merril", Severity: 28},
        {Name: "Brandon Welker", Severity: 36}
-     ]
-     /*
+     ],
+     
      width: '90%',
      height: '90%',
      margin: {
@@ -33,7 +33,7 @@ export default {
        right: 1,
        left: 1,
        bottom: 1,
-     },*/
+     }
    };
  },
  mounted() {
@@ -41,23 +41,29 @@ export default {
  },
  methods: {
    main() { 
+     d3 = require("d3@6")
+//TODO: change back to this.id from 0
      //We are accessing the div with the id chart using d3's select method and appending svg
      const svg = d3
        .select("#chart-" + this.id)
        .append("svg")
        .attr("width", this.width)
-       .attr("height", this.height);
+       .attr("height", this.height)
+       .attr("viewBox", [this.x, this.y, this.width, this.height])
+       .attr("font-size", 14)
+       .attr("font-family", "sans-serif")
+       .attr("text-anchor", "middle");
 
 ////////////////////////////////////
-      const color = d3.scaleOrdinal(d3.range(11), d3.schemeSpectral[11])
-      d3 = require("d3@6")
-
-      const root = d3.pack()
+      const color = d3.scaleOrdinal(data.map(d=>d), d3.schemeSpectral[10]);
+      
+      pack = data => d3.pack(data)
         .size([this.width - 2, this.height - 2])
         .padding(3)
         (d3.hierarchy({children: data})
-        .sum(d => d.Severity))
+        .sum(d => d.Severity));
     
+      const root = pack(data);
       /*
       svg = d3.create("svg")
         .attr("viewBox", [0, 0, width, height])
@@ -94,7 +100,7 @@ export default {
       leaf.append("title")
         .text(d => d.data.name === undefined ? "" : d.data.name);
     
-      return svg.node();
+      //return svg.node();
    }
 /////////////////////////////////////
   }
