@@ -1,21 +1,28 @@
 <template>
-  <Splitter class="configurator-content" :layout="isMainAxisVertical ? 'vertical' : 'horizontal'">
-    <SplitterPanel v-for="(splitter, si) in elementGrid" :key="'sp-'+si" :size="mainAxisSizes[index]" :ref="el => { mainAxisRefs[si] = el }">
-      <Splitter :layout="isMainAxisVertical ? 'horizontal' : 'vertical'">
-        <SplitterPanel class="p-d-flex p-ai-center p-jc-center" :ref="el => { splitterRefs[si][pi] = el }"
-          v-for="(panel, pi) in splitter" :key="'p-'+pi" :size="isMainAxisVertical ? panel.width : panel.height">
-          sample content
-        </SplitterPanel>
-      </Splitter>
-    </SplitterPanel>
-  </Splitter>
-  <Button @click="submit" />
+  <div class="configurator-window">
+    <Splitter class="configurator-content" :layout="isMainAxisVertical ? 'vertical' : 'horizontal'">
+      <SplitterPanel v-for="(splitter, si) in elementGrid" :key="'sp-'+si" :size="mainAxisSizes[si]" :ref="el => { mainAxisRefs[si] = el }">
+        <Splitter :layout="isMainAxisVertical ? 'horizontal' : 'vertical'">
+          <SplitterPanel class="p-d-flex p-ai-center p-jc-center" :ref="el => { splitterRefs[si][pi] = el }"
+            v-for="(panel, pi) in splitter" :key="'p-'+pi" :size="isMainAxisVertical ? panel.width : panel.height">
+            sample content
+          </SplitterPanel>
+        </Splitter>
+      </SplitterPanel>
+    </Splitter>
+    <div class="config-overlay">
+      <Button icon="pi pi-times" @click="confirmCancel($event)" class="p-button p-button-rounded p-button-danger"/>
+      <Button icon="pi pi-check" @click="onSubmit" class="p-button p-button-rounded"/>
+    </div>
+  </div>
+  <ConfirmPopup></ConfirmPopup>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType, ref } from "vue";
 import DashboardService from "@/services/dashboard.service";
 import { DashElement, DashPage } from "@/model/dashboard.model";
+import { useConfirm } from "primevue/useconfirm";
 
 export default defineComponent({
   name: 'DashboardConfigurator',
@@ -47,7 +54,7 @@ export default defineComponent({
     const splitterRefs = ref<any[]>([[], []]);
 
     // reconstruct DashElement array and emit
-    const submit = () => {
+    const onSubmit = () => {
       const newEls: DashElement[] = [];
       let mainAxisSum = 0;
       for (let i = 0; i < 2; i++) {
@@ -78,16 +85,58 @@ export default defineComponent({
       }
       emit('submit', { layout: props.page.layout, elements: newEls });
     }
+    const confirm = useConfirm();
+    const confirmCancel = (event: Event) => {
+      confirm.require({
+        target: event.currentTarget ?? undefined,
+        message: "Discard changes?",
+        icon: 'pi pi-info-circle',
+        acceptClass: 'p-button-danger',
+        accept: () => {
+          emit('submit', null);
+        }
+      })
+    }
 
-    return { isMainAxisVertical, mainAxisSizes, elementGrid, mainAxisRefs, splitterRefs, submit };
+    return { isMainAxisVertical, mainAxisSizes, elementGrid, mainAxisRefs, splitterRefs, onSubmit, confirmCancel };
   }
 });
 </script>
 
 <style lang="scss">
+.configurator-window {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
 .configurator-content {
   width: 100%;
   height: 100%;
   background-color: white;
+}
+
+.config-overlay {
+  font-size: .8rem;
+  position: absolute;
+  padding: 4em 0 0 8em;
+  bottom: 0;
+  right: 0;
+  background: transparent;
+  transition: background-image 2s ease-in-out !important;
+
+  .p-button {
+    margin: 0 .5em .5em 0;
+  }
+
+  &:not(:hover) .p-button {    
+    color: var(--surface-500);
+    border: 1px solid var(--surface-500);
+    background-color: rgba(0,0,0,0);
+  }
+
+  &:hover {   
+  transition: background-image 2s; 
+    background-image: radial-gradient(ellipse at 90% 100%, rgba(0,0,0,.7), rgba(0,0,0,0) 70%);
+  }
 }
 </style>

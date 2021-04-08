@@ -10,7 +10,7 @@
       <i class="pi pi-table p-mb-3" v-tooltip="'Configure'" @click="showLayoutDialog = true" />
       <div class="page-buttons p-d-flex p-flex-column p-jc-center">
         <i class="pi" :class="[curPage === index ? 'pi-circle-on' : 'pi-circle-off']" 
-          v-for="(page, index) in pages" @click="curPage = index" />
+          v-for="(page, index) in pages" @click="switchPage(index)" />
         <i class="pi pi-plus-circle" @click="addNewPage()" />
         <div style="height:5vh"></div>
       </div>
@@ -19,12 +19,12 @@
   <DashboardConfigurator v-else :page="pages[curPage]" @submit="onConfiguratorComplete" />
   <Dialog class="layout-dialog" header="Configure" v-model:visible="showLayoutDialog" :modal="true" :contentStyle="{'height':'30em', 'width':'31em'}">
     <span>Choose a page preset:</span>
-    <Accordion :activeIndex="dashLayoutToPanelCounts(pages[curPage].layout)[0] - 1">
+    <Accordion :activeIndex="dashLayoutToPanelCounts(newLayout)[0] - 1">
       <AccordionTab v-for="(opt, index) in layoutOptions" :header="(index + 1) + (index ? ' panels' : ' panel')" :key="index">
         <div class="p-d-flex p-flex-wrap">
           <div class="p-m-3" v-for="layout in opt">
             <label>
-              <input type="radio" :value="layout" v-model="pages[curPage].layout" />
+              <input type="radio" :value="layout" v-model="newLayout" />
               <img :src="require('../assets/layouts/'+layout+'.png')" />
             </label>
           </div>
@@ -60,12 +60,18 @@ export default defineComponent({
         elements: []
       });
       curPage.value = pages.value.length - 1;
+      newLayout.value = DashLayout.None;
       showLayoutDialog.value = true;
     };
+    const switchPage = (i: number) => {
+      curPage.value = i;
+      newLayout.value = pages.value[curPage.value].layout;
+    }
 
     // layout dialog setup
     const showLayoutDialog = ref(false);
     const layoutOptions: string[][] = [[], [], [], [], []];
+    const newLayout = ref(pages.value[curPage.value].layout);
     Object.values(DashLayout).forEach(v => {
       if (v == DashLayout.None) { return; }
       const panelNum = DashboardService.dashLayoutToPanelCounts(v)[0];
@@ -79,11 +85,13 @@ export default defineComponent({
       showLayoutDialog.value = false;
     };
     const onLayoutDialogContinue = () => {
-      if (pages.value[curPage.value].layout == DashLayout.None) {
+      if (newLayout.value == DashLayout.None) {
         onLayoutDialogClose();
         return;
       }
-      pages.value[curPage.value] = DashboardService.dashLayoutToDefaultPage(pages.value[curPage.value].layout);
+      if (pages.value[curPage.value].layout != newLayout.value) {
+        pages.value[curPage.value] = DashboardService.dashLayoutToDefaultPage(newLayout.value);
+      }
       showLayoutDialog.value = false;
       showConfigurator.value = true;
     };
@@ -98,8 +106,8 @@ export default defineComponent({
     };
 
 
-    return { curPage, pages, addNewPage,
-      showLayoutDialog, layoutOptions, onLayoutDialogClose, onLayoutDialogContinue,
+    return { curPage, pages, addNewPage, switchPage,
+      showLayoutDialog, layoutOptions, onLayoutDialogClose, onLayoutDialogContinue, newLayout,
       dashLayoutToPanelCounts: DashboardService.dashLayoutToPanelCounts, 
       showConfigurator, onConfiguratorComplete };
   }
