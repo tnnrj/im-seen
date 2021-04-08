@@ -16,9 +16,10 @@
       </div>
     </div>
   </div>
+  <DashboardConfigurator v-else :page="pages[curPage]" @submit="onConfiguratorComplete" />
   <Dialog class="layout-dialog" header="Configure" v-model:visible="showLayoutDialog" :modal="true" :contentStyle="{'height':'30em', 'width':'31em'}">
     <span>Choose a page preset:</span>
-    <Accordion :activeIndex="dashLayoutToPanelCount(pages[curPage].layout) - 1">
+    <Accordion :activeIndex="dashLayoutToPanelCounts(pages[curPage].layout)[0] - 1">
       <AccordionTab v-for="(opt, index) in layoutOptions" :header="(index + 1) + (index ? ' panels' : ' panel')" :key="index">
         <div class="p-d-flex p-flex-wrap">
           <div class="p-m-3" v-for="layout in opt">
@@ -39,19 +40,20 @@
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
-import { getDashPages, dashLayoutToPanelCount, dashLayoutToDefaultPage } from "@/services/dashboard.service";
+import DashboardService from "@/services/dashboard.service";
 import { DashPage } from "@/model/dashboard.model";
-import DashboardElement from "@/components/DashboardElement.vue";
 import { DashLayout } from "@/model/enums.model";
+import DashboardElement from "@/components/DashboardElement.vue";
+import DashboardConfigurator from "@/components/DashboardConfigurator.vue";
 
 export default defineComponent({
   name: "Dashboard",
-  components: { DashboardElement },
+  components: { DashboardElement, DashboardConfigurator },
   setup() {
     // pages setup
     const curPage = ref(0);
     const pages = ref<DashPage[]>([]);
-    pages.value = getDashPages();
+    pages.value = DashboardService.getDashPages();
     const addNewPage = () => {
       pages.value.push({
         layout: DashLayout.None,
@@ -59,14 +61,14 @@ export default defineComponent({
       });
       curPage.value = pages.value.length - 1;
       showLayoutDialog.value = true;
-    }
+    };
 
     // layout dialog setup
     const showLayoutDialog = ref(false);
     const layoutOptions: string[][] = [[], [], [], [], []];
     Object.values(DashLayout).forEach(v => {
       if (v == DashLayout.None) { return; }
-      const panelNum = dashLayoutToPanelCount(v);
+      const panelNum = DashboardService.dashLayoutToPanelCounts(v)[0];
       layoutOptions[panelNum - 1].push(v);
     });
     const onLayoutDialogClose = () => {
@@ -75,24 +77,31 @@ export default defineComponent({
         curPage.value = curPage.value ? curPage.value - 1 : 0;
       }
       showLayoutDialog.value = false;
-    }
+    };
     const onLayoutDialogContinue = () => {
       if (pages.value[curPage.value].layout == DashLayout.None) {
         onLayoutDialogClose();
         return;
       }
-      pages.value[curPage.value] = dashLayoutToDefaultPage(pages.value[curPage.value].layout);
+      pages.value[curPage.value] = DashboardService.dashLayoutToDefaultPage(pages.value[curPage.value].layout);
       showLayoutDialog.value = false;
-      //showConfigurator.value = true;
-    }
+      showConfigurator.value = true;
+    };
 
     // configurator setup
     const showConfigurator = ref(false);
+    const onConfiguratorComplete = (newPage: DashPage) => {
+      showConfigurator.value = false;
+      if (newPage) {
+        pages.value[curPage.value] = newPage;
+      }
+    };
 
 
     return { curPage, pages, addNewPage,
-      showLayoutDialog, layoutOptions, dashLayoutToPanelCount, onLayoutDialogClose, onLayoutDialogContinue,
-      showConfigurator };
+      showLayoutDialog, layoutOptions, onLayoutDialogClose, onLayoutDialogContinue,
+      dashLayoutToPanelCounts: DashboardService.dashLayoutToPanelCounts, 
+      showConfigurator, onConfiguratorComplete };
   }
 });
 </script>

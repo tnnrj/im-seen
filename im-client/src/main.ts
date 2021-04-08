@@ -9,6 +9,8 @@ import Tooltip from 'primevue/tooltip';
 import Accordion from 'primevue/accordion';
 import AccordionTab from 'primevue/accordiontab';
 import RadioButton from 'primevue/radiobutton';
+import Splitter from 'primevue/splitter';
+import SplitterPanel from 'primevue/splitterpanel';
 
 // primevue theming
 import 'primevue/resources/themes/saga-blue/theme.css';
@@ -29,6 +31,8 @@ app.component('InputText', InputText);
 app.component('Accordion', Accordion);
 app.component('AccordionTab', AccordionTab);
 app.component('RadioButton', RadioButton);
+app.component('Splitter', Splitter);
+app.component('SplitterPanel', SplitterPanel);
 app.directive('tooltip', Tooltip);
 
 app.mount('#app');

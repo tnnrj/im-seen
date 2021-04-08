@@ -1,6 +1,13 @@
 import { DashElement, DashPage } from "@/model/dashboard.model";
 import { ChartType, DashLayout } from "@/model/enums.model";
 
+export default {
+  getDashPages,
+  dashLayoutToDefaultPage,
+  dashLayoutToPanelCounts,
+}
+
+
 export function getDashPages(): DashPage[] {
   // TODO: get user pages from API
   return [
@@ -83,29 +90,35 @@ function dashElementRow(count: number, col = false): DashElement[] {
   return elements;
 }
 
-export function dashLayoutToPanelCount(layout: DashLayout): number {
+// returns an array where the first value represents the total number of panels,
+// second and third are the counts of each row/column
+export function dashLayoutToPanelCounts(layout: DashLayout): number[] {
   switch(layout) {
     case DashLayout.One:
-      return 1;
+      return [1, 1, 0];
     case DashLayout.TwoLR:
     case DashLayout.TwoTB:
-      return 2;
+      return [2, 1, 1];
     case DashLayout.ThreeOneLR:
     case DashLayout.ThreeOneTB:
+      return [3, 1, 2];
     case DashLayout.ThreeTwoLR:
     case DashLayout.ThreeTwoTB:
-      return 3;
+      return [3, 2, 1];
     case DashLayout.Four:
+      return [4, 2, 2];
     case DashLayout.FourOneLR:
     case DashLayout.FourOneTB:
+      return [4, 1, 3];
     case DashLayout.FourThreeLR:
     case DashLayout.FourThreeTB:
-      return 4;
+      return [4, 3, 1];
     case DashLayout.FiveTwoLR:
     case DashLayout.FiveTwoTB:
+      return [5, 2, 3];
     case DashLayout.FiveThreeLR:
     case DashLayout.FiveThreeTB:
-      return 5;
+      return [5, 3, 2];
   }
-  return 0;
+  return [0, 0, 0];
 }
