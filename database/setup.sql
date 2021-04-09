@@ -40,11 +40,11 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `MentalAlertDB`.`Reports` (
   `reportID` INT NOT NULL AUTO_INCREMENT,
   `userID` INT NOT NULL,
-  `studentID` INT NOT NULL,
+  `studentID` INT NULL,
   `studentName` VARCHAR(45) NULL,
   `description` VARCHAR(500) NOT NULL,
   `severity` INT NOT NULL,
-  `date` DATETIME NOT NULL,
+  `reportDate` DATETIME NOT NULL,
   PRIMARY KEY (`reportID`),
   INDEX `userID_idx` (`userID` ASC) VISIBLE,
   INDEX `studentID_idx` (`studentID` ASC) VISIBLE,
