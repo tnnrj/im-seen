@@ -46,8 +46,8 @@ CREATE TABLE IF NOT EXISTS `MentalAlertDB`.`Reports` (
   `severity` INT NOT NULL,
   `reportDate` DATETIME NOT NULL,
   PRIMARY KEY (`reportID`),
-  INDEX `userID_idx` (`userID` ASC) VISIBLE,
-  INDEX `studentID_idx` (`studentID` ASC) VISIBLE,
+  INDEX `userID_idx` (`userID` ASC),
+  INDEX `studentID_idx` (`studentID` ASC),
   CONSTRAINT `userID`
     FOREIGN KEY (`userID`)
     REFERENCES `MentalAlertDB`.`Users` (`userID`)
