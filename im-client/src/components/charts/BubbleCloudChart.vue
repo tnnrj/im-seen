@@ -1,5 +1,5 @@
 <template>
-  <div :id="'chart-'+id">
+  <div :id="'chart-'+id" style="width:100%;height:100%;">
   </div>
 </template>
 
@@ -24,16 +24,7 @@ export default {
        {Name: "Ryan Huntsman", Severity: 17},
        {Name: "Tanya Merril", Severity: 28},
        {Name: "Brandon Welker", Severity: 36}
-     ],
-     
-     width: '90%',
-     height: '90%',
-     margin: {
-       top: 1,
-       right: 1,
-       left: 1,
-       bottom: 1,
-     }
+     ]
    };
  },
  mounted() {
@@ -48,10 +39,11 @@ export default {
      const svg = d3
        .select("#chart-" + this.id)
        .append("svg")
-       .attr("width", width)
-       .attr("height", height)
+       .attr("width", "90%")
+       .attr("height", "90%")
        // I added these!
        .attr("viewBox", [0, 0, width, height])
+       .attr("preserveAspectRatio", "xMinYMin")
        .attr("font-size", 0.05 * width)
        .attr("font-family", "sans-serif")
        .attr("text-anchor", "middle");
