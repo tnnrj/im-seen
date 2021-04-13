@@ -48,10 +48,6 @@ export default {
        .attr("text-anchor", "middle");
 
 ////////////////////////////////////
-      // 2 functions that change the tooltip when user hover / move / leave a cell
-      const mouseover = (d => Tooltip.style("opacity", 1));
-      const mouseleave = (d => Tooltip.style("opacity", 0));
-
       const data = this.students;
       const color = d3.scaleOrdinal(data.map(d=>d), d3.schemeSpectral[10]);
     
@@ -65,8 +61,16 @@ export default {
         .data(root.leaves())
         .join("g")
         .attr("transform", d => `translate(${d.x + 1},${d.y + 1})`)
-        .on("mouseover", mouseover)
-        .on("mouseleave", mouseleave);
+        .on("mouseover", function() {
+          d3.select(this)
+          .attr("opacity", 0.5)
+          .attr("font-size", 0.05 * height);
+        })
+        .on("mouseleave", function() {
+          d3.select(this)
+          .attr("opacity", 1)
+          .attr("font-size", 0.04 * height);
+        });
 
       leaf.append("circle")
         .attr("stroke", "black")
