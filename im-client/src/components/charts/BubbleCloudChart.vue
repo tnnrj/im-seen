@@ -33,8 +33,8 @@ export default {
  methods: {
    main() { 
 // these need to not be static, but this.width/this.height does not return pixel values
-     const width = 250;
-     const height =  250;
+     const width = document.getElementById('chart-'+this.id).clientWidth;
+     const height = document.getElementById('chart-'+this.id).clientHeight;
      //We are accessing the div with the id chart using d3's select method and appending svg
      const svg = d3
        .select("#chart-" + this.id)
@@ -43,8 +43,7 @@ export default {
        .attr("height", "90%")
        // I added these!
        .attr("viewBox", [0, 0, width, height])
-       .attr("preserveAspectRatio", "xMidYMid meet")
-       .attr("font-size", 0.05 * width)
+       .attr("font-size", 0.04 * height)
        .attr("font-family", "sans-serif")
        .attr("text-anchor", "middle");
 
@@ -65,18 +64,17 @@ export default {
       const leaf = svg.selectAll("g")
         .data(root.leaves())
         .join("g")
-        .attr("transform", d => `translate(${d.x + 1},${d.y + 1})`);
+        .attr("transform", d => `translate(${d.x + 1},${d.y + 1})`)
+        .on("mouseover", mouseover)
+        .on("mouseleave", mouseleave);
 
       leaf.append("circle")
-        .enter()
-        .attr("stroke", "blue")
+        .attr("stroke", "black")
         .style("stroke-width", 1)
         .attr("id", d => (d.leafUid = Date.now()))
         .attr("r", d => d.r)
         .attr("fill-opacity", 0.7)
         .attr("fill", d => color(Math.random()*11))
-        .on("mouseover", mouseover)
-        .on("mouseleave", mouseleave);
 
       leaf.append("clipPath")
         .attr("id", d => (d.clipUid = Date.now()))
@@ -94,28 +92,10 @@ export default {
 
       leaf.append("title")
         .text(d => d.data.name === undefined ? "" : d.data.name);
-   
 
-///////////////////// MOVEMENT CODE ////////////
-  // Features of the forces applied to the nodes:
-  simulation = d3.forceSimulation()
-      .force("center", d3.forceCenter().x(width / 2).y(height / 2)) // Attraction to the center of the svg area
-      .force("charge", d3.forceManyBody().strength(.1)) // Nodes are attracted one each other of value is > 0
-      .force("collide", d3.forceCollide().strength(.2).radius(function(d){ return (size(d.value)+3) }).iterations(1)) // Force that avoids circle overlapping
-
-  // Apply these forces to the nodes and update their positions.
-  // Once the force algorithm is happy with positions ('alpha' value is low enough), simulations will stop.
-  simulation
-      .nodes(data)
-      .on("tick", function(d){
-        node
-            .attr("cx", function(d){ return d.x; })
-            .attr("cy", function(d){ return d.y; })
-      });
+////////////////////////////////////
    }
-/////////////////////////////////////
-  }
-};
+}}
 </script>
 
 <style>
