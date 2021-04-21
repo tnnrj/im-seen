@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using IMWebAPI.Models;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace IMWebAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [EnableCors]
+    [Route("Reports")]
     public class ReportsController : ControllerBase
     {
 
@@ -21,6 +23,7 @@ namespace IMWebAPI.Controllers
         }
 
         [HttpGet]
+        [Route("Get")]
         public string Get()
         {
             return "This worked!";

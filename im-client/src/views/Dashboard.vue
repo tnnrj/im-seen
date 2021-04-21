@@ -45,6 +45,7 @@ import { DashPage } from "@/model/dashboard.model";
 import { DashLayout } from "@/model/enums.model";
 import DashboardElement from "@/components/DashboardElement.vue";
 import DashboardConfigurator from "@/components/DashboardConfigurator.vue";
+import http from "@/services/base-api.service"
 
 export default defineComponent({
   name: "Dashboard",
@@ -105,6 +106,7 @@ export default defineComponent({
       }
     };
 
+    http.get("Reports/Get", null).then((data: any) => console.log(data))
 
     return { curPage, pages, addNewPage, switchPage,
       showLayoutDialog, layoutOptions, onLayoutDialogClose, onLayoutDialogContinue, newLayout,
