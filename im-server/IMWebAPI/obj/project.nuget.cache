@@ -1,0 +1,29 @@
+{
+  "version": 2,
+  "dgSpecHash": "hr/ZoB2N3r0jrviDCKmeCdJ0iVM44QQNoDSH1aLTSsmykTiD5N5/QIsL+BwyVN21vDMZWrvOpz6FD8wY0+HlLw==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Jcarp\\Desktop\\cs4000\\Capstone Project Repo\\im-server\\IMWebAPI\\IMWebAPI.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Jcarp\\.nuget\\packages\\microsoft.aspnetcore.nodeservices\\3.1.14\\microsoft.aspnetcore.nodeservices.3.1.14.nupkg.sha512",
+    "C:\\Users\\Jcarp\\.nuget\\packages\\microsoft.aspnetcore.spaservices\\3.1.14\\microsoft.aspnetcore.spaservices.3.1.14.nupkg.sha512",
+    "C:\\Users\\Jcarp\\.nuget\\packages\\microsoft.aspnetcore.spaservices.extensions\\3.1.14\\microsoft.aspnetcore.spaservices.extensions.3.1.14.nupkg.sha512",
+    "C:\\Users\\Jcarp\\.nuget\\packages\\microsoft.extensions.configuration\\3.1.14\\microsoft.extensions.configuration.3.1.14.nupkg.sha512",
+    "C:\\Users\\Jcarp\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\3.1.14\\microsoft.extensions.configuration.abstractions.3.1.14.nupkg.sha512",
+    "C:\\Users\\Jcarp\\.nuget\\packages\\microsoft.extensions.configuration.binder\\3.1.14\\microsoft.extensions.configuration.binder.3.1.14.nupkg.sha512",
+    "C:\\Users\\Jcarp\\.nuget\\packages\\microsoft.extensions.dependencyinjection\\3.1.14\\microsoft.extensions.dependencyinjection.3.1.14.nupkg.sha512",
+    "C:\\Users\\Jcarp\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\3.1.14\\microsoft.extensions.dependencyinjection.abstractions.3.1.14.nupkg.sha512",
+    "C:\\Users\\Jcarp\\.nuget\\packages\\microsoft.extensions.fileproviders.abstractions\\3.1.14\\microsoft.extensions.fileproviders.abstractions.3.1.14.nupkg.sha512",
+    "C:\\Users\\Jcarp\\.nuget\\packages\\microsoft.extensions.fileproviders.physical\\3.1.14\\microsoft.extensions.fileproviders.physical.3.1.14.nupkg.sha512",
+    "C:\\Users\\Jcarp\\.nuget\\packages\\microsoft.extensions.filesystemglobbing\\3.1.14\\microsoft.extensions.filesystemglobbing.3.1.14.nupkg.sha512",
+    "C:\\Users\\Jcarp\\.nuget\\packages\\microsoft.extensions.logging\\3.1.14\\microsoft.extensions.logging.3.1.14.nupkg.sha512",
+    "C:\\Users\\Jcarp\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\3.1.14\\microsoft.extensions.logging.abstractions.3.1.14.nupkg.sha512",
+    "C:\\Users\\Jcarp\\.nuget\\packages\\microsoft.extensions.logging.configuration\\3.1.14\\microsoft.extensions.logging.configuration.3.1.14.nupkg.sha512",
+    "C:\\Users\\Jcarp\\.nuget\\packages\\microsoft.extensions.logging.console\\3.1.14\\microsoft.extensions.logging.console.3.1.14.nupkg.sha512",
+    "C:\\Users\\Jcarp\\.nuget\\packages\\microsoft.extensions.options\\3.1.14\\microsoft.extensions.options.3.1.14.nupkg.sha512",
+    "C:\\Users\\Jcarp\\.nuget\\packages\\microsoft.extensions.options.configurationextensions\\3.1.14\\microsoft.extensions.options.configurationextensions.3.1.14.nupkg.sha512",
+    "C:\\Users\\Jcarp\\.nuget\\packages\\microsoft.extensions.primitives\\3.1.14\\microsoft.extensions.primitives.3.1.14.nupkg.sha512",
+    "C:\\Users\\Jcarp\\.nuget\\packages\\microsoft.visualstudio.azure.containers.tools.targets\\1.10.9\\microsoft.visualstudio.azure.containers.tools.targets.1.10.9.nupkg.sha512",
+    "C:\\Users\\Jcarp\\.nuget\\packages\\newtonsoft.json\\12.0.2\\newtonsoft.json.12.0.2.nupkg.sha512"
+  ],
+  "logs": []
+}

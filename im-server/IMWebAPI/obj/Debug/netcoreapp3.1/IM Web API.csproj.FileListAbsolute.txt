@@ -1,0 +1,44 @@
+C:\Users\Jcarp\Desktop\cs4000\Capstone Project Repo\im-backend api\IM Web API\IM Web API\obj\Debug\netcoreapp3.1\IM Web API.csprojAssemblyReference.cache
+C:\Users\Jcarp\Desktop\cs4000\Capstone Project Repo\im-backend api\IM Web API\IM Web API\obj\Debug\netcoreapp3.1\IM Web API.AssemblyInfoInputs.cache
+C:\Users\Jcarp\Desktop\cs4000\Capstone Project Repo\im-backend api\IM Web API\IM Web API\obj\Debug\netcoreapp3.1\IM Web API.AssemblyInfo.cs
+C:\Users\Jcarp\Desktop\cs4000\Capstone Project Repo\im-server\IM Web API\bin\Debug\netcoreapp3.1\appsettings.Development.json
+C:\Users\Jcarp\Desktop\cs4000\Capstone Project Repo\im-server\IM Web API\bin\Debug\netcoreapp3.1\appsettings.json
+C:\Users\Jcarp\Desktop\cs4000\Capstone Project Repo\im-server\IM Web API\bin\Debug\netcoreapp3.1\Properties\launchSettings.json
+C:\Users\Jcarp\Desktop\cs4000\Capstone Project Repo\im-server\IM Web API\bin\Debug\netcoreapp3.1\IM Web API.exe
+C:\Users\Jcarp\Desktop\cs4000\Capstone Project Repo\im-server\IM Web API\obj\Debug\netcoreapp3.1\IM Web API.csprojAssemblyReference.cache
+C:\Users\Jcarp\Desktop\cs4000\Capstone Project Repo\im-server\IM Web API\obj\Debug\netcoreapp3.1\IM Web API.AssemblyInfoInputs.cache
+C:\Users\Jcarp\Desktop\cs4000\Capstone Project Repo\im-server\IM Web API\obj\Debug\netcoreapp3.1\IM Web API.AssemblyInfo.cs
+C:\Users\Jcarp\Desktop\cs4000\Capstone Project Repo\im-server\IM Web API\obj\Debug\netcoreapp3.1\IM Web API.RazorTargetAssemblyInfo.cache
+C:\Users\Jcarp\Desktop\cs4000\Capstone Project Repo\im-server\IM Web API\obj\Debug\netcoreapp3.1\staticwebassets\IM Web API.StaticWebAssets.Manifest.cache
+C:\Users\Jcarp\Desktop\cs4000\Capstone Project Repo\im-server\IM Web API\obj\Debug\netcoreapp3.1\staticwebassets\IM Web API.StaticWebAssets.xml
+C:\Users\Jcarp\Desktop\cs4000\Capstone Project Repo\im-server\IM Web API\bin\Debug\netcoreapp3.1\IM Web API.deps.json
+C:\Users\Jcarp\Desktop\cs4000\Capstone Project Repo\im-server\IM Web API\bin\Debug\netcoreapp3.1\IM Web API.runtimeconfig.json
+C:\Users\Jcarp\Desktop\cs4000\Capstone Project Repo\im-server\IM Web API\bin\Debug\netcoreapp3.1\IM Web API.runtimeconfig.dev.json
+C:\Users\Jcarp\Desktop\cs4000\Capstone Project Repo\im-server\IM Web API\bin\Debug\netcoreapp3.1\IM Web API.dll
+C:\Users\Jcarp\Desktop\cs4000\Capstone Project Repo\im-server\IM Web API\bin\Debug\netcoreapp3.1\IM Web API.pdb
+C:\Users\Jcarp\Desktop\cs4000\Capstone Project Repo\im-server\IM Web API\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.NodeServices.dll
+C:\Users\Jcarp\Desktop\cs4000\Capstone Project Repo\im-server\IM Web API\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.SpaServices.dll
+C:\Users\Jcarp\Desktop\cs4000\Capstone Project Repo\im-server\IM Web API\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.SpaServices.Extensions.dll
+C:\Users\Jcarp\Desktop\cs4000\Capstone Project Repo\im-server\IM Web API\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Configuration.dll
+C:\Users\Jcarp\Desktop\cs4000\Capstone Project Repo\im-server\IM Web API\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Configuration.Abstractions.dll
+C:\Users\Jcarp\Desktop\cs4000\Capstone Project Repo\im-server\IM Web API\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Configuration.Binder.dll
+C:\Users\Jcarp\Desktop\cs4000\Capstone Project Repo\im-server\IM Web API\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.dll
+C:\Users\Jcarp\Desktop\cs4000\Capstone Project Repo\im-server\IM Web API\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Users\Jcarp\Desktop\cs4000\Capstone Project Repo\im-server\IM Web API\bin\Debug\netcoreapp3.1\Microsoft.Extensions.FileProviders.Abstractions.dll
+C:\Users\Jcarp\Desktop\cs4000\Capstone Project Repo\im-server\IM Web API\bin\Debug\netcoreapp3.1\Microsoft.Extensions.FileProviders.Physical.dll
+C:\Users\Jcarp\Desktop\cs4000\Capstone Project Repo\im-server\IM Web API\bin\Debug\netcoreapp3.1\Microsoft.Extensions.FileSystemGlobbing.dll
+C:\Users\Jcarp\Desktop\cs4000\Capstone Project Repo\im-server\IM Web API\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Logging.dll
+C:\Users\Jcarp\Desktop\cs4000\Capstone Project Repo\im-server\IM Web API\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Logging.Abstractions.dll
+C:\Users\Jcarp\Desktop\cs4000\Capstone Project Repo\im-server\IM Web API\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Logging.Configuration.dll
+C:\Users\Jcarp\Desktop\cs4000\Capstone Project Repo\im-server\IM Web API\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Logging.Console.dll
+C:\Users\Jcarp\Desktop\cs4000\Capstone Project Repo\im-server\IM Web API\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Options.dll
+C:\Users\Jcarp\Desktop\cs4000\Capstone Project Repo\im-server\IM Web API\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Options.ConfigurationExtensions.dll
+C:\Users\Jcarp\Desktop\cs4000\Capstone Project Repo\im-server\IM Web API\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Primitives.dll
+C:\Users\Jcarp\Desktop\cs4000\Capstone Project Repo\im-server\IM Web API\bin\Debug\netcoreapp3.1\Newtonsoft.Json.dll
+C:\Users\Jcarp\Desktop\cs4000\Capstone Project Repo\im-server\IM Web API\obj\Debug\netcoreapp3.1\IM Web API.csproj.CoreCompileInputs.cache
+C:\Users\Jcarp\Desktop\cs4000\Capstone Project Repo\im-server\IM Web API\obj\Debug\netcoreapp3.1\IM Web API.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\Jcarp\Desktop\cs4000\Capstone Project Repo\im-server\IM Web API\obj\Debug\netcoreapp3.1\IM Web API.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\Jcarp\Desktop\cs4000\Capstone Project Repo\im-server\IM Web API\obj\Debug\netcoreapp3.1\IM Web API.csproj.CopyComplete
+C:\Users\Jcarp\Desktop\cs4000\Capstone Project Repo\im-server\IM Web API\obj\Debug\netcoreapp3.1\IM Web API.dll
+C:\Users\Jcarp\Desktop\cs4000\Capstone Project Repo\im-server\IM Web API\obj\Debug\netcoreapp3.1\IM Web API.pdb
+C:\Users\Jcarp\Desktop\cs4000\Capstone Project Repo\im-server\IM Web API\obj\Debug\netcoreapp3.1\IM Web API.genruntimeconfig.cache
