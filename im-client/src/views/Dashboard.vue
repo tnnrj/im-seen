@@ -117,14 +117,13 @@ export default defineComponent({
 <style lang="scss">
 .dashboard-content {
   height: 100%;
+  padding: .5em;
 }
 
 .dashboard-elements {
   flex-flow: row wrap;
   flex: 1;
   height: 100%;
-  margin-top: -.75em;
-  margin-left: -.75em;  
 
   .element {
     padding: .5em;

@@ -15,7 +15,7 @@ export enum DashLayout {
   ThreeOneLR = 'ThreeOneLR',
   ThreeTwoTB = 'ThreeTwoTB',
   ThreeTwoLR = 'ThreeTwoLR',
-  Four = 'Four',
+  FourTB = 'FourTB',
   FourOneTB = 'FourOneTB',
   FourOneLR = 'FourOneLR',
   FourThreeTB = 'FourThreeTB',

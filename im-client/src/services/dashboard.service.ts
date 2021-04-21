@@ -1,5 +1,6 @@
 import { DashElement, DashPage } from "@/model/dashboard.model";
 import { ChartType, DashLayout } from "@/model/enums.model";
+import http from "@/services/base-api.service";
 
 export default {
   getDashPages,
@@ -46,7 +47,7 @@ export function dashLayoutToDefaultPage(layout: DashLayout): DashPage {
     case DashLayout.ThreeTwoTB:
       elements = elements.concat(dashElementRow(2), dashElementRow(1));
       break;
-    case DashLayout.Four:
+    case DashLayout.FourTB:
       elements = elements.concat(dashElementRow(2), dashElementRow(2));
       break;
     case DashLayout.FourOneLR:
@@ -105,7 +106,7 @@ export function dashLayoutToPanelCounts(layout: DashLayout): number[] {
     case DashLayout.ThreeTwoLR:
     case DashLayout.ThreeTwoTB:
       return [3, 2, 1];
-    case DashLayout.Four:
+    case DashLayout.FourTB:
       return [4, 2, 2];
     case DashLayout.FourOneLR:
     case DashLayout.FourOneTB:
