@@ -10,6 +10,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
+using IMWebAPI.Data;
 
 namespace IMWebAPI
 {
@@ -27,6 +29,9 @@ namespace IMWebAPI
         {
             services.AddCors();
             services.AddControllers();
+
+            services.AddDbContext<IM_API_Context>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("IM_API_Context")));
 
         }
 

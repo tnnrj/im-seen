@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -7,13 +8,12 @@ namespace IMWebAPI.Models
 {
     public class Report
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int reportID { get; set; }
 
-        public int userID { get; set; }
+        public User reporter { get; set; }
 
-        public int studentID { get; set; }
-
-        public string studentName { get; set; }
+        public Student student { get; set; }
 
         public string description { get; set; }
 
