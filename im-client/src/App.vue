@@ -49,7 +49,7 @@ body {
 }
 
 .app-content {
-  padding: 0 0 3em 14em;
+  padding: .5em .5em 3.5em 14.5em;
   height: 100%;
 }
 

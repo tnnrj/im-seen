@@ -19,19 +19,19 @@ class APIProvider {
     http.defaults.headers.common.Authorization = '';
   }
 
-  get(resource: string, query: any) {
+  get(resource: string, query: any = null) {
     return http.get(`${resource}`, {
       params: query
     });
   }
 
-  getById(resource: string, id: string, query: any) {
+  getById(resource: string, id: string, query: any = null) {
     return http.get(`${resource}/${id}`, {
       params: query
     });
   }
 
-  post(resource: string, data: string, query: any) {
+  post(resource: string, data: string, query: any = null) {
     return http.post(resource, data, {
       params: query
     });

@@ -1,7 +1,7 @@
 <template>
-  <div class="dashboard-content p-d-flex" v-if="!showConfigurator">
+  <div class="dashboard-content p-d-flex" v-if="!showConfigurator" ref="dashContent">
     <div class="dashboard-elements p-d-flex" :class="{'p-flex-column': pages[curPage].layout.indexOf('LR') !== -1}">
-      <div class="element" v-for="(element, index) in pages[curPage].elements"
+      <div class="element" v-for="(element, index) in pages[curPage].elements" :key="index"
         :style="{ width: element.width + '%', height: element.height + '%' }">
         <DashboardElement :chartType="element.chartType" :queryId="element.queryId" :idx="index"></DashboardElement>
       </div>
@@ -10,7 +10,7 @@
       <i class="pi pi-table p-mb-3" v-tooltip="'Configure'" @click="showLayoutDialog = true" />
       <div class="page-buttons p-d-flex p-flex-column p-jc-center">
         <i class="pi" :class="[curPage === index ? 'pi-circle-on' : 'pi-circle-off']" 
-          v-for="(page, index) in pages" @click="switchPage(index)" />
+          v-for="(page, index) in pages" :key="index" @click="switchPage(index)" />
         <i class="pi pi-plus-circle" @click="addNewPage()" />
         <div style="height:5vh"></div>
       </div>
@@ -22,7 +22,7 @@
     <Accordion :activeIndex="dashLayoutToPanelCounts(newLayout)[0] - 1">
       <AccordionTab v-for="(opt, index) in layoutOptions" :header="(index + 1) + (index ? ' panels' : ' panel')" :key="index">
         <div class="p-d-flex p-flex-wrap">
-          <div class="p-m-3" v-for="layout in opt">
+          <div class="p-m-3" v-for="(layout, lIndex) in opt" :key="lIndex">
             <label>
               <input type="radio" :value="layout" v-model="newLayout" />
               <img :src="require('../assets/layouts/'+layout+'.png')" />
@@ -39,13 +39,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, onMounted, onRenderTriggered, ref } from "vue";
 import DashboardService from "@/services/dashboard.service";
 import { DashPage } from "@/model/dashboard.model";
 import { DashLayout } from "@/model/enums.model";
 import DashboardElement from "@/components/DashboardElement.vue";
 import DashboardConfigurator from "@/components/DashboardConfigurator.vue";
-import http from "@/services/base-api.service"
 
 export default defineComponent({
   name: "Dashboard",
@@ -68,6 +67,10 @@ export default defineComponent({
       curPage.value = i;
       newLayout.value = pages.value[curPage.value].layout;
     }
+    const dashContent = ref();
+    onMounted(() => {
+      dashContent.value.parentElement.style.padding = '0 0 3em 14em';
+    });
 
     // layout dialog setup
     const showLayoutDialog = ref(false);
@@ -106,9 +109,7 @@ export default defineComponent({
       }
     };
 
-    http.get("Reports/Get", null).then((data: any) => console.log(data))
-
-    return { curPage, pages, addNewPage, switchPage,
+    return { curPage, pages, addNewPage, switchPage, dashContent,
       showLayoutDialog, layoutOptions, onLayoutDialogClose, onLayoutDialogContinue, newLayout,
       dashLayoutToPanelCounts: DashboardService.dashLayoutToPanelCounts, 
       showConfigurator, onConfiguratorComplete };
@@ -118,8 +119,8 @@ export default defineComponent({
 
 <style lang="scss">
 .dashboard-content {
-  height: 100%;
   padding: .5em;
+  height: 100%;
 }
 
 .dashboard-elements {

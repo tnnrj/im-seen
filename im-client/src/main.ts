@@ -15,6 +15,8 @@ import Splitter from 'primevue/splitter';
 import SplitterPanel from 'primevue/splitterpanel';
 import ConfirmPopup from 'primevue/confirmpopup';
 import ConfirmationService from 'primevue/confirmationservice';
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
 
 // primevue theming
 import 'primevue/resources/themes/saga-blue/theme.css';
@@ -38,6 +40,8 @@ app.component('RadioButton', RadioButton);
 app.component('Splitter', Splitter);
 app.component('SplitterPanel', SplitterPanel);
 app.component('ConfirmPopup', ConfirmPopup);
+app.component('DataTable', DataTable);
+app.component('Column', Column);
 app.directive('tooltip', Tooltip);
 app.use(ConfirmationService);
 
