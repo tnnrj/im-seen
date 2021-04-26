@@ -44,6 +44,20 @@ namespace IMWebAPI.Controllers
             return report;
         }
 
+        [HttpGet]
+        [Route("Student-Severity")]
+        public async Task<ActionResult<IEnumerable<Object>>> GetReportsSeverity()
+        {
+            var query = await _context.Reports.Select(report => new { report.studentName, report.severity}).ToListAsync();
+
+            if (query == null)
+            {
+                return NotFound();
+            }
+
+            return query;
+        }
+
         // PUT: api/Reports/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.

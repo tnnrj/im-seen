@@ -33,7 +33,7 @@ namespace IMWebAPI.Data
                     studentName=context.Students.Where(s => s.studentName == "Hermione").Select(s => s.studentName).FirstOrDefault(),
                     severity=1, description="Towards the end of the night, she was crying on the staircase outside the ballroom. Possibly due to drama with a Weasley boy."},
 
-                new Report {reportDate=new DateTime(1994,12,25,22,15,33),
+                new Report {reportDate=new DateTime(1996,11,20,14,46,0),
                     reporter=context.Users.Where(u => u.userName == "Filch").Select(u => u.userID).FirstOrDefault(),
                     studentName=context.Students.Where(s => s.studentName == "Draco").Select(s => s.studentName).FirstOrDefault(),
                     severity=3, description="He was sulking on the seventh floor left corridor, pacing back and forth and looking like he was up to no good. Then he disappeared."},
