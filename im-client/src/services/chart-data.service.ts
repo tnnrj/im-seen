@@ -1,6 +1,6 @@
 import http from "@/services/base-api.service";
+import { AxiosResponse } from "axios";
 
 export function getChartData(queryId: string) {
-  // http.get('ChartData/GetChartData', queryId);
-  return [queryId, queryId]
+  return http.get('ChartData/GetChartData', queryId);
 }

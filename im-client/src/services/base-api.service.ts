@@ -1,7 +1,7 @@
-import axios from 'axios'
+import axios, { AxiosInstance } from 'axios'
 
 // altered from https://tinyurl.com/537udhf4
-let http: any = null // not possible to create a private property in JavaScript, so we move it outside of the class, so that it's only accessible within this module
+let http: AxiosInstance = axios.create({}); // not possible to create a private property in JavaScript, so we move it outside of the class, so that it's only accessible within this module
 
 class APIProvider {
   constructor (url: string) {

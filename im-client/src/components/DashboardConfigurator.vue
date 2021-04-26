@@ -33,7 +33,7 @@ export default defineComponent({
     }
   },
   emits: ['submit'],
-  setup(props, { emit }) {
+  setup(props, context) {
     // load info about layout
     const isMainAxisVertical = props.page.layout.indexOf('TB') != -1;
     const mainAxisFirstSize = isMainAxisVertical ? props.page.elements[0].height : props.page.elements[0].width;
@@ -60,6 +60,7 @@ export default defineComponent({
       for (let i = 0; i < 2; i++) {
         let mainAxisSize: number;
         if (i === 1) {
+          // ensure final size adds up to 100 to account for rounding issues when extracting
           mainAxisSize = 100 - mainAxisSum;
         }
         else {
@@ -67,7 +68,8 @@ export default defineComponent({
           // look here first if there's a problem with building DashPages
           mainAxisSize = Math.round(mainAxisRefs.value[i].$el.style["flex-basis"].split('%')[0].substr(5) as number * 100) / 100;
           mainAxisSum += mainAxisSize;
-        }
+        }        
+        // same process as above, for secondary axis (rows/cols)
         let sizeSum = 0;
         for (let ii = 0; ii < counts[i + 1]; ii++) {
           let size: number;
@@ -78,13 +80,16 @@ export default defineComponent({
             size = Math.round(splitterRefs.value[i][ii].$el.style["flex-basis"].split('%')[0].substr(5) as number * 100) / 100;
             sizeSum += size;
           }
+          // assign w/h based on extracted sizes and orientation
           elementGrid.value[i][ii].width = isMainAxisVertical ? size : mainAxisSize;
           elementGrid.value[i][ii].height = isMainAxisVertical ? mainAxisSize : size;
           newEls.push(elementGrid.value[i][ii]);
         }
       }
-      emit('submit', { layout: props.page.layout, elements: newEls });
+      context.emit('submit', { layout: props.page.layout, elements: newEls });
     }
+
+    // confirmation dialog callback
     const confirm = useConfirm();
     const confirmCancel = (event: Event) => {
       confirm.require({
@@ -93,7 +98,7 @@ export default defineComponent({
         icon: 'pi pi-info-circle',
         acceptClass: 'p-button-danger',
         accept: () => {
-          emit('submit', null);
+          context.emit('submit', null);
         }
       })
     }
@@ -122,7 +127,7 @@ export default defineComponent({
   bottom: 0;
   right: 0;
   background: transparent;
-  transition: background-image 2s ease-in-out !important;
+  transition: background-image .3s ease-in-out;
 
   .p-button {
     margin: 0 .5em .5em 0;
@@ -134,8 +139,7 @@ export default defineComponent({
     background-color: rgba(0,0,0,0);
   }
 
-  &:hover {   
-  transition: background-image 2s; 
+  &:hover {
     background-image: radial-gradient(ellipse at 90% 100%, rgba(0,0,0,.7), rgba(0,0,0,0) 70%);
   }
 }

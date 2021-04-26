@@ -8,7 +8,7 @@ export default {
   dashLayoutToPanelCounts,
 }
 
-
+// fetches user Dashboard pages from API
 export function getDashPages(): DashPage[] {
   // TODO: get user pages from API
   return [
@@ -18,6 +18,7 @@ export function getDashPages(): DashPage[] {
   ];
 }
 
+// turns a dash layout enum into an empty DashPage with default dimensions
 export function dashLayoutToDefaultPage(layout: DashLayout): DashPage {
   let elements: DashElement[] = [];
   switch(layout) {
@@ -83,7 +84,7 @@ function dashElementRow(count: number, col = false): DashElement[] {
   for (let i = 0; i < count; i++) {
     elements.push({
       queryId: '',
-      chartType: ChartType.BubbleCloud,
+      chartType: ChartType.BubbleCloud, // TODO: change this to none when reports are selectable
       width: col ? 50 : 100 / count,
       height: col ? 100 / count : 50
     });
