@@ -8,12 +8,18 @@ namespace IMWebAPI.Models
 {
     public class Report
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        //[DatabaseGenerated(DatabaseGeneratedOption.None)]
+
         public int reportID { get; set; }
 
-        public User reporter { get; set; }
+        [ForeignKey("User.userID")]
+        public int reporter { get; set; }
 
-        public Student student { get; set; }
+        [ForeignKey("Student.studentID")]
+        public int studentID { get; set; }
+
+        [ForeignKey("Student.studentName")]
+        public string studentName { get; set; }
 
         public string description { get; set; }
 

@@ -7,11 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using IMWebAPI.Data;
 using IMWebAPI.Models;
+using Microsoft.AspNetCore.Cors;
 
 namespace IMWebAPI.Controllers
-{
-    [Route("api/[controller]")]
+{ 
     [ApiController]
+    [EnableCors]
+    [Route("Reports")]
     public class ReportsController : ControllerBase
     {
         private readonly IM_API_Context _context;

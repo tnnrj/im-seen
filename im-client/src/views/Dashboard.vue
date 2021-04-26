@@ -106,7 +106,7 @@ export default defineComponent({
       }
     };
 
-    http.get("Reports/Get", null).then((data: any) => console.log(data))
+    http.get("Reports", null).then((data: any) => console.log(data))
 
     return { curPage, pages, addNewPage, switchPage,
       showLayoutDialog, layoutOptions, onLayoutDialogClose, onLayoutDialogContinue, newLayout,
