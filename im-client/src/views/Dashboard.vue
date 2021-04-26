@@ -1,20 +1,25 @@
 <template>
-  <div class="dashboard-content p-d-flex" v-if="!showConfigurator" ref="dashContent">
-    <div class="dashboard-elements p-d-flex" :class="{'p-flex-column': pages[curPage].layout.indexOf('LR') !== -1}">
-      <div class="element" v-for="(element, index) in pages[curPage].elements" :key="index"
-        :style="{ width: element.width + '%', height: element.height + '%' }">
-        <DashboardElement :chartType="element.chartType" :queryId="element.queryId" :idx="index"></DashboardElement>
+  <div class="dashboard-content p-d-flex" v-if="!showConfigurator">
+    <template v-if="pages && pages.length">
+      <div class="dashboard-elements p-d-flex" :class="{'p-flex-column': pages[curPage].layout.indexOf('LR') !== -1}">
+        <div class="element" v-for="(element, index) in pages[curPage].elements" :key="index"
+          :style="{ width: element.width + '%', height: element.height + '%' }">
+          <DashboardElement :chartType="element.chartType" :queryId="element.queryId" :idx="index"></DashboardElement>
+        </div>
       </div>
-    </div>
-    <div class="sidebar p-d-flex p-flex-column p-ai-end">
-      <i class="pi pi-table p-mb-3" v-tooltip="'Configure'" @click="showLayoutDialog = true" />
-      <div class="page-buttons p-d-flex p-flex-column p-jc-center">
-        <i class="pi" :class="[curPage === index ? 'pi-circle-on' : 'pi-circle-off']" 
-          v-for="(page, index) in pages" :key="index" @click="switchPage(index)" />
-        <i class="pi pi-plus-circle" @click="addNewPage()" />
-        <div style="height:5vh"></div>
+      <div class="sidebar p-d-flex p-flex-column p-ai-end">
+        <i class="pi pi-table p-mb-3" v-tooltip="'Configure'" @click="showLayoutDialog = true" />
+        <div class="page-buttons p-d-flex p-flex-column p-jc-center">
+          <i class="pi" :class="[curPage === index ? 'pi-circle-on' : 'pi-circle-off']" 
+            v-for="(page, index) in pages" :key="index" @click="switchPage(index)" />
+          <i class="pi pi-plus-circle" @click="addNewPage()" />
+          <div style="height:5vh"></div>
+        </div>
       </div>
-    </div>
+    </template>
+    <template v-else>
+      <Loader />
+    </template>
   </div>
   <DashboardConfigurator v-else :page="pages[curPage]" @submit="onConfiguratorComplete" />
   <Dialog class="layout-dialog" header="Configure" v-model:visible="showLayoutDialog" :modal="true" :contentStyle="{'height':'30em', 'width':'31em'}">
@@ -39,16 +44,17 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, onRenderTriggered, ref } from "vue";
+import { defineComponent, ref } from "vue";
 import DashboardService from "@/services/dashboard.service";
 import { DashPage } from "@/model/dashboard.model";
 import { DashLayout } from "@/model/enums.model";
 import DashboardElement from "@/components/DashboardElement.vue";
 import DashboardConfigurator from "@/components/DashboardConfigurator.vue";
+import Loader from "@/components/Loader.vue";
 
 export default defineComponent({
   name: "Dashboard",
-  components: { DashboardElement, DashboardConfigurator },
+  components: { DashboardElement, DashboardConfigurator, Loader },
   setup() {
     // pages setup
     const curPage = ref(0);
@@ -67,10 +73,6 @@ export default defineComponent({
       curPage.value = i;
       newLayout.value = pages.value[curPage.value].layout;
     }
-    const dashContent = ref();
-    onMounted(() => {
-      dashContent.value.parentElement.style.padding = '0 0 3em 14em';
-    });
 
     // layout dialog setup
     const showLayoutDialog = ref(false);
@@ -109,7 +111,7 @@ export default defineComponent({
       }
     };
 
-    return { curPage, pages, addNewPage, switchPage, dashContent,
+    return { curPage, pages, addNewPage, switchPage,
       showLayoutDialog, layoutOptions, onLayoutDialogClose, onLayoutDialogContinue, newLayout,
       dashLayoutToPanelCounts: DashboardService.dashLayoutToPanelCounts, 
       showConfigurator, onConfiguratorComplete };

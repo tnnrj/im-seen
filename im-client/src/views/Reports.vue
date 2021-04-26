@@ -1,14 +1,16 @@
 <template>
-  <div class="reports-content">
-    <DataTable :value="reports" v-if="reports && reports.length">
-      <Column field="name" header="Name"></Column>
-      <Column field="severity" header="Severity"></Column>
-      <Column field="text" header="Description"></Column>
-      <Column field="date" header="Submit Date"></Column>
-    </DataTable>
-    <template v-else>
-      <Loader />
-    </template>
+  <div class="reports-wrapper">
+    <div class="reports-content">
+      <DataTable :value="reports" v-if="reports && reports.length">
+        <Column field="studentName" header="Name"></Column>
+        <Column field="severity" header="Severity"></Column>
+        <Column field="description" header="Description"></Column>
+        <Column field="reportDate" header="Submit Date"></Column>
+      </DataTable>
+      <template v-else>
+        <Loader />
+      </template>
+    </div>
   </div>
 </template>
 
@@ -30,6 +32,10 @@ export default defineComponent({
 </script>
 
 <style>
+.reports-wrapper {
+  padding: 1em;
+}
+
 .reports-content {
   height: 100%;
   background-color: white;
