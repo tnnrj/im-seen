@@ -18,7 +18,6 @@ namespace IMWebAPI.Models
         [ForeignKey("Students.studentID")]
         public int studentID { get; set; }
 
-        [ForeignKey("Students.studentName")]
         public string studentName { get; set; }
 
         public string description { get; set; }
