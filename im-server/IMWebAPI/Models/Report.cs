@@ -13,10 +13,10 @@ namespace IMWebAPI.Models
         public int reportID { get; set; }
 
         [ForeignKey("Users.userID")]
-        public int reporter { get; set; }
+        public int? reporter { get; set; }
 
         [ForeignKey("Students.studentID")]
-        public int studentID { get; set; }
+        public int? studentID { get; set; }
 
         public string studentName { get; set; }
 
