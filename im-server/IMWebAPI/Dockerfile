@@ -1,25 +1,18 @@
-#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
-#Depending on the operating system of the host machines(s) that will build or run the containers, the image specified in the FROM statement may need to be changed.
-#For more information, please see https://aka.ms/containercompat
-
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-nanoserver-1903 AS base
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build-env
 WORKDIR /app
-EXPOSE 80
-EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1-nanoserver-1903 AS build
-WORKDIR /src
-COPY ["IMWebAPI/IMWebAPI.csproj", "IMWebAPI/"]
-RUN dotnet restore "IMWebAPI/IMWebAPI.csproj"
-COPY . .
-WORKDIR "/src/IMWebAPI"
-RUN dotnet build "IMWebAPI.csproj" -c Release -o /app/build
 
-FROM build AS publish
-RUN dotnet publish "IMWebAPI.csproj" -c Release -o /app/publish
+COPY *.csproj ./
+RUN dotnet restore
 
-FROM base AS final
+ENV ASPNETCORE_URLS=http://+:5000
+EXPOSE 5000
+
+COPY . ./
+RUN dotnet publish -c Release -o out
+
+
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=build-env /app/out .
 ENTRYPOINT ["dotnet", "IMWebAPI.dll"]

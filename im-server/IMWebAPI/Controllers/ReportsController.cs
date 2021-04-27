@@ -13,7 +13,7 @@ namespace IMWebAPI.Controllers
 { 
     [ApiController]
     [EnableCors]
-    [Route("Reports")]
+    [Route("api/Reports")]
     public class ReportsController : ControllerBase
     {
         private readonly IM_API_Context _context;
