@@ -17,7 +17,9 @@ namespace IMWebAPI
         {
             var host = CreateHostBuilder(args).Build();
 
+# if DEBUG
             CreateDbIfNotExists(host);
+# endif
 
             host.Run();
         }
