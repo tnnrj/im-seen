@@ -20,9 +20,9 @@ namespace IMWebAPI.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Student>().ToTable("Student");
-            modelBuilder.Entity<User>().ToTable("User");
-            modelBuilder.Entity<Report>().ToTable("Report");
+            modelBuilder.Entity<Student>().ToTable("Students");
+            modelBuilder.Entity<User>().ToTable("Users");
+            modelBuilder.Entity<Report>().ToTable("Reports");
         }
     }
 }
