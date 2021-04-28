@@ -48,7 +48,11 @@ namespace IMWebAPI.Controllers
         [Route("Student-Severity")]
         public async Task<ActionResult<IEnumerable<Object>>> GetReportsSeverity()
         {
-            var query = await _context.Reports.Select(report => new { report.studentName, report.severity}).ToListAsync();
+            var query = await _context.Reports.GroupBy(report => report.studentName)
+                .Select(group => new { 
+                                        studentName = group.Key, 
+                                        severity = group.Sum(g => g.severity)
+                                     }).ToListAsync();
 
             if (query == null)
             {
