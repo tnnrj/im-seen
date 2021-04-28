@@ -1,14 +1,15 @@
 <template>
   <div class="reports-content">
-    <DataTable :value="reports" sortField="reportDate" :sortOrder="-1" dataKey="reportID" :autoLayout="true" :rowClass="rowClass"
+    <!--:rowClass="rowClass"-->
+    <DataTable :value="reports" sortField="reportDate" :sortOrder="-1" dataKey="reportID" :autoLayout="true" 
         v-model:expandedRows="expandedRows" @row-expand="onRowExpand" @row-collapse="onRowCollapse" :scrollable="true" scrollHeight="flex">
       <Column :expander="true" style="flex: 0 0 3em"></Column>
       <Column field="studentName" header="Name" :sortable="true" style="flex: 0 0 calc(20%-3em)"></Column>
       <Column field="severity" header="Severity" :sortable="true" style="flex: 0 0 10%"></Column>
       <Column field="description" header="Description" style="flex: 0 0 50%">
-        <template #body="slotProps">
+        <!--<template #body="slotProps">
           <span class="desc-cell">{{slotProps.data.description}}</span>
-        </template>
+        </template>-->
       </Column>
       <Column field="reportDate" header="Submit Date" :sortable="true" style="flex: 0 0 20%">
         <template #body="slotProps">{{slotProps.data.reportDate.toLocaleString()}}</template>
@@ -39,27 +40,27 @@ export default defineComponent({
     getReports()
       .then(response => reports.value = response.data
         .map(r => {
-          //r.fullDescription = r.description;
-          //r.description = r.description.length > maxDescLength + 4 ? r.description.substr(0, maxDescLength) + '...' : r.description;
+          r.fullDescription = r.description;
+          r.description = r.description.length > maxDescLength + 4 ? r.description.substr(0, maxDescLength) + '...' : r.description;
           r.reportDate = new Date(r.reportDate);
           return r;
         }));
     const expandedRows = ref([]);
     const onRowExpand = (event) => {
-      //event.data.description = event.data.fullDescription;
+      event.data.description = event.data.fullDescription;
     }
     const onRowCollapse = (event) => {
-      //event.data.description = event.data.fullDescription.length > maxDescLength + 4 ? event.data.fullDescription.substr(0, maxDescLength) + '...' : event.data.fullDescription;
+      event.data.description = event.data.fullDescription.length > maxDescLength + 4 ? event.data.fullDescription.substr(0, maxDescLength) + '...' : event.data.fullDescription;
     }
 
-    const rowClass = (data) => {
-      if (expandedRows.value.filter(r => r == data).length > 0) {
-        return "expanded-row";
-      }
-      return "minimized-row";
-    }
+    // const rowClass = (data) => {
+    //   if (expandedRows.value.filter(r => r == data).length > 0) {
+    //     return "expanded-row";
+    //   }
+    //   return "minimized-row";
+    // }
 
-    return { reports, expandedRows, onRowExpand, onRowCollapse, rowClass };
+    return { reports, expandedRows, onRowExpand, onRowCollapse };
   }
 })
 </script>
