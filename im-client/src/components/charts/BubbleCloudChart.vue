@@ -35,6 +35,7 @@ export default {
      // height and width should be calculated by element width
      const width = document.getElementById('chart-'+this.id).clientWidth;
      const height = document.getElementById('chart-'+this.id).clientHeight;
+     const minDimension = width < height ? width : height;
 
      //We are accessing the div with the id chart using d3's select method and appending svg
      const svg = d3
@@ -43,7 +44,7 @@ export default {
        .attr("width", "90%")
        .attr("height", "90%")
        .attr("viewBox", [0, 0, width, height])  // keeps chart within element bounds
-       .attr("font-size", 0.02 * height)       // depending on component layout, this may need to be set to min(width, height)
+       .attr("font-size", 0.02 * minDimension)
        .attr("font-family", "sans-serif") 
        .attr("text-anchor", "middle");
 
@@ -68,12 +69,12 @@ export default {
         .on("mouseover", function() {
           d3.select(this)
           .attr("opacity", 0.5)
-          .attr("font-size", 0.03 * height);
+          .attr("font-size", 0.03 * minDimension);
         })
         .on("mouseleave", function() {
           d3.select(this)
           .attr("opacity", 1)
-          .attr("font-size", 0.02 * height);
+          .attr("font-size", 0.02 * minDimension);
         });
 
       // draw the circle  
