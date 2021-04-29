@@ -1,6 +1,7 @@
 <template>
   <div class="element-content p-d-flex p-flex-column p-jc-center p-ai-center">
-    <template v-if="true || (data && data.length)">
+    <template v-if="data && data.length">
+      <h4 class="p-mb-0">{{name}}</h4>
       <BubbleCloudChart v-if="chartType == ChartType.BubbleCloud" :chartData="data" :id="idx"/>
     </template>
     <template v-else>
@@ -32,9 +33,13 @@ export default defineComponent({
   },
   setup(props) {
     const data = ref<any[]>();
-    getChartData(props.queryId).then((response: any) => data.value = response.data);
+    const name = ref<string>();
+    getChartData(props.queryId).then((response: any) => {
+        data.value = response.data.chartData;
+        name.value = response.data.chartName;
+      });
 
-    return { data, ChartType }
+    return { data, name, ChartType }
   }
 });
 </script>

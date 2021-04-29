@@ -43,12 +43,12 @@ export default {
        .attr("width", "90%")
        .attr("height", "90%")
        .attr("viewBox", [0, 0, width, height])  // keeps chart within element bounds
-       .attr("font-size", 0.03 * height)       // depending on component layout, this may need to be set to min(width, height)
+       .attr("font-size", 0.02 * height)       // depending on component layout, this may need to be set to min(width, height)
        .attr("font-family", "sans-serif") 
        .attr("text-anchor", "middle");
 
       // get data from the method above
-      const data = this.students;
+      const data = this.chartData;
       // initialize color scheme
       const color = d3.scaleOrdinal(data.map(d=>d), d3.schemeSpectral[10]);
     
@@ -57,7 +57,7 @@ export default {
         .size([width-2, height-2])
         .padding(3)
         (d3.hierarchy({children: data})
-        .sum(d => d.Severity));
+        .sum(d => d.severity));
 
       // each leaf represents one student - this is selecting nodes from the data essentially
       const leaf = svg.selectAll("g")
@@ -68,12 +68,12 @@ export default {
         .on("mouseover", function() {
           d3.select(this)
           .attr("opacity", 0.5)
-          .attr("font-size", 0.05 * height);
+          .attr("font-size", 0.03 * height);
         })
         .on("mouseleave", function() {
           d3.select(this)
           .attr("opacity", 1)
-          .attr("font-size", 0.03 * height);
+          .attr("font-size", 0.02 * height);
         });
 
       // draw the circle  
@@ -94,7 +94,7 @@ export default {
       leaf.append("text")
         .attr("clip-path", d => d.clipUid)
         .selectAll("tspan")
-        .data(d => d.data.Name.split(/(?=[A-Z][a-z])|\s+/g)) //+ "\n(" + d.data.Severity + ")")
+        .data(d => d.data.studentName.split(/(?=[A-Z][a-z])|\s+/g)) //+ "\n(" + d.data.severity + ")")
         .join("tspan")
         .attr("x", 0)
         .attr("y", (d, i, nodes) => `${i - nodes.length / 2 + 0.8}em`)
@@ -102,7 +102,7 @@ export default {
 
       // title is the student's name
       leaf.append("title")
-        .text(d => d.data.name === undefined ? "" : d.data.name);
+        .text(d => d.data.studentName === undefined ? "" : d.data.studentName);
 
 //////////////////////////////////// END D3.js CODE
    }
