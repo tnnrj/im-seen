@@ -1,15 +1,14 @@
 <template>
   <div class="reports-content">
-    <!--:rowClass="rowClass"-->
     <DataTable :value="reports" sortField="reportDate" :sortOrder="-1" dataKey="reportID" :autoLayout="true" 
         v-model:expandedRows="expandedRows" @row-expand="onRowExpand" @row-collapse="onRowCollapse" :scrollable="true" scrollHeight="flex">
       <Column :expander="true" style="flex: 0 0 3em"></Column>
       <Column field="studentName" header="Name" :sortable="true" style="flex: 0 0 calc(20%-3em)"></Column>
       <Column field="severity" header="Severity" :sortable="true" style="flex: 0 0 10%"></Column>
       <Column field="description" header="Description" style="flex: 0 0 50%">
-        <!--<template #body="slotProps">
-          <span class="desc-cell">{{slotProps.data.description}}</span>
-        </template>-->
+        <template #body="slotProps">
+          <span :class="{ 'clamp-text': !slotProps.data.expanded }">{{slotProps.data.description}}</span>
+        </template>
       </Column>
       <Column field="reportDate" header="Submit Date" :sortable="true" style="flex: 0 0 20%">
         <template #body="slotProps">{{slotProps.data.reportDate.toLocaleString()}}</template>
@@ -28,37 +27,29 @@
 
 <script>
 import { defineComponent, ref } from "vue";
-import { getReports } from "@/services/reports.service";
+import ReportsService from "@/services/reports.service";
 import Loader from "@/components/Loader.vue";
 
 export default defineComponent({
   name: 'Reports',
   components: { Loader },
   setup() {
-    let maxDescLength = 100;
     const reports = ref();
-    getReports()
+    ReportsService.getReports()
       .then(response => reports.value = response.data
         .map(r => {
           r.fullDescription = r.description;
-          r.description = r.description.length > maxDescLength + 4 ? r.description.substr(0, maxDescLength) + '...' : r.description;
           r.reportDate = new Date(r.reportDate);
+          r.expanded = false;
           return r;
         }));
     const expandedRows = ref([]);
     const onRowExpand = (event) => {
-      event.data.description = event.data.fullDescription;
+      event.data.expanded = true;
     }
     const onRowCollapse = (event) => {
-      event.data.description = event.data.fullDescription.length > maxDescLength + 4 ? event.data.fullDescription.substr(0, maxDescLength) + '...' : event.data.fullDescription;
+      event.data.expanded = false;
     }
-
-    // const rowClass = (data) => {
-    //   if (expandedRows.value.filter(r => r == data).length > 0) {
-    //     return "expanded-row";
-    //   }
-    //   return "minimized-row";
-    // }
 
     return { reports, expandedRows, onRowExpand, onRowCollapse };
   }
@@ -79,10 +70,10 @@ export default defineComponent({
   max-height: none;
 }
 
-.desc-cell {
-  white-space: nowrap;
+.clamp-text {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100em;
 }
 </style>
