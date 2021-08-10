@@ -1,6 +1,7 @@
 import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router';
+import { store, key } from "@/store";
 
 // primevue components
 import PrimeVue from 'primevue/config';
@@ -28,6 +29,9 @@ const app = createApp(App);
 
 // vue-router
 app.use(router);
+
+// vuex
+app.use(store, key);
 
 // prime
 app.use(PrimeVue);

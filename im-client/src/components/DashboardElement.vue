@@ -1,8 +1,8 @@
 <template>
   <div class="element-content p-d-flex p-flex-column p-jc-center p-ai-center">
-    <template v-if="data && data.length">
-      <h4 class="p-mb-0">{{name}}</h4>
-      <BubbleCloudChart v-if="chartType == ChartType.BubbleCloud" :chartData="data" :id="idx"/>
+    <template v-if="chartData && chartData.data">
+      <h4 class="p-mb-0">{{chartData.name}}</h4>
+      <BubbleCloudChart v-if="chartType == ChartType.BubbleCloud" :chartData="chartData.data" :id="idx"/>
     </template>
     <template v-else>
       <Loader />
@@ -12,10 +12,10 @@
 
 <script lang="ts">
 import { ChartType } from "@/model/enums.model";
-import { defineComponent, ref } from "vue";
-import { getChartData } from "@/services/chart-data.service";
+import { computed, defineComponent } from "vue";
 import BubbleCloudChart from "@/components/charts/BubbleCloudChart.vue";
 import Loader from "@/components/Loader.vue";
+import { useStore } from "@/store/index";
 
 export default defineComponent({
   name: "DashboardElement",
@@ -32,14 +32,12 @@ export default defineComponent({
     idx: Number
   },
   setup(props) {
-    const data = ref<any[]>();
-    const name = ref<string>();
-    getChartData(props.queryId).then((response: any) => {
-        data.value = response.data.chartData;
-        name.value = response.data.chartName;
-      });
+    const store = useStore();
+    if (!store.getters.getChartData(props.queryId)) store.dispatch('loadChartData', { queryId: props.queryId });
 
-    return { data, name, ChartType }
+    const chartData = computed(() => store.getters.getChartData(props.queryId));
+
+    return { chartData, ChartType }
   }
 });
 </script>

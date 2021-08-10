@@ -9,44 +9,26 @@ import * as d3 from "d3";
 export default {
   name: "BubbleCloudChart",
   props: ['chartData', 'id'],
-  data() {
-   return {
-     // we will use an actual method to get data rather than having this static input
-     students : [
-       {Name: "John Doe", Severity: 125},
-       {Name: "Casey Smith", Severity: 30},
-       {Name: "Adam Jenkins", Severity: 24},
-       {Name: "Sarah Hopkins", Severity: 35},
-       {Name: "Taylor Write", Severity: 40},
-       {Name: "Sam Johnson", Severity: 10},
-       {Name: "Porter Weatherly", Severity: 50},
-       {Name: "Michaela Brown", Severity: 49},
-       {Name: "Ryan Huntsman", Severity: 17},
-       {Name: "Tanya Merril", Severity: 28},
-       {Name: "Brandon Welker", Severity: 36}
-     ]
-   };
- },
- mounted() {
-   this.main();
- },
- methods: {
-   main() { 
-     // height and width should be calculated by element width
-     const width = document.getElementById('chart-'+this.id).clientWidth;
-     const height = document.getElementById('chart-'+this.id).clientHeight;
-     const minDimension = width < height ? width : height;
+  mounted() {
+    this.main();
+  },
+  methods: {
+    main() { 
+      // height and width should be calculated by element width
+      const width = document.getElementById('chart-'+this.id).clientWidth;
+      const height = document.getElementById('chart-'+this.id).clientHeight;
+      const minDimension = width < height ? width : height;
 
-     //We are accessing the div with the id chart using d3's select method and appending svg
-     const svg = d3
-       .select("#chart-" + this.id)
-       .append("svg")                   
-       .attr("width", "90%")
-       .attr("height", "90%")
-       .attr("viewBox", [0, 0, width, height])  // keeps chart within element bounds
-       .attr("font-size", 0.02 * minDimension)
-       .attr("font-family", "sans-serif") 
-       .attr("text-anchor", "middle");
+      //We are accessing the div with the id chart using d3's select method and appending svg
+      const svg = d3
+        .select("#chart-" + this.id)
+        .append("svg")                   
+        .attr("width", "90%")
+        .attr("height", "90%")
+        .attr("viewBox", [0, 0, width, height])  // keeps chart within element bounds
+        .attr("font-size", 0.02 * minDimension)
+        .attr("font-family", "sans-serif") 
+        .attr("text-anchor", "middle");
 
       // get data from the method above
       const data = this.chartData;
@@ -106,8 +88,9 @@ export default {
         .text(d => d.data.studentName === undefined ? "" : d.data.studentName);
 
 //////////////////////////////////// END D3.js CODE
-   }
-}}
+    }
+  }
+}
 </script>
 
 <style>
