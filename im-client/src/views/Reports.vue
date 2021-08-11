@@ -25,24 +25,36 @@
   </div>
 </template>
 
-<script>
-import { defineComponent, ref } from "vue";
-import ReportsService from "@/services/reports.service";
+<script lang="ts">
+import { defineComponent, ref, watchEffect } from "vue";
 import Loader from "@/components/Loader.vue";
+import { useStore } from "@/store";
+import { Report } from '@/model/reports.model';
+
+interface UiReport extends Report {
+  fullDescription: string;
+  expanded: boolean;
+}
 
 export default defineComponent({
   name: 'Reports',
   components: { Loader },
   setup() {
+    const store = useStore();
+
     const reports = ref();
-    ReportsService.getReports()
-      .then(response => reports.value = response.data
-        .map(r => {
-          r.fullDescription = r.description;
-          r.reportDate = new Date(r.reportDate);
-          r.expanded = false;
-          return r;
-        }));
+    watchEffect(() => {
+      if (!store.state.reports) store.dispatch('loadAllReports'); // here so we enforce watch dependency
+      setTimeout(() => { // needs to happen async so we show loader immediately
+        reports.value = store.state.reports?.map(r => {
+          let uir = r as UiReport;
+          uir.fullDescription = r.description;
+          uir.expanded = false;
+          return uir;
+        });
+      }, 0);
+    });
+    
     const expandedRows = ref([]);
     const onRowExpand = (event) => {
       event.data.expanded = true;
