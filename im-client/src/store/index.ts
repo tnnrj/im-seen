@@ -2,7 +2,8 @@ import { InjectionKey } from 'vue';
 import { createStore, Store, useStore as baseUseStore } from 'vuex';
 import ChartDataService from '@/services/chart-data.service';
 import ReportsService from '@/services/reports.service';
-import { Report, UiReport } from '@/model/reports.model';
+import { Report } from '@/model/reports.model';
+import auth from './modules/auth';
 
 // define our type for the store state
 export interface State {
@@ -34,19 +35,19 @@ export const store = createStore<State>({
   },
   actions: {
     // load data for a single chart from the server
-    loadChartData({ commit }, payload) {
-      ChartDataService.getChartData(payload.queryId).then(response => {
-        commit('setChartData', { queryId: payload.queryId, data: response.data });
-      });
+    async loadChartData({ commit }, payload) {
+      let response = await ChartDataService.getChartData(payload.queryId);
+      commit('setChartData', { queryId: payload.queryId, data: response.data });
     },
     // load data for all reports
-    loadAllReports({ commit }) {
-      ReportsService.getReports().then(response => {
-        commit('setAllReports', { reports: response.data });
-      });
+    async loadAllReports({ commit }) {
+      let response = await ReportsService.getReports();
+      commit('setAllReports', { reports: response.data });
     }
   }
 })
+
+store.registerModule('auth', auth);
 
 // define our own `useStore` composition function
 export function useStore () {

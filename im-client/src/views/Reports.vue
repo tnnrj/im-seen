@@ -1,25 +1,27 @@
 <template>
   <div class="reports-content">
-    <DataTable :value="reports" sortField="reportDate" :sortOrder="-1" dataKey="reportID" :autoLayout="true" 
+    <DataTable :value="reports" sortField="reportDate" :sortOrder="-1" dataKey="reportID"
         v-model:expandedRows="expandedRows" @row-expand="onRowExpand" @row-collapse="onRowCollapse" :scrollable="true" scrollHeight="flex">
-      <Column :expander="true" style="flex: 0 0 3em"></Column>
-      <Column field="studentName" header="Name" :sortable="true" style="flex: 0 0 calc(20%-3em)"></Column>
-      <Column field="severity" header="Severity" :sortable="true" style="flex: 0 0 10%"></Column>
-      <Column field="description" header="Description" style="flex: 0 0 50%">
+      <Column :expander="true" style="flex: 1 1 5%"></Column>
+      <Column field="studentName" header="Name" :sortable="true" style="flex: 1 1 15%"></Column>
+      <Column field="severity" header="Severity" :sortable="true" style="flex: 1 1 10%"></Column>
+      <Column field="description" header="Description" style="flex: 1 1 50%">
         <template #body="slotProps">
           <span :class="{ 'clamp-text': !slotProps.data.expanded }">{{slotProps.data.description}}</span>
         </template>
       </Column>
-      <Column field="reportDate" header="Submit Date" :sortable="true" style="flex: 0 0 20%">
-        <template #body="slotProps">{{slotProps.data.reportDate.toLocaleString()}}</template>
+      <Column field="reportDate" header="Submit Date" :sortable="true" style="flex: 1 1 20%">
+        <template #body="slotProps">{{slotProps.data.reportDate.toLocaleString('en-US')}}</template>
       </Column>
       <template #empty>
-        <template v-if="reports">
-          No records to display
-        </template>
-        <template v-else>
-          <Loader />
-        </template>
+        <div style="height:100%; width:100%">
+          <template v-if="reports">
+            No records to display
+          </template>
+          <template v-else>
+            <Loader />
+          </template>
+        </div>
       </template>
     </DataTable>
   </div>
@@ -48,6 +50,7 @@ export default defineComponent({
       setTimeout(() => { // needs to happen async so we show loader immediately
         reports.value = store.state.reports?.map(r => {
           let uir = r as UiReport;
+          uir.reportDate = new Date(r.reportDate);
           uir.fullDescription = r.description;
           uir.expanded = false;
           return uir;

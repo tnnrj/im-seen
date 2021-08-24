@@ -1,5 +1,5 @@
 <template>
-  <SideNav />
+  <SideNav v-if="isAuthenticated" />
   <div class="app-content">
     <router-view />
   </div>
@@ -12,13 +12,19 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, computed } from "vue";
 import SideNav from '@/components/SideNav.vue';
+import { useStore } from "@/store/index";
 
 export default defineComponent({
   name: 'App',
   components: {
     SideNav
+  },
+  setup () {
+    const store = useStore();
+    const isAuthenticated = computed(() => store.getters.isAuthenticated);
+    return { isAuthenticated };
   }
 })
 </script>
