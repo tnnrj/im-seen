@@ -5,7 +5,10 @@ const state = {
   user: null
 };
 const getters = {
-  isAuthenticated: state => !!state.user
+  isAuthenticated: state => !!state.user,
+  userRole: state => {
+    return { username: state.user };
+  }
 };
 const actions = {
   async logIn({commit}, form) {

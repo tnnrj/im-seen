@@ -18,6 +18,8 @@ import ConfirmPopup from 'primevue/confirmpopup';
 import ConfirmationService from 'primevue/confirmationservice';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
+import Password from 'primevue/password';
+import Menu from 'primevue/menu';
 
 // primevue theming
 import 'primevue/resources/themes/saga-blue/theme.css';
@@ -46,6 +48,8 @@ app.component('SplitterPanel', SplitterPanel);
 app.component('ConfirmPopup', ConfirmPopup);
 app.component('DataTable', DataTable);
 app.component('Column', Column);
+app.component('Password', Password);
+app.component('Menu', Menu);
 app.directive('tooltip', Tooltip);
 app.use(ConfirmationService);
 

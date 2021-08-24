@@ -1,14 +1,18 @@
 <template>
-  <SideNav v-if="isAuthenticated" />
-  <div class="app-content">
-    <router-view />
-  </div>
-  <div class="app-footer p-d-flex">
-    <span class="spacer"></span>
-    <div class="p-d-flex p-jc-center">
-      <span class="text-small p-m-3">(c) Paladin BI systems informatics etc</span>
+  <template v-if="isAuthenticated">
+    <SideNav />
+    <div class="app-content">
+      <router-view />
     </div>
-  </div>
+    <div class="app-footer p-d-flex">
+      <span class="spacer"></span>
+      <div class="p-d-flex p-jc-center">
+        <span class="text-small p-m-3">(c) Paladin BI systems informatics etc</span>
+      </div>
+    </div>
+  </template>
+  <!-- don't show side-nav if not logged in -->
+  <router-view v-else />
 </template>
 
 <script lang="ts">

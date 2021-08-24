@@ -37,8 +37,8 @@
       </AccordionTab>
     </Accordion>
     <template #footer>
-        <Button label="Cancel" icon="pi pi-times" @click="onLayoutDialogClose" class="p-button-text"/>
-        <Button label="Continue" icon="pi pi-check" @click="onLayoutDialogContinue" />
+      <Button label="Cancel" icon="pi pi-times" @click="onLayoutDialogClose" class="p-button-text"/>
+      <Button label="Continue" icon="pi pi-check" @click="onLayoutDialogContinue" />
     </template>
   </Dialog>
 </template>

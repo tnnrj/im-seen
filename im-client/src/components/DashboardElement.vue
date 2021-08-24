@@ -48,5 +48,6 @@ export default defineComponent({
   height: 100%;
   background-color: white;
   border-radius: 10px;
+  box-shadow: 5px 5px 10px 0px var(--surface-300);
 }
 </style>

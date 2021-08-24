@@ -3,36 +3,40 @@
     <div class="logo p-d-flex p-jc-center">
       <img src="../assets/school.png" />
     </div>
-    <div v-for="item in items" :key="item.title">
+    <div v-for="item in navItems" :key="item.title">
       <router-link class="p-mb-5" v-bind:to="item.link">
         <i class="pi" v-bind:class="item.iconStyle"></i>
         {{ item.title }}
       </router-link>
     </div>
-    <div class="account p-d-flex p-flex-column p-jc-end">
+    <div class="account p-d-flex p-flex-column p-jc-end" @click="toggleAccountMenu">
       <i class="pi pi-user p-mb-3"></i>
-      <span>Test User</span>
+      <span>{{ username }}</span>
+      <Menu ref="accountMenu" :model="accountMenuItems" :popup="true" />
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { computed, defineComponent, ref } from "vue";
+import { useStore } from "@/store/index";
+import router from "@/router";
 
 interface NavItem {
-    title: string;
-    link: string;
-    iconStyle: string;
-    show: boolean;
+  title: string;
+  link: string;
+  iconStyle: string;
+  show: boolean;
 };
 
 export default defineComponent({
   name: "SideNav",
   setup() {
+    const store = useStore();
     const isAdmin = true;
 
-    const items = ref<NavItem[]>([]);
-    items.value = [{
+    const navItems = ref<NavItem[]>([]);
+    navItems.value = [{
       title: 'Dashboard',
       link: '/',
       iconStyle: 'pi-chart-bar',
@@ -51,7 +55,22 @@ export default defineComponent({
       show: isAdmin
     }];
 
-    return { items };
+    const username = computed(() => store.getters.userRole.username);
+    const accountMenu = ref();
+    const toggleAccountMenu = function (event) {
+      accountMenu.value.toggle(event);
+    };
+    const accountMenuItems = ref<any[]>([]);
+    accountMenuItems.value = [{
+      label: 'Sign Out',
+      icon: 'pi pi-sign-out', 
+      command: () => {
+        store.dispatch('logOut');
+        router.push('/login');
+      }
+    }];
+
+    return { navItems, username, accountMenu, toggleAccountMenu, accountMenuItems };
   }
 });
 </script>
@@ -109,6 +128,7 @@ export default defineComponent({
   .account {
     height: 100%;
     margin-bottom: 7vh;
+    cursor: pointer;
 
     i {
       font-size: 2em;
@@ -124,6 +144,10 @@ export default defineComponent({
       color: var(--bluegray-700);
       font-weight: 600;
     }
+  }
+
+  .p-menu {
+    width: 80%;
   }
 }
 </style>
