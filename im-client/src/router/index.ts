@@ -25,6 +25,12 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import(/* webpackChunkName: "reports" */ "@/views/Reports.vue"),
     meta: { requiresAuth: true }
   },
+  {
+    path: "/users",
+    name: "Users",
+    component: () => import("@/views/Users.vue"),
+    meta: { requiresAuth: true }
+  },
 ];
 
 // create router singleton
