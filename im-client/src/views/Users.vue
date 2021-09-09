@@ -21,13 +21,7 @@
 <script lang="ts">
 import { defineComponent, ref } from "vue";
 import Loader from "@/components/Loader.vue";
-import { Report } from '@/model/reports.model';
 import UsersService from '@/services/users.service';
-
-interface UiReport extends Report {
-  fullDescription: string;
-  expanded: boolean;
-}
 
 export default defineComponent({
   name: 'Reports',
