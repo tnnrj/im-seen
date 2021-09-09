@@ -18,11 +18,11 @@ namespace IMWebAPI.Data
 
             var students = new Student[]
             {
-                new Student {studentName="Harry"},
+                new Student {LastName="Harry"},
 
-                new Student {studentName="Hermione"},
+                new Student {LastName="Hermione"},
 
-                new Student {studentName="Draco"}
+                new Student {LastName="Draco"}
             };
 
             context.Students.AddRange(students);

@@ -7,7 +7,12 @@ namespace IMWebAPI.Models
 {
     public class Student
     {
-        public int studentID { get; set; }
-        public string studentName { get; set; }
+        public int LocalID { get; set; }
+        public string LastName { get; set; }
+        public string FirstName { get; set; }
+        public string MiddleName { get; set; }
+        public DateTime DOB { get; set; }
+        public int ExternalID { get; set; }
+
     }
 }

@@ -16,13 +16,16 @@ namespace IMWebAPI.Data
 
         public DbSet<IMWebAPI.Models.Student> Students { get; set; }
         public DbSet<IMWebAPI.Models.User> Users { get; set; }
-        public DbSet<IMWebAPI.Models.Report> Reports { get; set; }
+        public DbSet<IMWebAPI.Models.Observation> Observations { get; set; }
+        //public DbSet<IMWebAPI.Models.Group> Groups { get; set; }
+        //public DbSet<IMWebAPI.Models.Observation> Observations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Student>().ToTable("Students");
             modelBuilder.Entity<User>().ToTable("Users");
-            modelBuilder.Entity<Report>().ToTable("Reports");
+            modelBuilder.Entity<Observation>().ToTable("Observations");
+            //modelBuilder.Entity<Group>().ToTable("Groups");
         }
     }
 }

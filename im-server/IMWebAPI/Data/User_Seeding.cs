@@ -18,11 +18,11 @@ namespace IMWebAPI.Data
 
             var users = new User[]
             {
-                new User {userName="Dumbledore"},
+                new User {Email="Dumbledore"},
 
-                new User {userName="McGonagall"},
+                new User {Email="McGonagall"},
 
-                new User {userName="Filch"}
+                new User {Email="Filch"}
             };
 
             context.Users.AddRange(users);
