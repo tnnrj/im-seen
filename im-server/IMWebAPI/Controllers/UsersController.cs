@@ -48,7 +48,7 @@ namespace IMWebAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUser(int id, User user)
         {
-            if (id != user.userID)
+            if (id != user.UserID)
             {
                 return BadRequest();
             }
@@ -83,7 +83,7 @@ namespace IMWebAPI.Controllers
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetUser", new { id = user.userID }, user);
+            return CreatedAtAction("GetUser", new { id = user.UserID }, user);
         }
 
         // DELETE: api/Users/5
@@ -104,7 +104,7 @@ namespace IMWebAPI.Controllers
 
         private bool UserExists(int id)
         {
-            return _context.Users.Any(e => e.userID == id);
+            return _context.Users.Any(e => e.UserID == id);
         }
     }
 }

@@ -13,45 +13,45 @@ namespace IMWebAPI.Controllers
 { 
     [ApiController]
     [EnableCors]
-    [Route("api/Reports")]
-    public class ReportsController : ControllerBase
+    [Route("api/Observations")]
+    public class ObservationsController : ControllerBase
     {
         private readonly IM_API_Context _context;
 
-        public ReportsController(IM_API_Context context)
+        public ObservationsController(IM_API_Context context)
         {
             _context = context;
         }
 
-        // GET: api/Reports
+        // GET: api/Observations
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Report>>> GetReport()
+        public async Task<ActionResult<IEnumerable<Observation>>> GetObservation()
         {
-            return await _context.Reports.ToListAsync();
+            return await _context.Observations.ToListAsync();
         }
 
-        // GET: api/Reports/5
+        // GET: api/Observations/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Report>> GetReport(int id)
+        public async Task<ActionResult<Observation>> GetObservation(int id)
         {
-            var report = await _context.Reports.FindAsync(id);
+            var observ = await _context.Observations.FindAsync(id);
 
-            if (report == null)
+            if (observ == null)
             {
                 return NotFound();
             }
 
-            return report;
+            return observ;
         }
 
         [HttpGet]
         [Route("Student-Severity")]
-        public async Task<ActionResult<IEnumerable<Object>>> GetReportsSeverity()
+        public async Task<ActionResult<IEnumerable<Object>>> GetObservationsSeverity()
         {
-            var query = await _context.Reports.GroupBy(report => report.studentName)
+            var query = await _context.Observations.GroupBy(observ => observ.StudentName)
                 .Select(group => new { 
                                         studentName = group.Key, 
-                                        severity = group.Sum(g => g.severity)
+                                        severity = group.Sum(g => g.Severity)
                                      }).ToListAsync();
 
             if (query == null)
@@ -62,18 +62,18 @@ namespace IMWebAPI.Controllers
             return query;
         }
 
-        // PUT: api/Reports/5
+        // PUT: api/Observations/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutReport(int id, Report report)
+        public async Task<IActionResult> PutObservation(int id, Observation observ)
         {
-            if (id != report.reportID)
+            if (id != observ.ObservationID)
             {
                 return BadRequest();
             }
 
-            _context.Entry(report).State = EntityState.Modified;
+            _context.Entry(observ).State = EntityState.Modified;
 
             try
             {
@@ -81,7 +81,7 @@ namespace IMWebAPI.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ReportExists(id))
+                if (!ObservationExists(id))
                 {
                     return NotFound();
                 }
@@ -94,20 +94,20 @@ namespace IMWebAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/Reports
+        // POST: api/Observations
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Report>> PostReport(Report report)
+        public async Task<ActionResult<Observation>> PostObservation(Observation observ)
         {
-            _context.Reports.Add(report);
+            _context.Observations.Add(observ);
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
             {
-                if (ReportExists(report.reportID))
+                if (ObservationExists(observ.ObservationID))
                 {
                     return Conflict();
                 }
@@ -117,28 +117,28 @@ namespace IMWebAPI.Controllers
                 }
             }
 
-            return CreatedAtAction("GetReport", new { id = report.reportID }, report);
+            return CreatedAtAction("GetObservation", new { id = observ.ObservationID }, observ);
         }
 
-        // DELETE: api/Reports/5
+        // DELETE: api/Observations/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Report>> DeleteReport(int id)
+        public async Task<ActionResult<Observation>> DeleteObservation(int id)
         {
-            var report = await _context.Reports.FindAsync(id);
-            if (report == null)
+            var observ = await _context.Observations.FindAsync(id);
+            if (observ == null)
             {
                 return NotFound();
             }
 
-            _context.Reports.Remove(report);
+            _context.Observations.Remove(observ);
             await _context.SaveChangesAsync();
 
-            return report;
+            return observ;
         }
 
-        private bool ReportExists(int id)
+        private bool ObservationExists(int id)
         {
-            return _context.Reports.Any(e => e.reportID == id);
+            return _context.Observations.Any(e => e.ObservationID == id);
         }
     }
 }

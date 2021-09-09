@@ -32,7 +32,7 @@ namespace IMWebAPI
                 try
                 {
                     var context = services.GetRequiredService<IM_API_Context>();
-                    DbInitializer.Initialize(context);
+                    //DbInitializer.Initialize(context);
                 }
                 catch (Exception ex)
                 {

@@ -48,7 +48,7 @@ namespace IMWebAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutStudent(int id, Student student)
         {
-            if (id != student.studentID)
+            if (id != student.LocalID)
             {
                 return BadRequest();
             }
@@ -83,7 +83,7 @@ namespace IMWebAPI.Controllers
             _context.Students.Add(student);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetStudent", new { id = student.studentID }, student);
+            return CreatedAtAction("GetStudent", new { id = student.LocalID }, student);
         }
 
         // DELETE: api/Students/5
@@ -104,7 +104,7 @@ namespace IMWebAPI.Controllers
 
         private bool StudentExists(int id)
         {
-            return _context.Students.Any(e => e.studentID == id);
+            return _context.Students.Any(e => e.LocalID == id);
         }
     }
 }
