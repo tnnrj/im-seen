@@ -25,3 +25,10 @@ export enum DashLayout {
   FiveThreeTB = 'FiveThreeTB',
   FiveThreeLR = 'FiveThreeLR'
 }
+
+export enum UserRole {
+  Admin = 'Admin',
+  Primary = 'Primary',
+  Secondary = 'Secondary',
+  Observer = 'Observer'
+}
