@@ -1,6 +1,6 @@
 <template>
-  <div class="reports-content">
-    <DataTable :value="reports" sortField="reportDate" :sortOrder="-1" dataKey="reportID"
+  <div class="observations-content">
+    <DataTable :value="observations" sortField="observationDate" :sortOrder="-1" dataKey="observationId"
         v-model:expandedRows="expandedRows" @row-expand="onRowExpand" @row-collapse="onRowCollapse" :scrollable="true" scrollHeight="flex">
       <Column :expander="true" style="flex: 1 1 5%"></Column>
       <Column field="studentName" header="Name" :sortable="true" style="flex: 1 1 15%"></Column>
@@ -10,12 +10,12 @@
           <span :class="{ 'clamp-text': !slotProps.data.expanded }">{{slotProps.data.description}}</span>
         </template>
       </Column>
-      <Column field="reportDate" header="Submit Date" :sortable="true" style="flex: 1 1 20%">
-        <template #body="slotProps">{{slotProps.data.reportDate.toLocaleString('en-US')}}</template>
+      <Column field="observationDate" header="Submit Date" :sortable="true" style="flex: 1 1 20%">
+        <template #body="slotProps">{{slotProps.data.observationDate.toLocaleString('en-US')}}</template>
       </Column>
       <template #empty>
         <div style="height:100%; width:100%">
-          <template v-if="reports">
+          <template v-if="observations">
             No records to display
           </template>
           <template v-else>
@@ -31,9 +31,9 @@
 import { defineComponent, ref, watchEffect } from "vue";
 import Loader from "@/components/Loader.vue";
 import { useStore } from "@/store";
-import { Report } from '@/model/reports.model';
+import { Observation } from '@/model/observations.model';
 
-interface UiReport extends Report {
+interface UiObservation extends Observation {
   fullDescription: string;
   expanded: boolean;
 }
@@ -44,13 +44,13 @@ export default defineComponent({
   setup() {
     const store = useStore();
 
-    const reports = ref();
+    const observations = ref();
     watchEffect(() => {
-      if (!store.state.reports) store.dispatch('loadAllReports'); // here so we enforce watch dependency
+      if (!store.state.observations) store.dispatch('loadAllObservations'); // here so we enforce watch dependency
       setTimeout(() => { // needs to happen async so we show loader immediately
-        reports.value = store.state.reports?.map(r => {
-          let uir = r as UiReport;
-          uir.reportDate = new Date(r.reportDate);
+        observations.value = store.state.observations?.map(r => {
+          let uir = r as UiObservation;
+          uir.observationDate = new Date(r.observationDate);
           uir.fullDescription = r.description;
           uir.expanded = false;
           return uir;
@@ -66,13 +66,13 @@ export default defineComponent({
       event.data.expanded = false;
     }
 
-    return { reports, expandedRows, onRowExpand, onRowCollapse };
+    return { observations, expandedRows, onRowExpand, onRowCollapse };
   }
 })
 </script>
 
 <style lang="scss">
-.reports-content {
+.observations-content {
   height: 100%;
   padding: 1em;
 }

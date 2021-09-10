@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using IMWebAPI.Data;
 using IMWebAPI.Models;
+using IMWebAPI.Helpers;
 
 namespace IMWebAPI.Controllers
 {
@@ -15,10 +16,12 @@ namespace IMWebAPI.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IM_API_Context _context;
+        private readonly IEmailer _emailer;
 
-        public UsersController(IM_API_Context context)
+        public UsersController(IM_API_Context context, IEmailer emailer)
         {
             _context = context;
+            _emailer = emailer;
         }
 
         // GET: api/Users
@@ -82,6 +85,9 @@ namespace IMWebAPI.Controllers
         {
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
+
+            // send password creation email
+            _emailer.Send(user.Email, "Create Account", "Create your account at ...");
 
             return CreatedAtAction("GetUser", new { id = user.UserID }, user);
         }

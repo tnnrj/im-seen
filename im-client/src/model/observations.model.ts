@@ -1,7 +1,8 @@
-export type Report = {
+export type Observation = {
+  observationId: string;
   studentId: string;
   studentName: string;
   description: string;
-  reportDate: Date;
+  observationDate: Date;
   severity: number;
 }

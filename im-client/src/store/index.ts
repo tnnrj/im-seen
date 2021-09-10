@@ -1,14 +1,14 @@
 import { InjectionKey } from 'vue';
 import { createStore, Store, useStore as baseUseStore } from 'vuex';
 import ChartDataService from '@/services/chart-data.service';
-import ReportsService from '@/services/reports.service';
-import { Report } from '@/model/reports.model';
+import ObservationsService from '@/services/observations.service';
+import { Observation } from '@/model/observations.model';
 import auth from './modules/auth';
 
 // define our type for the store state
 export interface State {
   chartDatas: Map<string, any>;
-  reports: Report[] | undefined;
+  observations: Observation[] | undefined;
 }
 
 // define injection key
@@ -18,7 +18,7 @@ export const key: InjectionKey<Store<State>> = Symbol()
 export const store = createStore<State>({
   state: {
     chartDatas: new Map<string, any>(),
-    reports: undefined
+    observations: undefined
   },
   getters: {
     getChartData: (state) => (queryId) => {
@@ -29,8 +29,8 @@ export const store = createStore<State>({
     setChartData(state, payload) {
       state.chartDatas.set(payload.queryId, payload.data);
     },
-    setAllReports(state, payload) {
-      state.reports = payload.reports;
+    setAllObservations(state, payload) {
+      state.observations = payload.observations;
     }
   },
   actions: {
@@ -39,10 +39,10 @@ export const store = createStore<State>({
       let response = await ChartDataService.getChartData(payload.queryId);
       commit('setChartData', { queryId: payload.queryId, data: response.data });
     },
-    // load data for all reports
-    async loadAllReports({ commit }) {
-      let response = await ReportsService.getReports();
-      commit('setAllReports', { reports: response.data });
+    // load data for all observations
+    async loadAllObservations({ commit }) {
+      let response = await ObservationsService.getObservations();
+      commit('setAllObservations', { observations: response.data });
     }
   }
 })
