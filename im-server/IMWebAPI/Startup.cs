@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using IMWebAPI.Data;
+using IMWebAPI.Helpers;
 
 namespace IMWebAPI
 {
@@ -38,7 +39,8 @@ namespace IMWebAPI
                       options.UseMySQL(Configuration.GetConnectionString("IM_API_Context")));
 #endif
 
-
+            // custom services for dependency injection
+            services.AddScoped<IEmailer, Emailer>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

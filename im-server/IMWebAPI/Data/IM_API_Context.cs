@@ -18,7 +18,6 @@ namespace IMWebAPI.Data
         public DbSet<IMWebAPI.Models.User> Users { get; set; }
         public DbSet<IMWebAPI.Models.Observation> Observations { get; set; }
         //public DbSet<IMWebAPI.Models.Group> Groups { get; set; }
-        //public DbSet<IMWebAPI.Models.Observation> Observations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

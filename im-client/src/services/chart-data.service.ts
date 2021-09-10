@@ -6,7 +6,7 @@ export default {
 }
 
 export async function getChartData(queryId: string): Promise<AxiosResponse<any>> {
-  return http.get('Reports/Student-Severity').then(response => {
+  return http.get('Observations/Student-Severity').then(response => {
     response.data.data = response.data;
     response.data.name = 'Students Grouped by Total Report Severity';
     return response;

@@ -24,7 +24,7 @@ import Loader from "@/components/Loader.vue";
 import UsersService from '@/services/users.service';
 
 export default defineComponent({
-  name: 'Reports',
+  name: 'Users',
   components: { Loader },
   setup() {
     const users = ref();

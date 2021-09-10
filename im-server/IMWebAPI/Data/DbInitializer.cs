@@ -9,7 +9,7 @@ namespace IMWebAPI.Data
     {
         public static void Initialize(IM_API_Context context)
         {
-            //context.Database.EnsureDeleted();
+            context.Database.EnsureDeleted();
             context.Database.EnsureCreated();
 
             User_Seeding.SeedUsers(context);
