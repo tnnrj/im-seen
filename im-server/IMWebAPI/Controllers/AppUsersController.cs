@@ -2,59 +2,61 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using IMWebAPI.Data;
-using IMWebAPI.Models;
-using IMWebAPI.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using IMWebAPI.Data;
+using IMWebAPI.Models;
+using IMWebAPI.Helpers;
 
 namespace IMWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class GroupsController : ControllerBase
+    public class AppUsersController : ControllerBase
     {
         private readonly IM_API_Context _context;
+        private readonly IEmailer _emailer;
 
-        public GroupsController(IM_API_Context context)
+        public AppUsersController(IM_API_Context context, IEmailer emailer)
         {
             _context = context;
+            _emailer = emailer;
         }
 
-        // GET: api/Groups
+        // GET: api/Users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Group>>> GetGroup()
+        public async Task<ActionResult<IEnumerable<ApplicationUser>>> GetUser()
         {
-            return await _context.Groups.ToListAsync();
+            return await _context.Users.ToListAsync();
         }
 
-        // GET: api/Groups/5
+        // GET: api/Users/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Group>> GetGroup(int id)
+        public async Task<ActionResult<ApplicationUser>> GetUser(int id)
         {
-            var @group = await _context.Groups.FindAsync(id);
+            var user = await _context.Users.FindAsync(id);
 
-            if (@group == null)
+            if (user == null)
             {
                 return NotFound();
             }
 
-            return @group;
+            return user;
         }
 
-        // PUT: api/Groups/5
+        // PUT: api/Users/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutGroup(int id, Group @group)
+        public async Task<IActionResult> PutUser(int id, ApplicationUser user)
         {
-            if (id != @group.GroupID)
+            if (id != user.UserID)
             {
                 return BadRequest();
             }
 
-            _context.Entry(@group).State = EntityState.Modified;
+            _context.Entry(user).State = EntityState.Modified;
 
             try
             {
@@ -62,7 +64,7 @@ namespace IMWebAPI.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!GroupExists(id))
+                if (!UserExists(id))
                 {
                     return NotFound();
                 }
@@ -75,37 +77,40 @@ namespace IMWebAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/Groups
+        // POST: api/Users
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Group>> PostGroup(Group @group)
+        public async Task<ActionResult<ApplicationUser>> PostUser(ApplicationUser user)
         {
-            _context.Groups.Add(@group);
+            _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetGroup", new { id = @group.GroupID }, @group);
+            // send password creation email
+            _emailer.Send(user.Email, "Create Account", "Create your account at ...");
+
+            return CreatedAtAction("GetUser", new { id = user.UserID }, user);
         }
 
-        // DELETE: api/Groups/5
+        // DELETE: api/Users/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Group>> DeleteGroup(int id)
+        public async Task<ActionResult<ApplicationUser>> DeleteUser(int id)
         {
-            var @group = await _context.Groups.FindAsync(id);
-            if (@group == null)
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
             {
                 return NotFound();
             }
 
-            _context.Groups.Remove(@group);
+            _context.Users.Remove(user);
             await _context.SaveChangesAsync();
 
-            return @group;
+            return user;
         }
 
-        private bool GroupExists(int id)
+        private bool UserExists(int id)
         {
-            return _context.Groups.Any(e => e.GroupID == id);
+            return _context.Users.Any(e => e.UserID == id);
         }
     }
 }

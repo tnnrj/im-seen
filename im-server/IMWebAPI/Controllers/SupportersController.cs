@@ -26,14 +26,14 @@ namespace IMWebAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Supporter>>> GetSupporter()
         {
-            return await _context.Supporter.ToListAsync();
+            return await _context.Supporters.ToListAsync();
         }
 
         // GET: api/Supporters/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Supporter>> GetSupporter(int id)
         {
-            var supporter = await _context.Supporter.FindAsync(id);
+            var supporter = await _context.Supporters.FindAsync(id);
 
             if (supporter == null)
             {
@@ -81,7 +81,7 @@ namespace IMWebAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Supporter>> PostSupporter(Supporter supporter)
         {
-            _context.Supporter.Add(supporter);
+            _context.Supporters.Add(supporter);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetSupporter", new { id = supporter.SupporterID }, supporter);
@@ -91,13 +91,13 @@ namespace IMWebAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Supporter>> DeleteSupporter(int id)
         {
-            var supporter = await _context.Supporter.FindAsync(id);
+            var supporter = await _context.Supporters.FindAsync(id);
             if (supporter == null)
             {
                 return NotFound();
             }
 
-            _context.Supporter.Remove(supporter);
+            _context.Supporters.Remove(supporter);
             await _context.SaveChangesAsync();
 
             return supporter;
@@ -105,7 +105,7 @@ namespace IMWebAPI.Controllers
 
         private bool SupporterExists(int id)
         {
-            return _context.Supporter.Any(e => e.SupporterID == id);
+            return _context.Supporters.Any(e => e.SupporterID == id);
         }
     }
 }

@@ -13,6 +13,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using IMWebAPI.Data;
 using IMWebAPI.Helpers;
+using Microsoft.AspNetCore.Identity;
+using IMWebAPI.Models;
 
 namespace IMWebAPI
 {
@@ -34,10 +36,15 @@ namespace IMWebAPI
 #if DEBUG
             services.AddDbContext<IM_API_Context>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("IM_API_Context")));
+
+
 #else
             services.AddDbContext<IM_API_Context>(options =>
                       options.UseMySQL(Configuration.GetConnectionString("IM_API_Context")));
 #endif
+
+            services.AddIdentity<ApplicationUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
+                    .AddEntityFrameworkStores<IM_API_Context>();
 
             // custom services for dependency injection
             services.AddScoped<IEmailer, Emailer>();

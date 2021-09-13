@@ -26,14 +26,14 @@ namespace IMWebAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Delegation>>> GetDelegation()
         {
-            return await _context.Delegation.ToListAsync();
+            return await _context.Delegations.ToListAsync();
         }
 
         // GET: api/Delegations/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Delegation>> GetDelegation(int id)
         {
-            var delegation = await _context.Delegation.FindAsync(id);
+            var delegation = await _context.Delegations.FindAsync(id);
 
             if (delegation == null)
             {
@@ -81,7 +81,7 @@ namespace IMWebAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Delegation>> PostDelegation(Delegation delegation)
         {
-            _context.Delegation.Add(delegation);
+            _context.Delegations.Add(delegation);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetDelegation", new { id = delegation.DelegationID }, delegation);
@@ -91,13 +91,13 @@ namespace IMWebAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Delegation>> DeleteDelegation(int id)
         {
-            var delegation = await _context.Delegation.FindAsync(id);
+            var delegation = await _context.Delegations.FindAsync(id);
             if (delegation == null)
             {
                 return NotFound();
             }
 
-            _context.Delegation.Remove(delegation);
+            _context.Delegations.Remove(delegation);
             await _context.SaveChangesAsync();
 
             return delegation;
@@ -105,7 +105,7 @@ namespace IMWebAPI.Controllers
 
         private bool DelegationExists(int id)
         {
-            return _context.Delegation.Any(e => e.DelegationID == id);
+            return _context.Delegations.Any(e => e.DelegationID == id);
         }
     }
 }

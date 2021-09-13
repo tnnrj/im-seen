@@ -16,13 +16,13 @@ namespace IMWebAPI.Data
                 return;   // DB has been seeded
             }
 
-            var users = new User[]
+            var users = new ApplicationUser[]
             {
-                new User {Email="Dumbledore"},
+                new ApplicationUser {Email="Dumbledore"},
 
-                new User {Email="McGonagall"},
+                new ApplicationUser {Email="McGonagall"},
 
-                new User {Email="Filch"}
+                new ApplicationUser {Email="Filch"}
             };
 
             context.Users.AddRange(users);

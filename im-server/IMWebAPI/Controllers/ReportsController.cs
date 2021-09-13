@@ -7,56 +7,53 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using IMWebAPI.Data;
 using IMWebAPI.Models;
-using IMWebAPI.Helpers;
 
 namespace IMWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class ReportsController : ControllerBase
     {
         private readonly IM_API_Context _context;
-        private readonly IEmailer _emailer;
 
-        public UsersController(IM_API_Context context, IEmailer emailer)
+        public ReportsController(IM_API_Context context)
         {
             _context = context;
-            _emailer = emailer;
         }
 
-        // GET: api/Users
+        // GET: api/Reports
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUser()
+        public async Task<ActionResult<IEnumerable<Report>>> GetReport()
         {
-            return await _context.Users.ToListAsync();
+            return await _context.Reports.ToListAsync();
         }
 
-        // GET: api/Users/5
+        // GET: api/Reports/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(int id)
+        public async Task<ActionResult<Report>> GetReport(int id)
         {
-            var user = await _context.Users.FindAsync(id);
+            var report = await _context.Reports.FindAsync(id);
 
-            if (user == null)
+            if (report == null)
             {
                 return NotFound();
             }
 
-            return user;
+            return report;
         }
 
-        // PUT: api/Users/5
+        // PUT: api/Reports/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(int id, User user)
+        public async Task<IActionResult> PutReport(int id, Report report)
         {
-            if (id != user.UserID)
+            if (id != report.ReportID)
             {
                 return BadRequest();
             }
 
-            _context.Entry(user).State = EntityState.Modified;
+            _context.Entry(report).State = EntityState.Modified;
 
             try
             {
@@ -64,7 +61,7 @@ namespace IMWebAPI.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UserExists(id))
+                if (!ReportExists(id))
                 {
                     return NotFound();
                 }
@@ -77,40 +74,37 @@ namespace IMWebAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/Users
+        // POST: api/Reports
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
+        public async Task<ActionResult<Report>> PostReport(Report report)
         {
-            _context.Users.Add(user);
+            _context.Reports.Add(report);
             await _context.SaveChangesAsync();
 
-            // send password creation email
-            _emailer.Send(user.Email, "Create Account", "Create your account at ...");
-
-            return CreatedAtAction("GetUser", new { id = user.UserID }, user);
+            return CreatedAtAction("GetReport", new { id = report.ReportID }, report);
         }
 
-        // DELETE: api/Users/5
+        // DELETE: api/Reports/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<User>> DeleteUser(int id)
+        public async Task<ActionResult<Report>> DeleteReport(int id)
         {
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
+            var report = await _context.Reports.FindAsync(id);
+            if (report == null)
             {
                 return NotFound();
             }
 
-            _context.Users.Remove(user);
+            _context.Reports.Remove(report);
             await _context.SaveChangesAsync();
 
-            return user;
+            return report;
         }
 
-        private bool UserExists(int id)
+        private bool ReportExists(int id)
         {
-            return _context.Users.Any(e => e.UserID == id);
+            return _context.Reports.Any(e => e.ReportID == id);
         }
     }
 }
