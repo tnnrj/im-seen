@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -15,6 +16,8 @@ using IMWebAPI.Data;
 using IMWebAPI.Helpers;
 using Microsoft.AspNetCore.Identity;
 using IMWebAPI.Models;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace IMWebAPI
 {
@@ -48,6 +51,26 @@ namespace IMWebAPI
 
             // custom services for dependency injection
             services.AddScoped<IEmailer, Emailer>();
+
+
+            // configure settings for cookie authentication (Maybe switch to jwt in the future)
+
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+                {
+                    options.Cookie.Name = "IM_Auth_Cookie";
+                    options.SlidingExpiration = true;
+                    options.ExpireTimeSpan = new TimeSpan(0, 1, 0);
+                    options.Events = new CookieAuthenticationEvents
+                    {
+                        OnRedirectToLogin = redirectContext =>
+                        {
+                            redirectContext.HttpContext.Response.StatusCode = 401;
+                            return Task.CompletedTask;
+                        }
+                    };
+                });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -67,6 +90,7 @@ namespace IMWebAPI
             .AllowAnyMethod()
             .AllowAnyOrigin());
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
