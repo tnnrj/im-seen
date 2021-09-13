@@ -53,6 +53,18 @@ namespace IMWebAPI
             services.AddScoped<IEmailer, Emailer>();
 
 
+            services.Configure<IdentityOptions>(options =>
+            {
+                // Default Password settings.
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequiredLength = 2;
+                options.Password.RequiredUniqueChars = 0;
+            });
+
+
             // configure settings for cookie authentication (Maybe switch to jwt in the future)
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
