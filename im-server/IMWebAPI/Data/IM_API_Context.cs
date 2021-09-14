@@ -22,6 +22,7 @@ namespace IMWebAPI.Data
         public DbSet<IMWebAPI.Models.Delegation> Delegations { get; set; }
         public DbSet<IMWebAPI.Models.Supporter> Supporters { get; set; }
         public DbSet<IMWebAPI.Models.Report> Reports { get; set; }
+        public DbSet<IMWebAPI.Models.Dashboard> Dashboards { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -31,6 +32,7 @@ namespace IMWebAPI.Data
             modelBuilder.Entity<Delegation>().ToTable("Delegations");
             modelBuilder.Entity<Supporter>().ToTable("Supporters");
             modelBuilder.Entity<Report>().ToTable("Reports");
+            modelBuilder.Entity<Dashboard>().ToTable("Dashboards");
 
             base.OnModelCreating(modelBuilder);
         }
