@@ -47,7 +47,7 @@ namespace IMWebAPI.Controllers
             if (!ModelState.IsValid || username == null || password == null)
                 return new BadRequestObjectResult(new { Message = "Login failed." });
 
-            var appUser = await _userManager.FindByEmailAsync(username);
+            var appUser = await _userManager.FindByNameAsync(username);
             if (appUser == null)
                 return new BadRequestObjectResult(new { Message = "Login failed. Email not recognized." });
 
@@ -58,7 +58,7 @@ namespace IMWebAPI.Controllers
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Email, appUser.Email),
-                new Claim(ClaimTypes.Name, appUser.Email),
+                new Claim(ClaimTypes.Name, appUser.UserName),
                 // Add more claims as necessary
             };
 

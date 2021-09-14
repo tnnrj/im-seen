@@ -10,7 +10,7 @@ namespace IMWebAPI.Data
 {
     public class User_Seeding
     {
-        public static void SeedUsers(IM_API_Context context)
+        public static async void SeedUsers(IM_API_Context context)
         {
             // Look for any existing Users.
             if (context.Users.Any())
@@ -27,30 +27,38 @@ namespace IMWebAPI.Data
                 Email = "dumbledore@hogwa.rts",
                 JobTitle = "Headmaster",
                 FirstName = "Albus",
-                LastName = "Dumbledore"
+                LastName = "Dumbledore",
+                NormalizedEmail = "DUMBLEDORE@HOGWA.RTS",
+                NormalizedUserName = "DUMBLEDORE"
             };
             user.PasswordHash = hasher.HashPassword(user, "test");
-            userStore.CreateAsync(user);
+            await userStore.CreateAsync(user);
             user = new ApplicationUser
             {
                 UserName = "mcgonagall",
                 Email = "mcgonagall@hogwa.rts",
                 JobTitle = "Assistant Headmaster",
                 FirstName = "Minerva",
-                LastName = "McGonagall"
+                LastName = "McGonagall",
+                NormalizedEmail = "MCGONAGALL@HOGWA.RTS",
+                NormalizedUserName = "MCGONAGALL"
             };
             user.PasswordHash = hasher.HashPassword(user, "test");
-            userStore.CreateAsync(user);
+            await userStore.CreateAsync(user);
             user = new ApplicationUser
             {
                 UserName = "filch",
                 Email = "filch@hogwa.rts",
                 JobTitle = "Caretaker",
                 FirstName = "Argus",
-                LastName = "Filch"
+                LastName = "Filch",
+                NormalizedEmail = "FILCH@HOGWA.RTS",
+                NormalizedUserName = "FILCH"
             };
             user.PasswordHash = hasher.HashPassword(user, "test");
-            userStore.CreateAsync(user);
+            await userStore.CreateAsync(user);
+
+            await context.SaveChangesAsync();
         }
     }
 }
