@@ -11,9 +11,9 @@ class APIProvider {
     // singleton axios instance
     http = axios.create({
       baseURL: url,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
       // for cookie auth
-      // withCredentials: true 
+      withCredentials: true
     });
     // login redirect on 401 unauth
     http.interceptors.response.use(undefined, function (error) {

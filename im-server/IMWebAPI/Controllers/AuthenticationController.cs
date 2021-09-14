@@ -40,16 +40,14 @@ namespace IMWebAPI.Controllers
             return Ok(new { Message = "User Registration Successful" });
         }
 
-
-
         [HttpPost]
         [Route("Login")]
-        public async Task<IActionResult> Login(string email, string password)
+        public async Task<IActionResult> Login(string username, string password)
         {
-            if (!ModelState.IsValid || email == null || password == null)
+            if (!ModelState.IsValid || username == null || password == null)
                 return new BadRequestObjectResult(new { Message = "Login failed." });
 
-            var appUser = await um.FindByEmailAsync(email);
+            var appUser = await um.FindByEmailAsync(username);
             if (appUser == null)
                 return new BadRequestObjectResult(new { Message = "Login failed. Email not recognized." });
 
@@ -70,8 +68,6 @@ namespace IMWebAPI.Controllers
 
             return Ok(new { Message = "You are logged in" });
         }
-
-
 
         [HttpPost]
         [Route("Logout")]

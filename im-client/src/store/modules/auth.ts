@@ -1,4 +1,4 @@
-import axios from 'axios';
+import http from '@/services/base-api.service';
 
 // template from https://www.smashingmagazine.com/2020/10/authentication-in-vue-js/
 const state = {
@@ -12,7 +12,7 @@ const getters = {
 };
 const actions = {
   async logIn({commit}, form) {
-    // await axios.post('login', form);
+    await http.post('Authentication/Login', "", form);
     commit('setUser', form.username);
   },
   async logOut({commit}){

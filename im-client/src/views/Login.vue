@@ -49,10 +49,8 @@ export default defineComponent({
       showError.value = false;
       submitted.value = true;
       try {
-        setTimeout(() => {
-          store.dispatch('logIn', form.value);
-          router.push('/');
-        }, 1000);
+        await store.dispatch('logIn', form.value);
+        router.push('/');
       } catch (error) {
         submitted.value = false;
         showError.value = true;

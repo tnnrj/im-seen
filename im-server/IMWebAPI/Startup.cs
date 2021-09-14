@@ -100,7 +100,8 @@ namespace IMWebAPI
             app.UseCors(builder => builder
             .AllowAnyHeader()
             .AllowAnyMethod()
-            .AllowAnyOrigin());
+            .WithOrigins("http://localhost:8080", "http://im.godandanime.tv")
+            .AllowCredentials());
 
             app.UseAuthentication();
             app.UseAuthorization();
