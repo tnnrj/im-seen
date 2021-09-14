@@ -8,8 +8,6 @@ namespace IMWebAPI.Models
 {
     public class ApplicationUser : IdentityUser
     {
-        public int UserID { get; set; }
-
         public string FirstName { get; set; }
 
         public string LastName { get; set; }

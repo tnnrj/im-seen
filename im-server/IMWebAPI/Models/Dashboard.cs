@@ -10,8 +10,8 @@ namespace IMWebAPI.Models
     {
         public int DashboardID { get; set; }
 
-        [ForeignKey("Users.UserID")]
-        public int UserID { get; set; }
+        [ForeignKey("Users.UserName")]
+        public string UserName { get; set; }
 
         public string DashboardText { get; set; }
 

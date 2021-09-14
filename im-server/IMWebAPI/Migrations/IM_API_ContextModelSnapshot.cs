@@ -76,9 +76,6 @@ namespace IMWebAPI.Migrations
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
-                    b.Property<int>("UserID")
-                        .HasColumnType("int");
-
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -94,6 +91,24 @@ namespace IMWebAPI.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
+                });
+
+            modelBuilder.Entity("IMWebAPI.Models.Dashboard", b =>
+                {
+                    b.Property<int>("DashboardID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("DashboardText")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("DashboardID");
+
+                    b.ToTable("Dashboards");
                 });
 
             modelBuilder.Entity("IMWebAPI.Models.Delegation", b =>
@@ -152,9 +167,6 @@ namespace IMWebAPI.Migrations
                     b.Property<DateTime>("ObservationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("Observer")
-                        .HasColumnType("int");
-
                     b.Property<int>("Severity")
                         .HasColumnType("int");
 
@@ -162,6 +174,9 @@ namespace IMWebAPI.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("StudentName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserName")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ObservationID");
@@ -224,8 +239,8 @@ namespace IMWebAPI.Migrations
                     b.Property<int>("GroupID")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserID")
-                        .HasColumnType("int");
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("SupporterID");
 

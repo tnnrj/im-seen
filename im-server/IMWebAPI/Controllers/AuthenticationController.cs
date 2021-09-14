@@ -18,11 +18,11 @@ namespace IMWebAPI.Controllers
     public class AuthenticationController : ControllerBase
     {
 
-        private readonly UserManager<ApplicationUser> um;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         public AuthenticationController(UserManager<ApplicationUser> userManager)
         {
-            this.um = userManager;
+            _userManager = userManager;
         }
 
         [HttpPost]
@@ -33,7 +33,7 @@ namespace IMWebAPI.Controllers
                 return new BadRequestObjectResult(new { Message = "User Registration failed." });
 
             var appUser = new ApplicationUser() { UserName = email, Email = email, JobTitle = job, FirstName = firstname, LastName = lastname };
-            var regResult = await um.CreateAsync(appUser, password);
+            var regResult = await _userManager.CreateAsync(appUser, password);
             if (!regResult.Succeeded)
                 return new BadRequestObjectResult(new { Message = "User Registration failed. Could not create new account." });
 
@@ -47,11 +47,11 @@ namespace IMWebAPI.Controllers
             if (!ModelState.IsValid || username == null || password == null)
                 return new BadRequestObjectResult(new { Message = "Login failed." });
 
-            var appUser = await um.FindByEmailAsync(username);
+            var appUser = await _userManager.FindByEmailAsync(username);
             if (appUser == null)
                 return new BadRequestObjectResult(new { Message = "Login failed. Email not recognized." });
 
-            var passResult = um.PasswordHasher.VerifyHashedPassword(appUser, appUser.PasswordHash, password);
+            var passResult = _userManager.PasswordHasher.VerifyHashedPassword(appUser, appUser.PasswordHash, password);
             if (passResult == PasswordVerificationResult.Failed)
                 return new BadRequestObjectResult(new { Message = "Login failed. Incorrect password." });
 

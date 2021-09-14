@@ -13,7 +13,7 @@ namespace IMWebAPI.Models
         [ForeignKey("Groups.GroupID")]
         public int GroupID { get; set; }
 
-        [ForeignKey("Users.UserID")]
-        public int UserID { get; set; }
+        [ForeignKey("Users.UserName")]
+        public string UserName { get; set; }
     }
 }

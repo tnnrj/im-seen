@@ -1,4 +1,6 @@
 ﻿using IMWebAPI.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,17 +18,39 @@ namespace IMWebAPI.Data
                 return;   // DB has been seeded
             }
 
-            var users = new ApplicationUser[]
+            var userStore = new UserStore<ApplicationUser>(context);
+
+            var hasher = new PasswordHasher<ApplicationUser>();
+            var user = new ApplicationUser
             {
-                new ApplicationUser {Email="Dumbledore"},
-
-                new ApplicationUser {Email="McGonagall"},
-
-                new ApplicationUser {Email="Filch"}
+                UserName = "dumbledore",
+                Email = "dumbledore@hogwa.rts",
+                JobTitle = "Headmaster",
+                FirstName = "Albus",
+                LastName = "Dumbledore"
             };
-
-            context.Users.AddRange(users);
-            context.SaveChanges();
+            user.PasswordHash = hasher.HashPassword(user, "test");
+            userStore.CreateAsync(user);
+            user = new ApplicationUser
+            {
+                UserName = "mcgonagall",
+                Email = "mcgonagall@hogwa.rts",
+                JobTitle = "Assistant Headmaster",
+                FirstName = "Minerva",
+                LastName = "McGonagall"
+            };
+            user.PasswordHash = hasher.HashPassword(user, "test");
+            userStore.CreateAsync(user);
+            user = new ApplicationUser
+            {
+                UserName = "filch",
+                Email = "filch@hogwa.rts",
+                JobTitle = "Caretaker",
+                FirstName = "Argus",
+                LastName = "Filch"
+            };
+            user.PasswordHash = hasher.HashPassword(user, "test");
+            userStore.CreateAsync(user);
         }
     }
 }

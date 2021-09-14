@@ -38,7 +38,7 @@ namespace IMWebAPI
 
 #if DEBUG
             services.AddDbContext<IM_API_Context>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("IM_API_Context")));
+                    options.UseMySQL(Configuration.GetConnectionString("IM_API_Context")));
 
 
 #else

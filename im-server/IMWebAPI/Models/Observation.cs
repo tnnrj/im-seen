@@ -12,8 +12,8 @@ namespace IMWebAPI.Models
 
         public int ObservationID { get; set; }
 
-        [ForeignKey("Users.UserID")]
-        public int? Observer { get; set; }
+        [ForeignKey("Users.UserName")]
+        public string UserName { get; set; }
 
         [ForeignKey("Students.StudentID")]
         public int? StudentID { get; set; }

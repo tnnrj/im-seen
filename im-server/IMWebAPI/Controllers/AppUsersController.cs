@@ -33,7 +33,7 @@ namespace IMWebAPI.Controllers
 
         // GET: api/Users/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ApplicationUser>> GetUser(int id)
+        public async Task<ActionResult<ApplicationUser>> GetUser(string id)
         {
             var user = await _context.Users.FindAsync(id);
 
@@ -49,9 +49,9 @@ namespace IMWebAPI.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(int id, ApplicationUser user)
+        public async Task<IActionResult> PutUser(string id, ApplicationUser user)
         {
-            if (id != user.UserID)
+            if (id != user.UserName)
             {
                 return BadRequest();
             }
@@ -89,12 +89,12 @@ namespace IMWebAPI.Controllers
             // send password creation email
             _emailer.Send(user.Email, "Create Account", "Create your account at ...");
 
-            return CreatedAtAction("GetUser", new { id = user.UserID }, user);
+            return CreatedAtAction("GetUser", new { id = user.UserName }, user);
         }
 
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<ApplicationUser>> DeleteUser(int id)
+        public async Task<ActionResult<ApplicationUser>> DeleteUser(string id)
         {
             var user = await _context.Users.FindAsync(id);
             if (user == null)
@@ -108,9 +108,9 @@ namespace IMWebAPI.Controllers
             return user;
         }
 
-        private bool UserExists(int id)
+        private bool UserExists(string id)
         {
-            return _context.Users.Any(e => e.UserID == id);
+            return _context.Users.Any(e => e.UserName == id);
         }
     }
 }
