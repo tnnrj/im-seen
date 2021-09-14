@@ -36,15 +36,8 @@ namespace IMWebAPI
             services.AddCors();
             services.AddControllers();
 
-#if DEBUG
             services.AddDbContext<IM_API_Context>(options =>
                     options.UseMySQL(Configuration.GetConnectionString("IM_API_Context")));
-
-
-#else
-            services.AddDbContext<IM_API_Context>(options =>
-                      options.UseMySQL(Configuration.GetConnectionString("IM_API_Context")));
-#endif
 
             services.AddIdentity<ApplicationUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
                     .AddEntityFrameworkStores<IM_API_Context>();
