@@ -7,7 +7,7 @@ using IMWebAPI.Data;
 using IMWebAPI.Helpers;
 using IMWebAPI.Models;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -23,6 +23,7 @@ namespace IMWebAPI.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IM_API_Context _context;
         private readonly IEmailer _emailer;
+        //private readonly JwtBearerTokenSettings jwtBearerTokenSettings;
 
         public AuthenticationController(UserManager<ApplicationUser> userManager, IM_API_Context context, IEmailer emailer)
         {
@@ -75,18 +76,14 @@ namespace IMWebAPI.Controllers
             if (passResult == PasswordVerificationResult.Failed)
                 return new BadRequestObjectResult(new { Message = "Login failed. Incorrect password." });
 
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Email, appUser.Email),
-                new Claim(ClaimTypes.Name, appUser.UserName),
-                // Add more claims as necessary
-            };
 
-            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-            await Request.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
+            var jwtGenerator = new JwtGenerator();
 
-            return Ok(new { Message = "You are logged in" });
+            jwtGenerator.AddClaim(new Claim(ClaimTypes.Email, appUser.Email));
+            jwtGenerator.AddClaim(new Claim(ClaimTypes.Name, appUser.UserName));
+            // Add more claims as necessary (ROLES)
+
+            return Ok(new { Token = jwtGenerator.GetToken(), Message = "You are logged in" });
         }
 
         [HttpPost]
@@ -129,7 +126,6 @@ namespace IMWebAPI.Controllers
         [Route("Logout")]
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync();
             return Ok(new { Message = "Logout Successful" });
         }
     }
