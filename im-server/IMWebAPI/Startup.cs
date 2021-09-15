@@ -91,9 +91,10 @@ namespace IMWebAPI
             app.UseRouting();
 
             app.UseCors(builder => builder
+            .SetIsOriginAllowed(origin => true)
             .AllowAnyHeader()
             .AllowAnyMethod()
-            .WithOrigins("http://localhost:8080", "http://im.godandanime.tv")
+            //.WithOrigins("http://localhost:8080", "http://im.godandanime.tv")
             .AllowCredentials());
 
             app.UseAuthentication();
