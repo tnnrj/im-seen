@@ -25,6 +25,8 @@ class APIProvider {
             store.dispatch('auth/logOut');
             return router.push('/login');
         }
+
+        return Promise.reject(error);
       }
     });
   }

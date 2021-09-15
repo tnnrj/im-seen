@@ -1,4 +1,4 @@
-import http from '@/services/base-api.service';
+import AuthenticationService from "@/services/authentication.service";
 
 // template from https://www.smashingmagazine.com/2020/10/authentication-in-vue-js/
 const state = {
@@ -12,7 +12,7 @@ const getters = {
 };
 const actions = {
   async logIn({commit}, form) {
-    await http.post('Authentication/Login', "", form);
+    await AuthenticationService.login(form);
     commit('setUser', form.username);
   },
   async logOut({commit}){

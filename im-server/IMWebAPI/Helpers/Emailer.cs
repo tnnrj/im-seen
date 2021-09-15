@@ -22,6 +22,7 @@ namespace IMWebAPI.Helpers
         private int port;
         private string email;
         private string password;
+        private string webUrl;
 
         public Emailer(IConfiguration configuration)
         {
@@ -30,6 +31,7 @@ namespace IMWebAPI.Helpers
             port = int.Parse(conn[1]);
             email = conn[2];
             password = conn[3];
+            webUrl = configuration.GetValue<string>("WebURL");
         }
 
         public void Send(string to, string subject, string body, Stream attachment = null)
@@ -48,7 +50,7 @@ namespace IMWebAPI.Helpers
             mailMessage.Subject = subject;
             mailMessage.Body = new TextPart("plain")
             {
-                Text = body
+                Text = body.Replace("{webUrl}", webUrl)
             };
 
             using (var smtpClient = new SmtpClient())
