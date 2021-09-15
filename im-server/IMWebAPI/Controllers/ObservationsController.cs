@@ -9,6 +9,7 @@ using IMWebAPI.Data;
 using IMWebAPI.Models;
 using Microsoft.AspNetCore.Cors;
 using IMWebAPI.Helpers;
+using Microsoft.AspNetCore.Authorization;
 
 namespace IMWebAPI.Controllers
 { 

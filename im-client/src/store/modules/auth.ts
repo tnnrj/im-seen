@@ -12,7 +12,7 @@ const getters = {
 };
 const actions = {
   async logIn({commit}, form) {
-    await AuthenticationService.login(form);
+    await AuthenticationService.login(form);    
     commit('setUser', form.username);
   },
   async logOut({commit}){

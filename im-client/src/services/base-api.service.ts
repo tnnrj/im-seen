@@ -13,7 +13,7 @@ class APIProvider {
       baseURL: url,
       headers: { 'Content-Type': 'application/json' },
       // for cookie auth
-      withCredentials: true
+      // withCredentials: true
     });
     // login redirect on 401 unauth
     http.interceptors.response.use(undefined, function (error) {
@@ -32,13 +32,13 @@ class APIProvider {
   }
 
   // for token auth (call from store)
-  // login(token: string) {
-  //   http.defaults.headers.common.Authorization = `Bearer ${token}`;
-  // }
+  login(token: string) {
+    http.defaults.headers.common.Authorization = `Bearer ${token}`;
+  }
 
-  // logout() {
-  //   http.defaults.headers.common.Authorization = '';
-  // }
+  logout() {
+    http.defaults.headers.common.Authorization = '';
+  }
 
   get(resource: string, query: any = null) {
     return http.get(`${resource}`, {
