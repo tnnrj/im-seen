@@ -11,6 +11,13 @@ const routes: Array<RouteRecordRaw> = [
     meta: { guest: true }
   },
   {
+    path: "/register",
+    name: "Register",
+    component: () => import("@/views/Register.vue"),
+    meta: { guest: true },
+    props: route => ({ username: route.query.username, token: route.query.token })
+  },
+  {
     path: "/",
     name: "Dashboard",
     component: Dashboard,

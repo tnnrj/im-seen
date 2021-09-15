@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace IMWebAPI.Data
 {
-    public class Report_Seeding
+    public class Observation_Seeding
     {
-        public static void SeedReports(IM_API_Context context)
+        public static void SeedObservations(IM_API_Context context)
         {
             // Look for any existing Users.
             if (context.Observations.Any())

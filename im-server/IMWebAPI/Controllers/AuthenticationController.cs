@@ -3,16 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using IMWebAPI.Data;
 using IMWebAPI.Helpers;
 using IMWebAPI.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.Extensions.Configuration;
 
 namespace IMWebAPI.Controllers
 {
@@ -20,25 +19,43 @@ namespace IMWebAPI.Controllers
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        //private readonly JwtBearerTokenSettings jwtBearerTokenSettings;
 
-        public AuthenticationController(UserManager<ApplicationUser> userManager)
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IM_API_Context _context;
+        private readonly IEmailer _emailer;
+
+        public AuthenticationController(UserManager<ApplicationUser> userManager, IM_API_Context context, IEmailer emailer)
         {
             _userManager = userManager;
+            _context = context;
+            _emailer = emailer;
         }
 
         [HttpPost]
         [Route("Register")]
-        public async Task<IActionResult> Register(string username, string password, string job, string firstname, string lastname)
+        public async Task<IActionResult> Register(string email, string password, string job, string firstname, string lastname)
         {
-            if (!ModelState.IsValid || username == null || password == null)
+            if (!ModelState.IsValid || email == null)
                 return new BadRequestObjectResult(new { Message = "User Registration failed." });
 
-            var appUser = new ApplicationUser() { UserName = username, Email = username, JobTitle = job, FirstName = firstname, LastName = lastname };
+            var appUser = new ApplicationUser() { UserName = email, Email = email, JobTitle = job, FirstName = firstname, LastName = lastname };
+            bool sendRegLink = false;
+            if (string.IsNullOrEmpty(password))
+            {
+                // adding user from admin UI - create a temporary password and send a registration link
+                sendRegLink = true;
+                password = Guid.NewGuid().ToString();
+            }
+
             var regResult = await _userManager.CreateAsync(appUser, password);
             if (!regResult.Succeeded)
                 return new BadRequestObjectResult(new { Message = "User Registration failed. Could not create new account." });
+
+            if (sendRegLink)
+            {
+                _emailer.Send(email, "Create web portal account", "You have been added as a user on Canyons School District's mental web portal. Please follow the link below to activate your account.\n\n"
+                     + $"{{webUrl}}/register?username={email}&token={password}");
+            }
 
             return Ok(new { Message = "User Registration Successful" });
         }
@@ -58,20 +75,61 @@ namespace IMWebAPI.Controllers
             if (passResult == PasswordVerificationResult.Failed)
                 return new BadRequestObjectResult(new { Message = "Login failed. Incorrect password." });
 
-            var jwtGenerator = new JwtGenerator();
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Email, appUser.Email),
+                new Claim(ClaimTypes.Name, appUser.UserName),
+                // Add more claims as necessary
+            };
 
-            jwtGenerator.AddClaim(new Claim(ClaimTypes.Email, appUser.Email));
-            jwtGenerator.AddClaim(new Claim(ClaimTypes.Name, appUser.UserName));
-            // Add more claims as necessary (ROLES)
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+            await Request.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
 
+            return Ok(new { Message = "You are logged in" });
+        }
 
-            return Ok(new { Token = jwtGenerator.GetToken(), Message = "You are logged in" });
+        [HttpPost]
+        [Route("ChangePassword")]
+        public async Task<IActionResult> ChangePassword(string username, string currentPassword, string password, string firstname, string lastname, string job)
+        {
+            if (!ModelState.IsValid || username == null || password == null || currentPassword == null)
+                return new BadRequestObjectResult(new { Message = "Missing parameters" });
+
+            var appUser = await _userManager.FindByNameAsync(username);
+            if (appUser == null)
+                return new BadRequestObjectResult(new { Message = "Login failed. Email not recognized." });
+
+            var result = await _userManager.ChangePasswordAsync(appUser, currentPassword, password);
+            if (!result.Succeeded)
+                return new BadRequestObjectResult(new { Message = "Login failed. Password incorrect or does not meet requirements." });
+
+            if (!string.IsNullOrEmpty(firstname) || !string.IsNullOrEmpty(lastname) || !string.IsNullOrEmpty(job))
+            {
+                var user = _context.Users.Where(u => u.UserName == username).First();
+                if (!string.IsNullOrEmpty(firstname))
+                {
+                    user.FirstName = firstname;
+                }
+                if (!string.IsNullOrEmpty(lastname))
+                {
+                    user.LastName = lastname;
+                }
+                if (!string.IsNullOrEmpty(job))
+                {
+                    user.JobTitle = job;
+                }
+                await _context.SaveChangesAsync();
+            }
+
+            return Ok(new { Message = "Password changed successfully" });
         }
 
         [HttpPost]
         [Route("Logout")]
         public async Task<IActionResult> Logout()
         {
+            await HttpContext.SignOutAsync();
             return Ok(new { Message = "Logout Successful" });
         }
     }

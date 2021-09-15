@@ -16,12 +16,10 @@ namespace IMWebAPI.Controllers
     public class AppUsersController : ControllerBase
     {
         private readonly IM_API_Context _context;
-        private readonly IEmailer _emailer;
 
-        public AppUsersController(IM_API_Context context, IEmailer emailer)
+        public AppUsersController(IM_API_Context context)
         {
             _context = context;
-            _emailer = emailer;
         }
 
         // GET: api/Users
@@ -85,9 +83,6 @@ namespace IMWebAPI.Controllers
         {
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
-
-            // send password creation email
-            _emailer.Send(user.Email, "Create Account", "Create your account at ...");
 
             return CreatedAtAction("GetUser", new { id = user.UserName }, user);
         }
