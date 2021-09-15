@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -60,22 +60,39 @@ namespace IMWebAPI
 
             // configure settings for cookie authentication (Maybe switch to jwt in the future)
 
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
                 {
-                    options.Cookie.Name = "IM_Auth_Cookie";
-                    options.SlidingExpiration = true;
-                    options.ExpireTimeSpan = new TimeSpan(0, 1, 0);
-                    options.Events = new CookieAuthenticationEvents
+                    options.IncludeErrorDetails = true;
+                    options.TokenValidationParameters = new TokenValidationParameters()
                     {
-                        OnRedirectToLogin = redirectContext =>
-                        {
-                            redirectContext.HttpContext.Response.StatusCode = 401;
-                            return Task.CompletedTask;
-                        }
+                        ValidateIssuer = true,
+                        ValidIssuer = "IMWEBAPI",//jwtBearerTokenSettings.Issuer,
+                        ValidateAudience = true,
+                        ValidAudience = "IMWEBAPI",//jwtBearerTokenSettings.Audience,
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("IMWEBAPI_SECRETKEY")),//jwtBearerTokenSettings.Key)),
+                        ValidateLifetime = true,
+                        RequireAudience = true,
+                        RequireExpirationTime = true
                     };
                 });
 
+                //services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                //    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+                //    {
+                //        options.Cookie.Name = "IM_Auth_Cookie";
+                //        options.SlidingExpiration = true;
+                //        options.ExpireTimeSpan = new TimeSpan(0, 1, 0);
+                //        options.Events = new CookieAuthenticationEvents
+                //        {
+                //            OnRedirectToLogin = redirectContext =>
+                //            {
+                //                redirectContext.HttpContext.Response.StatusCode = 401;
+                //                return Task.CompletedTask;
+                //            }
+                //        };
+                //    });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
