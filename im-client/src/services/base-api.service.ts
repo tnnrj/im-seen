@@ -29,15 +29,22 @@ class APIProvider {
         return Promise.reject(error);
       }
     });
+    // check for existing auth
+    let token = localStorage.getItem('token');
+    if (token) {
+      http.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    }
   }
 
   // for token auth (call from store)
   login(token: string) {
     http.defaults.headers.common.Authorization = `Bearer ${token}`;
+    localStorage.setItem('token', token);
   }
 
   logout() {
     http.defaults.headers.common.Authorization = '';
+    localStorage.removeItem('token');
   }
 
   get(resource: string, query: any = null) {
