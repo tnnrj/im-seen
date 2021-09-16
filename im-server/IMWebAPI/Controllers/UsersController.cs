@@ -13,11 +13,11 @@ namespace IMWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AppUsersController : ControllerBase
+    public class UsersController : ControllerBase
     {
         private readonly IM_API_Context _context;
 
-        public AppUsersController(IM_API_Context context)
+        public UsersController(IM_API_Context context)
         {
             _context = context;
         }

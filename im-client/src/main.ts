@@ -20,6 +20,8 @@ import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Password from 'primevue/password';
 import Menu from 'primevue/menu';
+import ToastService from 'primevue/toastservice';
+import Toast from 'primevue/toast';
 
 // primevue theming
 import 'primevue/resources/themes/saga-blue/theme.css';
@@ -50,7 +52,9 @@ app.component('DataTable', DataTable);
 app.component('Column', Column);
 app.component('Password', Password);
 app.component('Menu', Menu);
+app.component('Toast', Toast);
 app.directive('tooltip', Tooltip);
 app.use(ConfirmationService);
+app.use(ToastService);
 
 app.mount('#app');

@@ -1,7 +1,10 @@
 import { UserRole } from "./enums.model";
 
 export type User = {
-  fullName: string;
-  username: string;
+  firstName: string;
+  lastName: string;
+  userName: string;
+  email: string;
+  jobTitle: string;
   userRole: UserRole;
 }

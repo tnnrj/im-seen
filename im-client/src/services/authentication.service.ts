@@ -20,7 +20,7 @@ async function logout() {
   http.logout();
 }
 
-async function addUser(form: { username: string }): Promise<AxiosResponse<any>> {
+async function addUser(form: { email: string }): Promise<AxiosResponse<any>> {
   return http.post('Authentication/Register', '', form);
 }
 
