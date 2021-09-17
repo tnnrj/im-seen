@@ -8,6 +8,7 @@ using IMWebAPI.Helpers;
 using IMWebAPI.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -130,6 +131,17 @@ namespace IMWebAPI.Controllers
             }
 
             return Ok(new { Message = "Password changed successfully" });
+        }
+
+        [HttpPost, Authorize]
+        [Route("User")]
+        public async Task<IActionResult> GetUserInfo()
+        {
+            var username = User.Identity.Name;
+            var user = await _userManager.FindByNameAsync(username);
+            if (user == null) return BadRequest();
+
+            return Ok(new { User = user });
         }
 
         [HttpPost]
