@@ -83,7 +83,17 @@ namespace IMWebAPI.Controllers
             jwtGenerator.AddClaim(new Claim(ClaimTypes.Name, appUser.UserName));
             // Add more claims as necessary (ROLES)
 
-            return Ok(new { Token = jwtGenerator.GetToken(), Message = "You are logged in" });
+            var accessToken = jwtGenerator.GetAccessToken();
+            var refreshToken = jwtGenerator.GetRefreshToken();
+
+            appUser.RefreshToken = refreshToken;
+            appUser.RefreshTokenExpiryTime = DateTime.Now.AddMinutes(10); // CHANGE THIS VALUE AFTER TESTING
+            var result = await _userManager.UpdateAsync(appUser);
+
+            if (!result.Succeeded)
+                return new BadRequestObjectResult(new { Message = "Login failed. Token not generated." });
+
+            return Ok(new { AccessToken = accessToken, RefreshToken = refreshToken, Message = "You are logged in." });
         }
 
         [HttpPost]
@@ -124,7 +134,7 @@ namespace IMWebAPI.Controllers
 
         [HttpPost]
         [Route("Logout")]
-        public async Task<IActionResult> Logout()
+        public IActionResult Logout()
         {
             return Ok(new { Message = "Logout Successful" });
         }

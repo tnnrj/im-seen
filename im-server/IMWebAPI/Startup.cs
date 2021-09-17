@@ -72,7 +72,7 @@ namespace IMWebAPI
                         ValidAudience = "IMWEBAPI",//jwtBearerTokenSettings.Audience,
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("IMWEBAPI_SECRETKEY")),//jwtBearerTokenSettings.Key)),
-                        ValidateLifetime = true,
+                        ValidateLifetime = false,
                         RequireAudience = true,
                         RequireExpirationTime = true
                     };
