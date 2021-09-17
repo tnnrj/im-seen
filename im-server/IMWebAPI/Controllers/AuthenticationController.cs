@@ -8,6 +8,7 @@ using IMWebAPI.Helpers;
 using IMWebAPI.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -83,7 +84,17 @@ namespace IMWebAPI.Controllers
             jwtGenerator.AddClaim(new Claim(ClaimTypes.Name, appUser.UserName));
             // Add more claims as necessary (ROLES)
 
-            return Ok(new { Token = jwtGenerator.GetToken(), Message = "You are logged in" });
+            var accessToken = jwtGenerator.GetAccessToken();
+            var refreshToken = jwtGenerator.GetRefreshToken();
+
+            appUser.RefreshToken = refreshToken;
+            appUser.RefreshTokenExpiryTime = DateTime.Now.AddMinutes(10); // CHANGE THIS VALUE AFTER TESTING
+            var result = await _userManager.UpdateAsync(appUser);
+
+            if (!result.Succeeded)
+                return new BadRequestObjectResult(new { Message = "Login failed. Token not generated." });
+
+            return Ok(new { AccessToken = accessToken, RefreshToken = refreshToken, Message = "You are logged in." });
         }
 
         [HttpPost]
@@ -122,9 +133,20 @@ namespace IMWebAPI.Controllers
             return Ok(new { Message = "Password changed successfully" });
         }
 
+        [HttpPost, Authorize]
+        [Route("User")]
+        public async Task<IActionResult> GetUserInfo()
+        {
+            var username = User.Identity.Name;
+            var user = await _userManager.FindByNameAsync(username);
+            if (user == null) return BadRequest();
+
+            return Ok(new { User = user });
+        }
+
         [HttpPost]
         [Route("Logout")]
-        public async Task<IActionResult> Logout()
+        public IActionResult Logout()
         {
             return Ok(new { Message = "Logout Successful" });
         }

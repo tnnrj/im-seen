@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -28,7 +29,7 @@ namespace IMWebAPI.Helpers
             this.tokenLifetimeInSecs = 7200; //jwtBearerTokenSettings.LifeInSecs;
         }
 
-        public string GetToken()
+        public string GetAccessToken()
         {
             JwtSecurityToken jwt = new JwtSecurityToken(
                 jwtHeader,
@@ -38,6 +39,43 @@ namespace IMWebAPI.Helpers
 
             return new JwtSecurityTokenHandler().WriteToken(jwt);
         }
+        public string GetRefreshToken()
+        {
+            var randomNumber = new byte[32];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(randomNumber);
+                return Convert.ToBase64String(randomNumber);
+            }
+        }
+
+        public ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            SecurityToken securityToken;
+
+            var parameters = new TokenValidationParameters()
+            {
+                ValidateIssuer = true,
+                ValidIssuer = "IMWEBAPI",//jwtBearerTokenSettings.Issuer,
+                ValidateAudience = true,
+                ValidAudience = "IMWEBAPI",//jwtBearerTokenSettings.Audience,
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("IMWEBAPI_SECRETKEY")),//jwtBearerTokenSettings.Key)),
+                ValidateLifetime = false,
+                RequireAudience = true,
+                RequireExpirationTime = true
+            };
+
+            var principal = tokenHandler.ValidateToken(token, parameters, out securityToken);
+            var jwtSecurityToken = securityToken as JwtSecurityToken;
+            if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+                throw new SecurityTokenException("Invalid token");
+            return principal;
+        }
+
+
+
 
         public void AddClaim(Claim claim)
         {

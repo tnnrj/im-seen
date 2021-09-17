@@ -3,14 +3,16 @@ using System;
 using IMWebAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace IMWebAPI.Migrations
 {
     [DbContext(typeof(IM_API_Context))]
-    partial class IM_API_ContextModelSnapshot : ModelSnapshot
+    [Migration("20210917020930_IM_API_Context_RefreshTokens")]
+    partial class IM_API_Context_RefreshTokens
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
