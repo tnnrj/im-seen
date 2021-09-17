@@ -24,7 +24,7 @@ export function dashLayoutToDefaultPage(layout: DashLayout): DashPage {
   switch(layout) {
     case DashLayout.One:
       elements.push({
-        queryId: '123',
+        reportId: '1',
         chartType: ChartType.None,
         width: 100,
         height: 100
@@ -83,7 +83,7 @@ function dashElementRow(count: number, col = false): DashElement[] {
   let elements: DashElement[] = [];
   for (let i = 0; i < count; i++) {
     elements.push({
-      queryId: '123',
+      reportId: '1',
       chartType: ChartType.BubbleCloud, // TODO: change this to none when reports are selectable
       width: col ? 50 : 100 / count,
       height: col ? 100 / count : 50

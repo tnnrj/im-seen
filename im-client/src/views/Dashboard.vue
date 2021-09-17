@@ -4,7 +4,7 @@
       <div class="dashboard-elements p-d-flex" :class="{'p-flex-column': pages[curPage].layout.indexOf('LR') !== -1}">
         <div class="element" v-for="(element, index) in pages[curPage].elements" :key="index"
           :style="{ width: element.width + '%', height: element.height + '%' }">
-          <DashboardElement :chartType="element.chartType" :queryId="element.queryId" :idx="index"></DashboardElement>
+          <DashboardElement :chartType="element.chartType" :reportId="element.reportId" :idx="index"></DashboardElement>
         </div>
       </div>
       <div class="sidebar p-d-flex p-flex-column p-ai-end">

@@ -1,6 +1,6 @@
 import { InjectionKey } from 'vue';
 import { createStore, Store, useStore as baseUseStore } from 'vuex';
-import ChartDataService from '@/services/chart-data.service';
+import reportDataService from '@/services/report-data.service';
 import ObservationsService from '@/services/observations.service';
 import { Observation } from '@/model/observations.model';
 import auth from './modules/auth';
@@ -21,13 +21,13 @@ export const store = createStore<State>({
     observations: undefined
   },
   getters: {
-    getChartData: (state) => (queryId) => {
-      return state.chartDatas.get(queryId);
+    getReportData: (state) => (reportId) => {
+      return state.chartDatas.get(reportId);
     }
   },
   mutations: {
     setChartData(state, payload) {
-      state.chartDatas.set(payload.queryId, payload.data);
+      state.chartDatas.set(payload.reportId, payload.data);
     },
     setAllObservations(state, payload) {
       state.observations = payload.observations;
@@ -35,9 +35,9 @@ export const store = createStore<State>({
   },
   actions: {
     // load data for a single chart from the server
-    async loadChartData({ commit }, payload) {
-      let response = await ChartDataService.getChartData(payload.queryId);
-      commit('setChartData', { queryId: payload.queryId, data: response.data });
+    async loadReportData({ commit }, payload) {
+      let response = await reportDataService.getReportData(payload.reportId);
+      commit('setChartData', { reportId: payload.reportId, data: response.data });
     },
     // load data for all observations
     async loadAllObservations({ commit }) {

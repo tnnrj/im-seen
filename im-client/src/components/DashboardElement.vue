@@ -25,7 +25,7 @@ export default defineComponent({
       type: String,
       required: true
     },
-    queryId: {
+    reportId: {
       type: String,
       required: true
     },
@@ -33,9 +33,9 @@ export default defineComponent({
   },
   setup(props) {
     const store = useStore();
-    if (!store.getters.getChartData(props.queryId)) store.dispatch('loadChartData', { queryId: props.queryId });
+    if (!store.getters.getReportData(props.reportId)) store.dispatch('loadReportData', { reportId: props.reportId });
 
-    const chartData = computed(() => store.getters.getChartData(props.queryId));
+    const chartData = computed(() => store.getters.getReportData(props.reportId));
 
     return { chartData, ChartType }
   }

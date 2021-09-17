@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using IMWebAPI.Data;
 using IMWebAPI.Models;
+using IMWebAPI.Helpers;
+using Newtonsoft.Json.Linq;
 
 namespace IMWebAPI.Controllers
 {
@@ -15,10 +17,12 @@ namespace IMWebAPI.Controllers
     public class ReportsController : ControllerBase
     {
         private readonly IM_API_Context _context;
+        private readonly QueryRunner _queryRunner;
 
-        public ReportsController(IM_API_Context context)
+        public ReportsController(IM_API_Context context, QueryRunner queryRunner)
         {
             _context = context;
+            _queryRunner = queryRunner;
         }
 
         // GET: api/Reports
@@ -40,6 +44,25 @@ namespace IMWebAPI.Controllers
             }
 
             return report;
+        }
+
+        [HttpGet]
+        [Route("GetDataForReport")]
+        public async Task<ActionResult<string>> GetDataForReport(int id)
+        {
+            var report = await _context.Reports.FindAsync(id);
+
+            if (report == null || string.IsNullOrEmpty(report.Query))
+            {
+                return NotFound();
+            }
+
+            var data = _queryRunner.ExecuteAsJson(report.Query);
+
+            var response = new JObject();
+            response.Add("name", report.ReportName);
+            response.Add("data", data);
+            return Content(response.ToString(), "application/json");
         }
 
         // PUT: api/Reports/5

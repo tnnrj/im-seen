@@ -13,7 +13,7 @@ namespace IMWebAPI.Data
             User_Seeding.SeedUsers(context);
             Student_Seeding.SeedStudents(context);
             Observation_Seeding.SeedObservations(context);
-
+            Report_Seeding.SeedReports(context);
         }
     }
 }

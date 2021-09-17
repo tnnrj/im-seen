@@ -44,6 +44,7 @@ namespace IMWebAPI
 
             // custom services for dependency injection
             services.AddScoped<IEmailer, Emailer>();
+            services.AddScoped<QueryRunner>();
 
 
             services.Configure<IdentityOptions>(options =>
