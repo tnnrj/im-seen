@@ -46,7 +46,7 @@ namespace IMWebAPI.Controllers
             return observ;
         }
 
-        [HttpGet, Authorize]
+        [HttpGet]//, Authorize]
         [Route("Student-Severity")]
         public async Task<ActionResult<IEnumerable<Object>>> GetObservationsSeverity()
         {

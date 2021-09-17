@@ -133,7 +133,7 @@ namespace IMWebAPI.Controllers
             return Ok(new { Message = "Password changed successfully" });
         }
 
-        [HttpPost, Authorize]
+        [HttpGet, Authorize]
         [Route("User")]
         public async Task<IActionResult> GetUserInfo()
         {

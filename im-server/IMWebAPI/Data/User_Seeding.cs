@@ -29,7 +29,8 @@ namespace IMWebAPI.Data
                 FirstName = "Albus",
                 LastName = "Dumbledore",
                 NormalizedEmail = "DUMBLEDORE@HOGWA.RTS",
-                NormalizedUserName = "DUMBLEDORE"
+                NormalizedUserName = "DUMBLEDORE",
+                EmailConfirmed = true
             };
             user.PasswordHash = hasher.HashPassword(user, "test");
             await userStore.CreateAsync(user);
