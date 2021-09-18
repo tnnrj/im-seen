@@ -11,7 +11,7 @@ export default {
 async function login(form: { username: string; password: string }): Promise<AxiosResponse<any>> {
   return http.post('Authentication/Login', "", form)
     .then(response => {
-      http.login(response.data.token);
+      http.login(response.data.accessToken);
       return response;
     });
 }

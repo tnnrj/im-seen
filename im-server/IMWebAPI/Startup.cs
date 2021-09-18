@@ -37,7 +37,7 @@ namespace IMWebAPI
             services.AddDbContext<IM_API_Context>(options =>
                     options.UseMySQL(Configuration.GetConnectionString("IM_API_Context")));
 
-            services.AddIdentity<ApplicationUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = false)
+            services.AddIdentity<ApplicationUser, IdentityRole>()
                     .AddEntityFrameworkStores<IM_API_Context>();
 
             // custom services for dependency injection
@@ -63,10 +63,13 @@ namespace IMWebAPI
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
             })
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
                 {
                     options.IncludeErrorDetails = true;
+                    options.SaveToken = true;
+                    options.RequireHttpsMetadata = false;
                     options.TokenValidationParameters = new TokenValidationParameters()
                     {
                         ValidateIssuer = true,
@@ -75,9 +78,9 @@ namespace IMWebAPI
                         ValidAudience = "IMWEBAPI",//jwtBearerTokenSettings.Audience,
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("IMWEBAPI_SECRETKEY")),//jwtBearerTokenSettings.Key)),
-                        ValidateLifetime = false,
-                        RequireAudience = true,
-                        RequireExpirationTime = true
+                        ValidateLifetime = true,
+                        RequireAudience = false,
+                        RequireExpirationTime = false
                     };
                 });
         }

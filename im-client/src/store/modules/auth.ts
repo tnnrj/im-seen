@@ -28,10 +28,10 @@ const mutations = {
 };
 
 // check for existing auth
-let token = localStorage.getItem('token');
-if (token) {
-  state.isAuthenticated = true;
-}
+// let token = localStorage.getItem('token');
+// if (token) {
+//   state.isAuthenticated = true;
+// }
 
 export default {
   state,
