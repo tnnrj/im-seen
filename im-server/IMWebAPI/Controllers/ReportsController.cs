@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace IMWebAPI.Controllers
 {
-    [Authorize(Roles = "Admin, PrimaryActor, SupportingActor")]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ReportsController : ControllerBase
@@ -48,7 +48,8 @@ namespace IMWebAPI.Controllers
             return report;
         }
 
-        [HttpGet, Authorize(Roles = "Administrator, PrimaryActor")]
+        [Authorize]
+        [HttpGet]
         [Route("GetDataForReport")]
         public async Task<ActionResult<string>> GetDataForReport(int id)
         {

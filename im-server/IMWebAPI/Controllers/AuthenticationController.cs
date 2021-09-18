@@ -77,12 +77,15 @@ namespace IMWebAPI.Controllers
             if (passResult == PasswordVerificationResult.Failed)
                 return new BadRequestObjectResult(new { Message = "Login failed. Incorrect password." });
 
-
             var jwtGenerator = new JwtGenerator();
 
             jwtGenerator.AddClaim(new Claim(ClaimTypes.Email, appUser.Email));
             jwtGenerator.AddClaim(new Claim(ClaimTypes.Name, appUser.UserName));
             // Add more claims as necessary (ROLES)
+            foreach (var role in await _userManager.GetRolesAsync(appUser))
+            {
+                jwtGenerator.AddClaim(new Claim(ClaimTypes.Role, role));
+            }
 
             var accessToken = jwtGenerator.GetAccessToken();
             var refreshToken = jwtGenerator.GetRefreshToken();
