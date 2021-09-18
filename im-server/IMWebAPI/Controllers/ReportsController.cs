@@ -9,9 +9,11 @@ using IMWebAPI.Data;
 using IMWebAPI.Models;
 using IMWebAPI.Helpers;
 using Newtonsoft.Json.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace IMWebAPI.Controllers
 {
+    [Authorize(Roles = "Admin, PrimaryActor, SupportingActor")]
     [Route("api/[controller]")]
     [ApiController]
     public class ReportsController : ControllerBase
@@ -46,7 +48,7 @@ namespace IMWebAPI.Controllers
             return report;
         }
 
-        [HttpGet]
+        [HttpGet, Authorize(Roles = "Administrator, PrimaryActor")]
         [Route("GetDataForReport")]
         public async Task<ActionResult<string>> GetDataForReport(int id)
         {

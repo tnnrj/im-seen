@@ -32,7 +32,9 @@ namespace IMWebAPI
                 try
                 {
                     var context = services.GetRequiredService<IM_API_Context>();
-                    DbInitializer.Initialize(context);
+                    UserManager<ApplicationUser> um = services.GetRequiredService<UserManager<ApplicationUser>>();
+                    RoleManager<IdentityRole> rm = services.GetRequiredService<RoleManager<IdentityRole>>();
+                    DbInitializer.Initialize(context, um, rm);
                 }
                 catch (Exception ex)
                 {

@@ -94,7 +94,7 @@ namespace IMWebAPI.Controllers
             if (!result.Succeeded)
                 return new BadRequestObjectResult(new { Message = "Login failed. Token not generated." });
 
-            return Ok(new { AccessToken = accessToken, RefreshToken = refreshToken, Message = "You are logged in." });
+            return Ok(new { Token = accessToken, RefreshToken = refreshToken, Message = "You are logged in." });
         }
 
         [HttpPost]

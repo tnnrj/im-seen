@@ -10,15 +10,32 @@ namespace IMWebAPI.Data
 {
     public class User_Seeding
     {
-        public static async void SeedUsers(IM_API_Context context)
+        public static async void SeedUsers(IM_API_Context context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
+
+            // Create roles if they don't exist
+            try
+            {
+                if (roleManager.Roles.Count() == 0)
+                {
+                    roleManager.CreateAsync(new IdentityRole("Administrator")).Wait();
+                    roleManager.CreateAsync(new IdentityRole("PrimaryActor")).Wait();
+                    roleManager.CreateAsync(new IdentityRole("SupportingActor")).Wait();
+                    roleManager.CreateAsync(new IdentityRole("Observer")).Wait();
+                }
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error creating role.");
+            }
+
             // Look for any existing Users.
             if (context.Users.Any())
             {
                 return;   // DB has been seeded
             }
 
-            var userStore = new UserStore<ApplicationUser>(context);
 
             var hasher = new PasswordHasher<ApplicationUser>();
             var user = new ApplicationUser
@@ -30,10 +47,12 @@ namespace IMWebAPI.Data
                 LastName = "Dumbledore",
                 NormalizedEmail = "DUMBLEDORE@HOGWA.RTS",
                 NormalizedUserName = "DUMBLEDORE",
-                EmailConfirmed = true
+                EmailConfirmed = true,
             };
             user.PasswordHash = hasher.HashPassword(user, "test");
-            await userStore.CreateAsync(user);
+            await userManager.CreateAsync(user);
+            await userManager.AddToRoleAsync(user, "Administrator");
+
             user = new ApplicationUser
             {
                 UserName = "mcgonagall",
@@ -45,7 +64,9 @@ namespace IMWebAPI.Data
                 NormalizedUserName = "MCGONAGALL"
             };
             user.PasswordHash = hasher.HashPassword(user, "test");
-            await userStore.CreateAsync(user);
+            await userManager.CreateAsync(user);
+            await userManager.AddToRoleAsync(user, "PrimaryActor");
+
             user = new ApplicationUser
             {
                 UserName = "filch",
@@ -57,7 +78,8 @@ namespace IMWebAPI.Data
                 NormalizedUserName = "FILCH"
             };
             user.PasswordHash = hasher.HashPassword(user, "test");
-            await userStore.CreateAsync(user);
+            await userManager.CreateAsync(user);
+            await userManager.AddToRoleAsync(user, "Observer");
 
             await context.SaveChangesAsync();
         }

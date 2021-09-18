@@ -55,7 +55,7 @@ namespace IMWebAPI.Controllers
             if (!result.Succeeded)
                 return new BadRequestObjectResult(new { Message = "Token could not be refreshed. Please log in again." });
 
-            return Ok(new { AccessToken = newAccessToken, RefreshToken = refreshToken, Message = "Token Refresh Successful" });
+            return Ok(new { Token = newAccessToken, RefreshToken = refreshToken, Message = "Token Refresh Successful" });
         }
 
 
