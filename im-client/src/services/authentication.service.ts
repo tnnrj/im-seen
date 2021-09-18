@@ -4,6 +4,7 @@ import { AxiosResponse } from 'axios';
 export default {
   login,
   logout,
+  isLoggedIn,
   addUser,
   changePassword
 }
@@ -18,6 +19,10 @@ async function login(form: { username: string; password: string }): Promise<Axio
 
 async function logout() {
   http.logout();
+}
+
+function isLoggedIn() {
+  return http.loggedIn();
 }
 
 async function addUser(form: { email: string }): Promise<AxiosResponse<any>> {

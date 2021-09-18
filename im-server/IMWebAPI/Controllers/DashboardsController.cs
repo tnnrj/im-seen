@@ -8,6 +8,7 @@ using IMWebAPI.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace IMWebAPI.Controllers
 {
@@ -41,6 +42,41 @@ namespace IMWebAPI.Controllers
             }
 
             return dashboard;
+        }
+
+        // GET: api/GetMyDashboard
+        [HttpGet]
+        [Route("GetMyDashboard")]
+        public ActionResult<Dashboard> GetMyDashboard()
+        {
+            var dashboard = _context.Dashboards.FirstOrDefault(d => d.UserName == User.Identity.Name);
+
+            // we're okay with returning null here, as the client will just use a default dashboard configuration
+            return dashboard;
+        }
+
+        [HttpPost]
+        [Route("UpdateMyDashboard")]
+        public async Task<IActionResult> UpdateMyDashboard([FromBody] string dashboardText)
+        {
+            var dashboard = _context.Dashboards.FirstOrDefault(d => d.UserName == User.Identity.Name);
+
+            if (dashboard == null)
+            {
+                _context.Dashboards.Add(new Dashboard
+                {
+                    UserName = User.Identity.Name,
+                    DashboardText = dashboardText
+                });
+            }
+            else
+            {
+                dashboard.DashboardText = dashboardText;
+            }
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
         }
 
         // PUT: api/Dashboards/5

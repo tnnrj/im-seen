@@ -1,21 +1,33 @@
 import { DashElement, DashPage } from "@/model/dashboard.model";
 import { ChartType, DashLayout } from "@/model/enums.model";
 import http from "@/services/base-api.service";
+import { AxiosResponse } from "axios";
 
 export default {
   getDashPages,
+  saveDashPages,
   dashLayoutToDefaultPage,
   dashLayoutToPanelCounts,
 }
 
 // fetches user Dashboard pages from API
-export function getDashPages(): DashPage[] {
-  // TODO: get user pages from API
-  return [
-    dashLayoutToDefaultPage(DashLayout.ThreeOneTB),
-    dashLayoutToDefaultPage(DashLayout.TwoTB),
-    dashLayoutToDefaultPage(DashLayout.ThreeTwoLR),
-  ];
+export async function getDashPages(): Promise<DashPage[]> {
+  return http.get('Dashboards/GetMyDashboard').then(response => {
+    if (!response.data?.dashboardText) {
+      // if null, construct default dashboard
+      return [
+        dashLayoutToDefaultPage(DashLayout.ThreeOneTB),
+        dashLayoutToDefaultPage(DashLayout.TwoTB),
+        dashLayoutToDefaultPage(DashLayout.ThreeTwoLR),
+      ];
+    }
+
+    return JSON.parse(response.data.dashboardText) as DashPage[];
+  });
+}
+
+export async function saveDashPages(pages: DashPage[]): Promise<AxiosResponse<any>> {
+  return http.post('Dashboards/UpdateMyDashboard', `"${JSON.stringify(pages).replaceAll("\"", "\\\"")}"`);
 }
 
 // turns a dash layout enum into an empty DashPage with default dimensions

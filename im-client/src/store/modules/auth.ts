@@ -1,4 +1,4 @@
-import AuthenticationService from "@/services/authentication.service";
+import authenticationService from "@/services/authentication.service";
 
 // template from https://www.smashingmagazine.com/2020/10/authentication-in-vue-js/
 const state = {
@@ -13,10 +13,11 @@ const getters = {
 };
 const actions = {
   async logIn({commit}, form) {
-    await AuthenticationService.login(form);    
+    await authenticationService.login(form);    
     commit('setUser', form.username);
   },
   async logOut({commit}){
+    authenticationService.logout();
     commit('setUser', null);
   }
 };
@@ -28,10 +29,9 @@ const mutations = {
 };
 
 // check for existing auth
-// let token = localStorage.getItem('token');
-// if (token) {
-//   state.isAuthenticated = true;
-// }
+if (authenticationService.isLoggedIn()) {
+  state.isAuthenticated = true;
+}
 
 export default {
   state,
