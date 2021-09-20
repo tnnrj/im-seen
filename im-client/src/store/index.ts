@@ -21,13 +21,13 @@ export const store = createStore<State>({
     observations: undefined
   },
   getters: {
-    getReportData: (state) => (reportId) => {
-      return state.chartDatas.get(reportId);
+    getReportData: (state) => (reportID) => {
+      return state.chartDatas.get(reportID);
     }
   },
   mutations: {
     setChartData(state, payload) {
-      state.chartDatas.set(payload.reportId, payload.data);
+      state.chartDatas.set(payload.reportID, payload.data);
     },
     setAllObservations(state, payload) {
       state.observations = payload.observations;
@@ -36,13 +36,13 @@ export const store = createStore<State>({
   actions: {
     // load data for a single chart from the server
     async loadReportData({ commit }, payload) {
-      let response = await reportDataService.getReportData(payload.reportId);
-      commit('setChartData', { reportId: payload.reportId, data: response.data });
+      let response = await reportDataService.getReportData(payload.reportID);
+      commit('setChartData', { reportID: payload.reportID, data: response });
     },
     // load data for all observations
     async loadAllObservations({ commit }) {
       let response = await ObservationsService.getObservations();
-      commit('setAllObservations', { observations: response.data });
+      commit('setAllObservations', { observations: response });
     }
   }
 })

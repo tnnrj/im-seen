@@ -1,6 +1,4 @@
 import http from '@/services/base-api.service';
-import { AxiosResponse } from 'axios';
-
 export default {
   login,
   logout,
@@ -9,10 +7,10 @@ export default {
   changePassword
 }
 
-async function login(form: { username: string; password: string }): Promise<AxiosResponse<any>> {
+async function login(form: { username: string; password: string }): Promise<any> {
   return http.post('Authentication/Login', "", form)
     .then(response => {
-      http.login(response.data.token);
+      http.login(response.token);
       return response;
     });
 }
@@ -25,10 +23,10 @@ function isLoggedIn() {
   return http.loggedIn();
 }
 
-async function addUser(form: { email: string }): Promise<AxiosResponse<any>> {
+async function addUser(form: { email: string }): Promise<any> {
   return http.post('Authentication/Register', '', form);
 }
 
-async function changePassword(form: { firstname: string; lastname: string; job: string; currentPassword: string; password: string }): Promise<AxiosResponse<any>> {
+async function changePassword(form: { firstname: string; lastname: string; job: string; currentPassword: string; password: string }): Promise<any> {
   return http.post('Authentication/ChangePassword', '', form);
 }

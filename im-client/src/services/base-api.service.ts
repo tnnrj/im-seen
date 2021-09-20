@@ -50,18 +50,30 @@ class APIProvider {
   get(resource: string, query: any = null) {
     return http.get(`${resource}`, {
       params: query
+    }).then(response => {
+      return response.data;
+    }, err => {
+      return err;
     });
   }
 
   getById(resource: string, id: string, query: any = null) {
     return http.get(`${resource}/${id}`, {
       params: query
+    }).then(response => {
+      return response.data;
+    }, err => {
+      return err;
     });
   }
 
   post(resource: string, data: string, query: any = null) {
     return http.post(resource, data, {
       params: query
+    }).then(response => {
+      return response.data;
+    }, err => {
+      return err;
     });
   }
 }

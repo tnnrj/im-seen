@@ -5,7 +5,14 @@
         <Splitter :layout="isMainAxisVertical ? 'horizontal' : 'vertical'">
           <SplitterPanel class="p-d-flex p-ai-center p-jc-center" :ref="el => { splitterRefs[si][pi] = el }"
             v-for="(panel, pi) in splitter" :key="'p-'+pi" :size="isMainAxisVertical ? panel.width : panel.height">
-            sample content
+            <div class="selector">
+              <h5>Select Report Data</h5>
+              <Dropdown v-model="panel.reportID" :options="reportValues" optionLabel="label" optionValue="value" />
+            </div>
+            <div class="selector">
+              <h5>Select Chart Type</h5>
+              <Dropdown v-model="panel.chartType" :options="chartTypes" />
+            </div>
           </SplitterPanel>
         </Splitter>
       </SplitterPanel>
@@ -21,8 +28,10 @@
 <script lang="ts">
 import { defineComponent, PropType, ref } from "vue";
 import DashboardService from "@/services/dashboard.service";
+import reportsService from "@/services/report-data.service";
 import { DashElement, DashPage } from "@/model/dashboard.model";
 import { useConfirm } from "primevue/useconfirm";
+import { ChartType } from "@/model/enums.model";
 
 export default defineComponent({
   name: 'DashboardConfigurator',
@@ -39,6 +48,13 @@ export default defineComponent({
     const mainAxisFirstSize = isMainAxisVertical ? props.page.elements[0].height : props.page.elements[0].width;
     const mainAxisSizes = [mainAxisFirstSize, 100 - mainAxisFirstSize];
     const counts = DashboardService.dashLayoutToPanelCounts(props.page.layout);
+
+    // load available reports and charts
+    const reportValues = ref<any[]>([]);
+    reportsService.getAllReports().then(reports => {
+      reportValues.value = reports.map(r => { return { label: r.reportName, value: r.reportID }; });
+    });
+    const chartTypes = ref<ChartType[]>(Object.keys(ChartType) as ChartType[]);
 
     // used to set initial value of splitter sizes and bind to element chart types/queries
     const elementGrid = ref<DashElement[][]>([]);
@@ -103,7 +119,7 @@ export default defineComponent({
       })
     }
 
-    return { isMainAxisVertical, mainAxisSizes, elementGrid, mainAxisRefs, splitterRefs, onSubmit, confirmCancel };
+    return { isMainAxisVertical, mainAxisSizes, reportValues, chartTypes, elementGrid, mainAxisRefs, splitterRefs, onSubmit, confirmCancel };
   }
 });
 </script>
@@ -141,6 +157,14 @@ export default defineComponent({
 
   &:hover {
     background-image: radial-gradient(ellipse at 90% 100%, rgba(0,0,0,.7), rgba(0,0,0,0) 70%);
+  }
+}
+
+.selector {
+  margin: 1em;
+  
+  .p-dropdown {
+    max-width: 15em;
   }
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="element-content p-d-flex p-flex-column p-jc-center p-ai-center">
+  <div v-if="chartType != 'None'" class="element-content p-d-flex p-flex-column p-jc-center p-ai-center">
     <template v-if="chartData && chartData.data">
       <h4 class="p-mb-0">{{chartData.name}}</h4>
       <BubbleCloudChart v-if="chartType == ChartType.BubbleCloud" :chartData="chartData.data" :id="idx"/>
@@ -25,17 +25,17 @@ export default defineComponent({
       type: String,
       required: true
     },
-    reportId: {
-      type: String,
+    reportID: {
+      type: Number,
       required: true
     },
     idx: Number
   },
   setup(props) {
     const store = useStore();
-    if (!store.getters.getReportData(props.reportId)) store.dispatch('loadReportData', { reportId: props.reportId });
+    if (!store.getters.getReportData(props.reportID)) store.dispatch('loadReportData', { reportID: props.reportID });
 
-    const chartData = computed(() => store.getters.getReportData(props.reportId));
+    const chartData = computed(() => store.getters.getReportData(props.reportID));
 
     return { chartData, ChartType }
   }

@@ -1,10 +1,15 @@
+import { Report } from "@/model/reports.model";
 import http from "@/services/base-api.service";
-import { AxiosResponse } from "axios";
 
 export default { 
-  getReportData
+  getReportData,
+  getAllReports
 }
 
-export async function getReportData(reportId: string): Promise<AxiosResponse<any>> {
-  return http.get('Reports/GetDataForReport', { id: reportId });
+export async function getReportData(reportID: string): Promise<any> {
+  return http.get('Reports/GetDataForReport', { id: reportID });
+}
+
+export async function getAllReports(): Promise<Report[]> {
+  return http.get('Reports');
 }

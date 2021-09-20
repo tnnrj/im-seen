@@ -3,8 +3,8 @@
     <template v-if="pages && pages.length">
       <div class="dashboard-elements p-d-flex" :class="{'p-flex-column': pages[curPageNum].layout.indexOf('LR') !== -1}">
         <div class="element" v-for="(element, index) in pages[curPageNum].elements" :key="index"
-          :style="{ width: element.width + '%', height: element.height + '%' }">
-          <DashboardElement :chartType="element.chartType" :reportId="element.reportId" :idx="index"></DashboardElement>
+          :style="{ width: element.width + '%', height: element.height + '%', visibility: element.chartType == 'None' ? 'hidden' : '' }">
+          <DashboardElement :chartType="element.chartType" :reportID="element.reportID" :idx="index"></DashboardElement>
         </div>
       </div>
       <div class="sidebar p-d-flex p-flex-column p-ai-end">
@@ -44,7 +44,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from "vue";
+import { defineComponent, ref } from "vue";
 import DashboardService from "@/services/dashboard.service";
 import { DashPage } from "@/model/dashboard.model";
 import { DashLayout } from "@/model/enums.model";
@@ -111,8 +111,8 @@ export default defineComponent({
       showConfigurator.value = false;
       if (newPage) {
         pages.value[curPageNum.value] = newPage;
+        DashboardService.saveDashPages(pages.value);
       }
-      DashboardService.saveDashPages(pages.value);
     };
 
     return { curPageNum, pages, addNewPage, switchPage,

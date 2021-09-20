@@ -53,7 +53,7 @@ export default defineComponent({
 
     const users = ref<User[]>();
     const loadUsers = async () => {
-      users.value = (await UsersService.getAllUsers()).data;
+      users.value = await UsersService.getAllUsers();
     }
     loadUsers();
 

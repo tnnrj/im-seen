@@ -1,7 +1,6 @@
 import { DashElement, DashPage } from "@/model/dashboard.model";
 import { ChartType, DashLayout } from "@/model/enums.model";
 import http from "@/services/base-api.service";
-import { AxiosResponse } from "axios";
 
 export default {
   getDashPages,
@@ -13,7 +12,7 @@ export default {
 // fetches user Dashboard pages from API
 export async function getDashPages(): Promise<DashPage[]> {
   return http.get('Dashboards/GetMyDashboard').then(response => {
-    if (!response.data?.dashboardText) {
+    if (!response?.dashboardText) {
       // if null, construct default dashboard
       return [
         dashLayoutToDefaultPage(DashLayout.ThreeOneTB),
@@ -22,11 +21,11 @@ export async function getDashPages(): Promise<DashPage[]> {
       ];
     }
 
-    return JSON.parse(response.data.dashboardText) as DashPage[];
+    return JSON.parse(response.dashboardText) as DashPage[];
   });
 }
 
-export async function saveDashPages(pages: DashPage[]): Promise<AxiosResponse<any>> {
+export async function saveDashPages(pages: DashPage[]): Promise<any> {
   return http.post('Dashboards/UpdateMyDashboard', `"${JSON.stringify(pages).replaceAll("\"", "\\\"")}"`);
 }
 
@@ -36,7 +35,7 @@ export function dashLayoutToDefaultPage(layout: DashLayout): DashPage {
   switch(layout) {
     case DashLayout.One:
       elements.push({
-        reportId: '1',
+        reportID: 1,
         chartType: ChartType.None,
         width: 100,
         height: 100
@@ -95,7 +94,7 @@ function dashElementRow(count: number, col = false): DashElement[] {
   let elements: DashElement[] = [];
   for (let i = 0; i < count; i++) {
     elements.push({
-      reportId: '1',
+      reportID: 1,
       chartType: ChartType.BubbleCloud, // TODO: change this to none when reports are selectable
       width: col ? 50 : 100 / count,
       height: col ? 100 / count : 50

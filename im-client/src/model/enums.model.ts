@@ -1,8 +1,8 @@
 export enum ChartType {
   None = 'None',
-  Bar = 'Bar',
-  Line = 'Line',
-  Pie = 'Pie',
+  //Bar = 'Bar',
+  //Line = 'Line',
+  //Pie = 'Pie',
   BubbleCloud = 'BubbleCloud'
 }
 
