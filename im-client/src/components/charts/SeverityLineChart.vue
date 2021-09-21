@@ -30,11 +30,6 @@ export default {
         .attr("text-anchor", "middle")
         .style("overflow", "visible");
 
-      // TODO: get data from the method above
-
-      svg.append("g").call(xAxis);
-      svg.append("g").call(yAxis);
-
       const path = svg
         .append("g")
         .attr("fill", "none")
@@ -61,6 +56,31 @@ export default {
         })),
         dates: columns.map(d3.utcParse("%m/%d/%y")),
       };
+
+      const xAxis = (g) =>
+        g.attr("transform", `translate(0,${height - margin.bottom})`).call(
+          d3
+            .axisBottom(x)
+            .tickSizeOuter(0)
+        );
+
+      const yAxis = (g) =>
+        g
+          .attr("transform", `translate(${margin.left},0)`)
+          .call(d3.axisLeft(y))
+          .call((g) => g.select(".domain").remove())
+          .call((g) =>
+            g
+              .select(".tick:last-of-type text")
+              .clone()
+              .attr("x", 3)
+              .attr("text-anchor", "start")
+              .attr("font-weight", "bold")
+              .text(data.y)
+          );
+
+      svg.append("g").call(xAxis);
+      svg.append("g").call(yAxis);
 
       function hover(svg, path) {
         if ("ontouchstart" in document)
@@ -129,29 +149,6 @@ export default {
         .domain([0, d3.max(data.series, (d) => d3.max(d.values))])
         .nice()
         .range([height - margin.bottom, margin.top]);
-
-      const xAxis = (g) =>
-        g.attr("transform", `translate(0,${height - margin.bottom})`).call(
-          d3
-            .axisBottom(x)
-            .ticks(width / 80)
-            .tickSizeOuter(0)
-        );
-
-      const yAxis = (g) =>
-        g
-          .attr("transform", `translate(${margin.left},0)`)
-          .call(d3.axisLeft(y))
-          .call((g) => g.select(".domain").remove())
-          .call((g) =>
-            g
-              .select(".tick:last-of-type text")
-              .clone()
-              .attr("x", 3)
-              .attr("text-anchor", "start")
-              .attr("font-weight", "bold")
-              .text(data.y)
-          );
 
       const line = d3
         .line()
