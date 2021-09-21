@@ -4,7 +4,7 @@
       <h4 class="p-mb-0">{{chartData.name}}</h4>
       <BubbleCloudChart v-if="chartType == ChartType.BubbleCloud" :chartData="chartData.data" :id="idx"/>
       <FrequencyLineChart v-if="chartType == ChartType.Line" :chartData="chartData.data" :id="idx"/>
-      <SeverityLineChart v-if="chartType == ChartType.Line" :chartData="chartData.data" :id="idx"/>
+      <!-- <SeverityLineChart v-if="chartType == ChartType.Line" :chartData="chartData.data" :id="idx"/> -->
     </template>
     <template v-else>
       <Loader />
@@ -14,7 +14,7 @@
 
 <script lang="ts">
 import { ChartType } from "@/model/enums.model";
-import { computed, defineComponent } from "vue";
+import { computed, defineComponent, onBeforeUpdate } from "vue";
 import BubbleCloudChart from "@/components/charts/BubbleCloudChart.vue";
 import FrequencyLineChart from "@/components/charts/FrequencyLineChart.vue";
 import SeverityLineChart from "@/components/charts/SeverityLineChart.vue";
@@ -23,7 +23,7 @@ import { useStore } from "@/store/index";
 
 export default defineComponent({
   name: "DashboardElement",
-  components: { BubbleCloudChart, FrequencyLineChart, SeverityLineChart, Loader },
+  components: { BubbleCloudChart, FrequencyLineChart, Loader },
   props: {
     chartType: {
       type: String,
@@ -37,9 +37,11 @@ export default defineComponent({
   },
   setup(props) {
     const store = useStore();
-    if (!store.getters.getReportData(props.reportID)) store.dispatch('loadReportData', { reportID: props.reportID });
-
+    const loadData = () => { if (!store.getters.getReportData(props.reportID)) store.dispatch('loadReportData', { reportID: props.reportID }); }
+    loadData();
     const chartData = computed(() => store.getters.getReportData(props.reportID));
+
+    onBeforeUpdate(loadData);
 
     return { chartData, ChartType }
   }
