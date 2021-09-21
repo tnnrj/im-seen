@@ -1,26 +1,26 @@
 <template>
-  <div :id="'chart-'+id" style="width:100%;height:100%;">
-  </div>
+  <div :id="'chart-' + id" style="width: 100%; height: 100%"></div>
 </template>
 
 <script>
 import * as d3 from "d3";
-import _ from 'lodash';
+import _ from "lodash";
 
 export default {
   name: "FrequencyLineChart",
-  props: ['chartData', 'id'],
+  props: ["chartData", "id"],
   mounted() {
     this.main();
   },
   methods: {
-   main() {
+    main() {
       // height and width should be calculated by element width
       const width = document.getElementById("chart-" + this.id).clientWidth;
       const height = document.getElementById("chart-" + this.id).clientHeight;
       const minDimension = width < height ? width : height;
 
       //We are accessing the div with the id chart using d3's select method and appending svg
+      /***** START D3.js CHART CODE *******/
       const svg = d3
         .select("#chart-" + this.id)
         .append("svg")
@@ -32,41 +32,76 @@ export default {
         .attr("text-anchor", "middle")
         .style("overflow", "visible");
 
-      // parse data from prop
-      const columns = _.uniq(this.chartData.map(cd => cd.date));
-      const names = _.uniq(this.chartData.map(cd => cd.name));
+      /** Set margin **/
+      const margin = { top: 20, right: 20, bottom: 20, left: 30 };
+
+      /** Helper for parsing date strings **/
+      const parser = d3.utcParse("%Y-%m-%dT%H:%M:%S");
+
+      /** Color styling vars **/
+      const colorscheme = d3.interpolateTurbo;
+
+      /** Parse data from prop **/
+      const columns = _.uniq(this.chartData.map((cd) => cd.date));
+      const names = _.uniq(this.chartData.map((cd) => cd.name));
 
       const data = {
         y: "Frequency of Observations",
-        series: names.map(n => ({
+        series: names.map((n) => ({
           name: n,
-          values: columns.map(d => {
-            let match = _.find(this.chartData, cd => cd.date == d && cd.name == n);
-            return match ? match.value : 0
+          values: columns.map((d) => {
+            let match = _.find(
+              this.chartData,
+              (cd) => cd.date == d && cd.name == n
+            );
+            return match ? match.value : 0;
           }),
+          color: colorscheme(Math.random())
         })),
-        dates: columns.map(d => new Date(Date.parse(d)).toLocaleDateString()),
+        dates: columns.map((d) => parser(d)),
       };
-      console.log(data);
+      console.log(data); // for debugging :)
 
+      /** Format x and y axis **/
+      const x = d3
+        .scaleUtc()
+        .domain(d3.extent(data.dates))
+        .range([margin.left, width - margin.right]);
+
+      const y = d3
+        .scaleLinear()
+        .domain([0, d3.max(data.series, (d) => d3.max(d.values))+1])
+        .nice()
+        .range([height - margin.bottom, margin.top]);
+
+      const xAxis = (g) =>
+        g.attr("transform", `translate(0,${height - margin.bottom})`).call(
+          d3
+            .axisBottom(x)
+            .ticks(width / 80)
+            .tickSizeOuter(0)
+        );
+
+      const yAxis = (g) =>
+        g
+          .attr("transform", `translate(${margin.left},0)`)
+          .call(d3.axisLeft(y))
+          .call((g) => g.select(".domain").remove())
+          .call((g) =>
+            g
+              .select(".tick:last-of-type text")
+              .clone()
+              .attr("x", 3)
+              .attr("text-anchor", "start")
+              .attr("font-weight", "bold")
+              .text(data.y)
+          );
+
+      /** Add axis to chart **/
       svg.append("g").call(xAxis);
       svg.append("g").call(yAxis);
 
-      const path = svg
-        .append("g")
-        .attr("fill", "none")
-        .attr("stroke-width", 1.5)
-        .attr("stroke-linejoin", "round")
-        .attr("stroke-linecap", "round")
-        .selectAll("path")
-        .data(data.series)
-        .join("path")
-        .style("mix-blend-mode", "multiply")
-        .attr("d", (d) => line(d.values))
-        .attr("stroke", (d) => color(Math.random() * 10));
-
-      svg.call(hover, path);
-
+      /** Interactive elements! :D **/
       function hover(svg, path) {
         if ("ontouchstart" in document)
           svg
@@ -112,63 +147,42 @@ export default {
         function entered() {
           path
             .style("mix-blend-mode", null)
-            .attr("stroke", (d) => color(Math.random() * 10));
+            .attr("stroke", (d) => d.color);
           dot.attr("display", null);
         }
 
         function left() {
           path
             .style("mix-blend-mode", "multiply")
-            .attr("stroke", (d) => color(Math.random() * 10));
+            .attr("stroke", (d) => d.color);
           dot.attr("display", "none");
         }
       }
 
-      const x = d3
-        .scaleUtc()
-        .domain(d3.extent(data.dates))
-        .range([margin.left, width - margin.right]);
-
-      const y = d3
-        .scaleLinear()
-        .domain([0, d3.max(data.series, (d) => d3.max(d.values))])
-        .nice()
-        .range([height - margin.bottom, margin.top]);
-
-      const xAxis = (g) =>
-        g.attr("transform", `translate(0,${height - margin.bottom})`).call(
-          d3
-            .axisBottom(x)
-            .ticks(width / 80)
-            .tickSizeOuter(0)
-        );
-
-      const yAxis = (g) =>
-        g
-          .attr("transform", `translate(${margin.left},0)`)
-          .call(d3.axisLeft(y))
-          .call((g) => g.select(".domain").remove())
-          .call((g) =>
-            g
-              .select(".tick:last-of-type text")
-              .clone()
-              .attr("x", 3)
-              .attr("text-anchor", "start")
-              .attr("font-weight", "bold")
-              .text(data.y)
-          );
-
+      /** Add lines for data **/
       const line = d3
         .line()
         .defined((d) => !isNaN(d))
         .x((d, i) => x(data.dates[i]))
         .y((d) => y(d));
 
-      const colorscheme = d3.schemeSpectral[11];
-      const color = d3.scaleOrdinal(d3.range(11), colorscheme);
-    }
-  }
-}
+      const path = svg
+        .append("g")
+        .attr("fill", "none")
+        .attr("stroke-width", 1.5)
+        .attr("stroke-linejoin", "round")
+        .attr("stroke-linecap", "round")
+        .selectAll("path")
+        .data(data.series)
+        .join("path")
+        .style("mix-blend-mode", "multiply")
+        .attr("d", (d) => line(d.values))
+        .attr("stroke", (d) => d.color);
+
+      svg.call(hover, path);
+    },
+  },
+};
 </script>
 
 <style>

@@ -19,6 +19,7 @@ export default {
       const minDimension = width < height ? width : height;
 
       //We are accessing the div with the id chart using d3's select method and appending svg
+      /***** START D3.js CHART CODE *******/
       const svg = d3
         .select("#chart-" + this.id)
         .append("svg")
@@ -30,37 +31,53 @@ export default {
         .attr("text-anchor", "middle")
         .style("overflow", "visible");
 
-      const path = svg
-        .append("g")
-        .attr("fill", "none")
-        .attr("stroke-width", 1.5)
-        .attr("stroke-linejoin", "round")
-        .attr("stroke-linecap", "round")
-        .selectAll("path")
-        .data(data.series)
-        .join("path")
-        .style("mix-blend-mode", "multiply")
-        .attr("d", (d) => line(d.values))
-        .attr("stroke", (d) => color(Math.random() * 10));
+      /** Set margin **/
+      const margin = { top: 20, right: 20, bottom: 20, left: 30 };
 
-      svg.call(hover, path);
+      /** Helper for parsing date strings **/
+      const parser = d3.utcParse("%Y-%m-%dT%H:%M:%S");
 
-      const testdata = await d3.csv("Severity.csv");
-      const columns = Object.keys(testdata[0]).slice(1);
+      /** Color styling vars **/
+      const colorscheme = d3.interpolateTurbo;
+
+      /** Parse data from prop **/
+      const columns = _.uniq(this.chartData.map((cd) => cd.date));
+      const names = _.uniq(this.chartData.map((cd) => cd.name));
 
       const data = {
         y: "Severity of Observations",
-        series: testdata.map((d) => ({
-          name: d.Name,
-          values: columns.map((k) => +d[k]),
+        series: names.map((n) => ({
+          name: n,
+          values: columns.map((d) => {
+            let match = _.find(
+              this.chartData,
+              (cd) => cd.date == d && cd.name == n
+            );
+            return match ? match.value : 0;
+          }),
+          color: colorscheme(Math.random()),
         })),
-        dates: columns.map(d3.utcParse("%m/%d/%y")),
+        dates: columns.map((d) => parser(d)),
       };
+      console.log(data); // for debugging :)
+
+      /** Format x and y axis **/
+      const x = d3
+        .scaleUtc()
+        .domain(d3.extent(data.dates))
+        .range([margin.left, width - margin.right]);
+
+      const y = d3
+        .scaleLinear()
+        .domain([0, d3.max(data.series, (d) => d3.max(d.values)) + 1])
+        .nice()
+        .range([height - margin.bottom, margin.top]);
 
       const xAxis = (g) =>
         g.attr("transform", `translate(0,${height - margin.bottom})`).call(
           d3
             .axisBottom(x)
+            .ticks(width / 80)
             .tickSizeOuter(0)
         );
 
@@ -79,9 +96,11 @@ export default {
               .text(data.y)
           );
 
+      /** Add axis to chart **/
       svg.append("g").call(xAxis);
       svg.append("g").call(yAxis);
 
+      /** Interactive elements! :D **/
       function hover(svg, path) {
         if ("ontouchstart" in document)
           svg
@@ -125,41 +144,39 @@ export default {
         }
 
         function entered() {
-          path
-            .style("mix-blend-mode", null)
-            .attr("stroke", (d) => color(Math.random() * 10));
+          path.style("mix-blend-mode", null).attr("stroke", (d) => d.color);
           dot.attr("display", null);
         }
 
         function left() {
           path
             .style("mix-blend-mode", "multiply")
-            .attr("stroke", (d) => color(Math.random() * 10));
+            .attr("stroke", (d) => d.color);
           dot.attr("display", "none");
         }
       }
 
-      const x = d3
-        .scaleUtc()
-        .domain(d3.extent(data.dates))
-        .range([margin.left, width - margin.right]);
-
-      const y = d3
-        .scaleLinear()
-        .domain([0, d3.max(data.series, (d) => d3.max(d.values))])
-        .nice()
-        .range([height - margin.bottom, margin.top]);
-
+      /** Add lines for data **/
       const line = d3
         .line()
         .defined((d) => !isNaN(d))
         .x((d, i) => x(data.dates[i]))
         .y((d) => y(d));
 
-      const colorscheme = d3.schemeSpectral[11];
-      const color = d3.scaleOrdinal(d3.range(11), colorscheme);
+      const path = svg
+        .append("g")
+        .attr("fill", "none")
+        .attr("stroke-width", 1.5)
+        .attr("stroke-linejoin", "round")
+        .attr("stroke-linecap", "round")
+        .selectAll("path")
+        .data(data.series)
+        .join("path")
+        .style("mix-blend-mode", "multiply")
+        .attr("d", (d) => line(d.values))
+        .attr("stroke", (d) => d.color);
 
-      const parser = d3.utcParse("%m/%d/%y");
+      svg.call(hover, path);
     },
   },
 };
