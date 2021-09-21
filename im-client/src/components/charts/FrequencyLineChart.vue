@@ -5,6 +5,7 @@
 
 <script>
 import * as d3 from "d3";
+import _ from 'lodash';
 
 export default {
   name: "FrequencyLineChart",
@@ -31,7 +32,22 @@ export default {
         .attr("text-anchor", "middle")
         .style("overflow", "visible");
 
-      // TODO: get data from the method above
+      // parse data from prop
+      const columns = _.uniq(this.chartData.map(cd => cd.date));
+      const names = _.uniq(this.chartData.map(cd => cd.name));
+
+      const data = {
+        y: "Frequency of Observations",
+        series: names.map(n => ({
+          name: n,
+          values: columns.map(d => {
+            let match = _.find(this.chartData, cd => cd.date == d && cd.name == n);
+            return match ? match.value : 0
+          }),
+        })),
+        dates: columns.map(d => new Date(Date.parse(d)).toLocaleDateString()),
+      };
+      console.log(data);
 
       svg.append("g").call(xAxis);
       svg.append("g").call(yAxis);
@@ -50,18 +66,6 @@ export default {
         .attr("stroke", (d) => color(Math.random() * 10));
 
       svg.call(hover, path);
-
-      const testdata = await d3.csv("Frequency.csv");
-      const columns = Object.keys(testdata[0]).slice(1);
-
-      const data = {
-        y: "Frequency of Observations",
-        series: testdata.map((d) => ({
-          name: d.Name,
-          values: columns.map((k) => +d[k]),
-        })),
-        dates: columns.map(d3.utcParse("%m/%d/%y")),
-      };
 
       function hover(svg, path) {
         if ("ontouchstart" in document)
@@ -162,8 +166,6 @@ export default {
 
       const colorscheme = d3.schemeSpectral[11];
       const color = d3.scaleOrdinal(d3.range(11), colorscheme);
-
-      const parser = d3.utcParse("%m/%d/%y");
     }
   }
 }
