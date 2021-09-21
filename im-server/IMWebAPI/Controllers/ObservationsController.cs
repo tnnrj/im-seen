@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace IMWebAPI.Controllers
 { 
+    [Authorize]
     [ApiController]
     [EnableCors]
     [Route("api/Observations")]
@@ -99,6 +100,7 @@ namespace IMWebAPI.Controllers
         // POST: api/Observations
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [AllowAnonymous]
         [HttpPost]
         public async Task<ActionResult<Observation>> PostObservation(Observation observ)
         {

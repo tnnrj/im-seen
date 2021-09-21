@@ -48,7 +48,6 @@ namespace IMWebAPI.Controllers
             return report;
         }
 
-        [Authorize]
         [HttpGet]
         [Route("GetDataForReport")]
         public async Task<ActionResult<string>> GetDataForReport(int id)
