@@ -4,6 +4,7 @@
       <h4 class="p-mb-0">{{chartData.name}}</h4>
       <BubbleCloudChart v-if="chartType == ChartType.BubbleCloud" :chartData="chartData.data" :id="idx"/>
       <FrequencyLineChart v-if="chartType == ChartType.Line" :chartData="chartData.data" :id="idx"/>
+      <SeverityLineChart v-if="chartType == ChartType.Line" :chartData="chartData.data" :id="idx"/>
     </template>
     <template v-else>
       <Loader />
@@ -16,12 +17,13 @@ import { ChartType } from "@/model/enums.model";
 import { computed, defineComponent } from "vue";
 import BubbleCloudChart from "@/components/charts/BubbleCloudChart.vue";
 import FrequencyLineChart from "@/components/charts/FrequencyLineChart.vue";
+import SeverityLineChart from "@/components/charts/SeverityLineChart.vue";
 import Loader from "@/components/Loader.vue";
 import { useStore } from "@/store/index";
 
 export default defineComponent({
   name: "DashboardElement",
-  components: { BubbleCloudChart, FrequencyLineChart, Loader },
+  components: { BubbleCloudChart, FrequencyLineChart, SeverityLineChart, Loader },
   props: {
     chartType: {
       type: String,

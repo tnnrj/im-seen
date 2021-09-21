@@ -27,6 +27,11 @@ namespace IMWebAPI.Data
                 {
                     ReportName = "Observation Frequency by Student and Date",
                     Query = "SELECT StudentName as name, ObservationDate as date, COUNT(*) as value FROM Observations GROUP BY StudentName, ObservationDate ORDER BY ObservationDate"
+                },
+                new Report
+                {
+                    ReportName = "Observation Severity by Student and Date",
+                    Query = "SELECT StudentName as name, ObservationDate as date, SUM(Severity) as value FROM Observations GROUP BY StudentName, ObservationDate ORDER BY ObservationDate"
                 }
             };
 

@@ -45,7 +45,7 @@ export default {
       const names = _.uniq(this.chartData.map((cd) => cd.name));
 
       const data = {
-        y: "Severity of Observations",
+        y: "Total Severity of Observations",
         series: names.map((n) => ({
           name: n,
           values: columns.map((d) => {
