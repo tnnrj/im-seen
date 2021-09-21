@@ -60,7 +60,6 @@ export default {
         })),
         dates: columns.map((d) => parser(d)),
       };
-      console.log(data); // for debugging :)
 
       /** Format x and y axis **/
       const x = d3
