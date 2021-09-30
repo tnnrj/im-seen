@@ -4,10 +4,11 @@
 
 <script>
 import * as d3 from "d3";
+import _ from "lodash";
 
 export default {
-  name: "SeverityLineChart",
-  props: ["chartData", "id"],
+  name: "LineChart",
+  props: ["chartData", "id", "axis1Name", "axis2Name"],
   mounted() {
     this.main();
   },
@@ -45,7 +46,7 @@ export default {
       const names = _.uniq(this.chartData.map((cd) => cd.name));
 
       const data = {
-        y: "Total Severity of Observations",
+        y: this.axis2Name,
         series: names.map((n) => ({
           name: n,
           values: columns.map((d) => {
@@ -55,11 +56,10 @@ export default {
             );
             return match ? match.value : 0;
           }),
-          color: colorscheme(Math.random()),
+          color: colorscheme(Math.random())
         })),
         dates: columns.map((d) => parser(d)),
       };
-      console.log(data); // for debugging :)
 
       /** Format x and y axis **/
       const x = d3
@@ -69,7 +69,7 @@ export default {
 
       const y = d3
         .scaleLinear()
-        .domain([0, d3.max(data.series, (d) => d3.max(d.values)) + 1])
+        .domain([0, d3.max(data.series, (d) => d3.max(d.values))+1])
         .nice()
         .range([height - margin.bottom, margin.top]);
 
@@ -144,7 +144,9 @@ export default {
         }
 
         function entered() {
-          path.style("mix-blend-mode", null).attr("stroke", (d) => d.color);
+          path
+            .style("mix-blend-mode", null)
+            .attr("stroke", (d) => d.color);
           dot.attr("display", null);
         }
 

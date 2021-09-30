@@ -12,5 +12,8 @@ namespace IMWebAPI.Models
         public string ReportName { get; set; }
 
         public string Query { get; set; }
+
+        public string Axis1Name { get; set; }
+        public string Axis2Name { get; set; }
     }
 }

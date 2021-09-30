@@ -63,6 +63,8 @@ namespace IMWebAPI.Controllers
 
             var response = new JObject();
             response.Add("name", report.ReportName);
+            response.Add("axis1Name", report.Axis1Name);
+            response.Add("axis2Name", report.Axis2Name);
             response.Add("data", data);
             return Content(response.ToString(), "application/json");
         }

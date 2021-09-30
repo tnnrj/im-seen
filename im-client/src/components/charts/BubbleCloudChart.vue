@@ -40,7 +40,7 @@ export default {
         .size([width-2, height-2])
         .padding(3)
         (d3.hierarchy({children: data})
-        .sum(d => d.severity));
+        .sum(d => d.value));
 
       // each leaf represents one student - this is selecting nodes from the data essentially
       const leaf = svg.selectAll("g")
@@ -77,7 +77,7 @@ export default {
       leaf.append("text")
         .attr("clip-path", d => d.clipUid)
         .selectAll("tspan")
-        .data(d => d.data.studentName.split(/(?=[A-Z][a-z])|\s+/g)) //+ "\n(" + d.data.severity + ")")
+        .data(d => d.data.name.split(/(?=[A-Z][a-z])|\s+/g)) //+ "\n(" + d.data.severity + ")")
         .join("tspan")
         .attr("x", 0)
         .attr("y", (d, i, nodes) => `${i - nodes.length / 2 + 0.8}em`)
@@ -85,7 +85,7 @@ export default {
 
       // title is the student's name
       leaf.append("title")
-        .text(d => d.data.studentName === undefined ? "" : d.data.studentName);
+        .text(d => d.data.name === undefined ? "" : d.data.name);
 
 //////////////////////////////////// END D3.js CODE
     }

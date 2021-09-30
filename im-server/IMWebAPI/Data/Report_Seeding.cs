@@ -21,17 +21,23 @@ namespace IMWebAPI.Data
                 new Report
                 {
                     ReportName = "Students Grouped by Total Observation Severity",
-                    Query = "SELECT studentName, SUM(severity) AS severity FROM Observations GROUP BY studentName"
+                    Query = "SELECT StudentName as name, SUM(Severity) AS value FROM Observations GROUP BY StudentName",
+                    Axis1Name = "Student",
+                    Axis2Name = "Total Observation Severity"
                 },
                 new Report
                 {
                     ReportName = "Observation Frequency by Student and Date",
-                    Query = "SELECT StudentName as name, ObservationDate as date, COUNT(*) as value FROM Observations GROUP BY StudentName, ObservationDate ORDER BY ObservationDate"
+                    Query = "SELECT StudentName as name, CAST(ObservationDate AS DATE) as date, COUNT(*) as value FROM Observations GROUP BY StudentName, CAST(ObservationDate AS DATE) ORDER BY ObservationDate",
+                    Axis1Name = "Date",
+                    Axis2Name = "Frequency of Observations"
                 },
                 new Report
                 {
                     ReportName = "Observation Severity by Student and Date",
-                    Query = "SELECT StudentName as name, ObservationDate as date, SUM(Severity) as value FROM Observations GROUP BY StudentName, ObservationDate ORDER BY ObservationDate"
+                    Query = "SELECT StudentName as name, CAST(ObservationDate AS DATE) as date, SUM(Severity) as value FROM Observations GROUP BY StudentName, CAST(ObservationDate AS DATE) ORDER BY ObservationDate",
+                    Axis1Name = "Date",
+                    Axis2Name = "Severity of Observations"
                 }
             };
 
