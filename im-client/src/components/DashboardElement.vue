@@ -6,6 +6,8 @@
       
       <LineChart v-else-if="chartType == ChartType.Line" :chartData="chartData.data" :axis1Name="chartData.axis1Name" 
         :axis2Name="chartData.axis2Name" :id="idx" />
+      <BarChart v-else-if="chartType == ChartType.Bar" :chartData="chartData.data" :axis1Name="chartData.axis1Name" 
+        :axis2Name="chartData.axis2Name" :id="idx" />
     </template>
     <template v-else>
       <Loader />
@@ -18,12 +20,13 @@ import { ChartType } from "@/model/enums.model";
 import { computed, defineComponent, onBeforeUpdate } from "vue";
 import BubbleCloudChart from "@/components/charts/BubbleCloudChart.vue";
 import LineChart from "@/components/charts/LineChart.vue";
+import BarChart from "@/components/charts/BarChart.vue";
 import Loader from "@/components/Loader.vue";
 import { useStore } from "@/store/index";
 
 export default defineComponent({
   name: "DashboardElement",
-  components: { BubbleCloudChart, LineChart, Loader },
+  components: { BubbleCloudChart, LineChart, BarChart, Loader },
   props: {
     chartType: {
       type: String,

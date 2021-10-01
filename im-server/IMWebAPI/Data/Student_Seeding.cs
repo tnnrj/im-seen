@@ -19,10 +19,39 @@ namespace IMWebAPI.Data
             var students = new Student[]
             {
                 new Student {LastName="Harry"},
-
                 new Student {LastName="Hermione"},
+                new Student {LastName="Draco"},
+                new Student {LastName="Marcus"},
+                new Student {LastName="Woodley"},
+                new Student {LastName="Burch"},
 
-                new Student {LastName="Draco"}
+                new Student {LastName="Garza"},
+                new Student {LastName="Rooney"},
+                new Student {LastName="Beach"},
+                new Student {LastName="Goodwin"},
+                new Student {LastName="Pittman"},
+                new Student {LastName="Murray"},
+
+                new Student {LastName="Peacock"},
+                new Student {LastName="Mcghee"},
+                new Student {LastName="Herring"},
+                new Student {LastName="Ryder"},
+                new Student {LastName="Prince"},
+                new Student {LastName="Cecily"},
+
+                new Student {LastName="Mohammed"},
+                new Student {LastName="Cruz"},
+                new Student {LastName="Hayward"},
+                new Student {LastName="Louisa"},
+                new Student {LastName="Zack"},
+                new Student {LastName="Nojus"},
+
+                new Student {LastName="Ismail"},
+                new Student {LastName="Powell"},
+                new Student {LastName="Maheen"},
+                new Student {LastName="Zubair"},
+                new Student {LastName="Arissa"},
+                new Student {LastName="Astrid"},
             };
 
             context.Students.AddRange(students);

@@ -8,13 +8,13 @@ import * as d3 from "d3";
 
 export default {
  name: "BarChart",
-  props: ['chartData', 'id'],
+  props: ['chartData', 'id', "axis1Name", "axis2Name"],
   mounted() {
     this.main();
   },
   methods: {
     main() {
-
+      console.log(this.chartData);
     }
   }
 }
