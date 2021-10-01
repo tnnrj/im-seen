@@ -28,14 +28,14 @@ namespace IMWebAPI.Data
                 new Report
                 {
                     ReportName = "Observation Frequency by Student and Date",
-                    Query = "SELECT StudentName as name, CAST(ObservationDate AS DATE) as date, COUNT(*) as value FROM Observations GROUP BY StudentName, CAST(ObservationDate AS DATE) ORDER BY ObservationDate",
+                    Query = "SELECT StudentName as name, CAST(ObservationDate AS DATE) as date, COUNT(*) as value FROM Observations GROUP BY StudentName, ObservationDate ORDER BY ObservationDate",
                     Axis1Name = "Date",
                     Axis2Name = "Frequency of Observations"
                 },
                 new Report
                 {
                     ReportName = "Observation Severity by Student and Date",
-                    Query = "SELECT StudentName as name, CAST(ObservationDate AS DATE) as date, SUM(Severity) as value FROM Observations GROUP BY StudentName, CAST(ObservationDate AS DATE) ORDER BY ObservationDate",
+                    Query = "SELECT StudentName as name, CAST(ObservationDate AS DATE) as date, SUM(Severity) as value FROM Observations GROUP BY StudentName, ObservationDate ORDER BY ObservationDate",
                     Axis1Name = "Date",
                     Axis2Name = "Severity of Observations"
                 }
