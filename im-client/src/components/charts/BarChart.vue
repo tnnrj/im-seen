@@ -38,6 +38,13 @@ export default {
         return a.value - b.value;
       });
 
+      // add label
+      svg.append("text")
+        .text("Total severity")
+        .style("text-anchor", "middle")
+        .style("font-size", "12px")
+        .attr('transform', 'translate(' + (0) + ', ' + (-5) + ')');
+
       // add X axis
       // scale for x axis
       let xScale = d3.scaleBand()
