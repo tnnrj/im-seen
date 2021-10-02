@@ -52,7 +52,12 @@ namespace IMWebAPI.Controllers
         {
             var dashboard = _context.Dashboards.FirstOrDefault(d => d.UserName == User.Identity.Name);
 
-            // we're okay with returning null here, as the client will just use a default dashboard configuration
+            if (dashboard == null)
+            {
+                // default dashboard configuration with no user assigned
+                dashboard = _context.Dashboards.FirstOrDefault(d => string.IsNullOrEmpty(d.UserName));
+            }
+
             return dashboard;
         }
 

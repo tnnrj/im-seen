@@ -16,6 +16,7 @@ namespace IMWebAPI.Data
             Student_Seeding.SeedStudents(context);
             Observation_Seeding.SeedObservations(context);
             Report_Seeding.SeedReports(context);
+            Dashboard_Seeding.SeedDashboards(context);
         }
     }
 }
