@@ -94,8 +94,8 @@ function dashElementRow(count: number, col = false): DashElement[] {
   let elements: DashElement[] = [];
   for (let i = 0; i < count; i++) {
     elements.push({
-      reportID: 3,
-      chartType: ChartType.BubbleCloud, // TODO: change this to none when reports are selectable
+      reportID: 0,
+      chartType: ChartType.None,
       width: col ? 50 : 100 / count,
       height: col ? 100 / count : 50
     });

@@ -23,12 +23,12 @@ const routes: Array<RouteRecordRaw> = [
     meta: { requiresAuth: true }
   },
   {
-    path: "/reports",
-    name: "Reports",
+    path: "/observations",
+    name: "Observations",
     // route level code-splitting
-    // this generates a separate chunk (reports.[hash].js) for this route
+    // this generates a separate chunk (observations.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "reports" */ "@/views/Reports.vue"),
+    component: () => import(/* webpackChunkName: "observations" */ "@/views/Observations.vue"),
     meta: { requiresAuth: true }
   },
   {

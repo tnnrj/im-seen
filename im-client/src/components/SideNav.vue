@@ -43,8 +43,8 @@ export default defineComponent({
       show: true
     },
     {
-      title: 'Reports',
-      link: '/reports',
+      title: 'Observations',
+      link: '/observations',
       iconStyle: 'pi-list',
       show: true
     },
