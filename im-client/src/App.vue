@@ -27,7 +27,11 @@ export default defineComponent({
   },
   setup () {
     const store = useStore();
-    const isAuthenticated = computed(() => store.getters.isAuthenticated);
+    const isAuthenticated = computed(() => store.state.isAuthenticated);
+    if (store.state.isAuthenticated) {
+      // need to load user on every refresh
+      store.dispatch('getUser');
+    }
     return { isAuthenticated };
   }
 })

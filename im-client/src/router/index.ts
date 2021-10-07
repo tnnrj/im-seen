@@ -47,12 +47,12 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   // auth guard
-  if (to.matched.some(record => record.meta.requiresAuth) && !store.getters.isAuthenticated) {
+  if (to.matched.some(record => record.meta.requiresAuth) && !store.state.isAuthenticated) {
     next('/login');
     return;
   }  
   // login redirect
-  if (to.matched.some(record => record.meta.guest) && store.getters.isAuthenticated) {
+  if (to.matched.some(record => record.meta.guest) && store.state.isAuthenticated) {
     next('/');
     return;
   }

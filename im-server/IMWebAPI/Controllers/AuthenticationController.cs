@@ -143,8 +143,9 @@ namespace IMWebAPI.Controllers
             var username = User.Identity.Name;
             var user = await _userManager.FindByNameAsync(username);
             if (user == null) return BadRequest();
+            var roles = await _userManager.GetRolesAsync(user);
 
-            return Ok(new { User = user });
+            return Ok(new { User = user, Role = roles.First() });
         }
 
         [HttpPost]

@@ -50,7 +50,7 @@ import router from "@/router";
 import authenticationService from "@/services/authentication.service";
 
 export default defineComponent({
-  name: 'Login',
+  name: 'Register',
   components: { Loader },
   props: {
     username: {
@@ -64,7 +64,7 @@ export default defineComponent({
   },
   setup(props) {
     const store = useStore();
-    if (store.getters.isAuthenticated) store.dispatch('logOut');
+    if (store.state.isAuthenticated) store.dispatch('logOut');
     const form = ref({ firstname: "", lastname: "", job: "", password: "", passwordConfirm: "", currentPassword: props.token, username: props.username });
     const submitted = ref(false);
     const errorText = ref();

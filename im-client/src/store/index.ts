@@ -3,12 +3,15 @@ import { createStore, Store, useStore as baseUseStore } from 'vuex';
 import reportDataService from '@/services/report-data.service';
 import ObservationsService from '@/services/observations.service';
 import { Observation } from '@/model/observations.model';
-import auth from './modules/auth';
+import authenticationService from "@/services/authentication.service";
+import { User } from '@/model/user.model';
 
 // define our type for the store state
 export interface State {
   chartDatas: Map<string, any>;
   observations: Observation[] | undefined;
+  user: User | undefined;
+  isAuthenticated: boolean;
 }
 
 // define injection key
@@ -18,7 +21,9 @@ export const key: InjectionKey<Store<State>> = Symbol()
 export const store = createStore<State>({
   state: {
     chartDatas: new Map<string, any>(),
-    observations: undefined
+    observations: undefined,
+    user: undefined,
+    isAuthenticated: authenticationService.isLoggedIn()
   },
   getters: {
     getReportData: (state) => (reportID) => {
@@ -31,6 +36,10 @@ export const store = createStore<State>({
     },
     setAllObservations(state, payload) {
       state.observations = payload.observations;
+    },
+    setUser(state, user) {
+      state.user = user;
+      state.isAuthenticated = !!user;
     }
   },
   actions: {
@@ -43,11 +52,23 @@ export const store = createStore<State>({
     async loadAllObservations({ commit }) {
       let response = await ObservationsService.getObservations();
       commit('setAllObservations', { observations: response });
+    },
+    // authentication below
+    async logIn({commit}, form) {
+      await authenticationService.login(form);
+      let u = await authenticationService.getUser();
+      commit('setUser', u);
+    },
+    async logOut({commit}) {
+      authenticationService.logout();
+      commit('setUser', null);
+    },
+    async getUser({commit}) {
+      let u = await authenticationService.getUser();
+      commit('setUser', u);
     }
   }
 })
-
-store.registerModule('auth', auth);
 
 // define our own `useStore` composition function
 export function useStore () {
