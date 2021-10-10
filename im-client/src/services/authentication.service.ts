@@ -2,6 +2,7 @@ import http from '@/services/base-api.service';
 export default {
   login,
   logout,
+  getUser,
   isLoggedIn,
   addUser,
   changePassword
@@ -17,6 +18,12 @@ async function login(form: { username: string; password: string }): Promise<any>
 
 async function logout() {
   http.logout();
+}
+
+async function getUser() {
+  return http.get('Authentication/User').then(u => {
+    return { ...u.user, role: u.role }
+  });
 }
 
 function isLoggedIn() {

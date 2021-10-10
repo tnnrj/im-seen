@@ -11,7 +11,7 @@
     </div>
     <div class="account p-d-flex p-flex-column p-jc-end" @click="toggleAccountMenu">
       <i class="pi pi-user p-mb-3"></i>
-      <span>{{ username }}</span>
+      <span>{{ userName }}</span>
       <Menu ref="accountMenu" :model="accountMenuItems" :popup="true" />
     </div>
   </div>
@@ -55,7 +55,13 @@ export default defineComponent({
       show: isAdmin
     }];
 
-    const username = computed(() => store.getters.userRole.username);
+    const userName = computed(() => {
+      let u = store.state.user;
+      if (u) {
+        return u?.firstName + " " + u?.lastName;
+      }
+      return "";
+    });
     const accountMenu = ref();
     const toggleAccountMenu = function (event) {
       accountMenu.value.toggle(event);
@@ -70,7 +76,7 @@ export default defineComponent({
       }
     }];
 
-    return { navItems, username, accountMenu, toggleAccountMenu, accountMenuItems };
+    return { navItems, userName, accountMenu, toggleAccountMenu, accountMenuItems };
   }
 });
 </script>
