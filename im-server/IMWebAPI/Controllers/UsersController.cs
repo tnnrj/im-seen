@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace IMWebAPI.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Administrator, PrimaryActor, SupportingActor")]
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
@@ -90,6 +90,7 @@ namespace IMWebAPI.Controllers
         }
 
         // DELETE: api/Users/5
+        [Authorize(Roles = "Administrator")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<ApplicationUser>> DeleteUser(string id)
         {

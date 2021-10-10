@@ -35,7 +35,7 @@ namespace IMWebAPI.Controllers
 
         [HttpPost]
         [Route("Register")]
-        public async Task<IActionResult> Register(string email, string password, string job, string firstname, string lastname)
+        public async Task<IActionResult> Register(string email, string password, string role, string job, string firstname, string lastname)
         {
             if (!ModelState.IsValid || email == null)
                 return new BadRequestObjectResult(new { Message = "User Registration failed." });
@@ -52,8 +52,15 @@ namespace IMWebAPI.Controllers
             var result = await _userManager.CreateAsync(appUser, password);
             if (!result.Succeeded)
                 return new BadRequestObjectResult(new { Message = "User Registration failed. Could not create new account." });
-
-            result = await _userManager.AddToRoleAsync(appUser, "Observer");
+            if (role == null || (role != "Administrator" && role != "PrimaryActor" && role != "SupportingActor"))
+            {
+                result = await _userManager.AddToRoleAsync(appUser, "Observer");
+            }
+            else
+            {
+                result = await _userManager.AddToRoleAsync(appUser, role);
+            }
+            
             if (!result.Succeeded)
                 return new BadRequestObjectResult(new { Message = "User Registration Successful, but could not assign the appropriate role." });
 
@@ -141,7 +148,7 @@ namespace IMWebAPI.Controllers
             return Ok(new { Message = "Password changed successfully" });
         }
 
-        [HttpGet, Authorize]
+        [HttpGet, Authorize(Roles = "Administrator, PrimaryActor, SupportingActor")]
         [Route("User")]
         public async Task<IActionResult> GetUserInfo()
         {

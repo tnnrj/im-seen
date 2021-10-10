@@ -12,8 +12,8 @@ using IMWebAPI.Helpers;
 using Microsoft.AspNetCore.Authorization;
 
 namespace IMWebAPI.Controllers
-{ 
-    [Authorize]
+{
+    [Authorize(Roles = "Administrator, PrimaryActor, SupportingActor")]
     [ApiController]
     [EnableCors]
     [Route("api/Observations")]
@@ -125,6 +125,7 @@ namespace IMWebAPI.Controllers
         }
 
         // DELETE: api/Observations/5
+        [Authorize(Roles = "Administrator, PrimaryActor")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<Observation>> DeleteObservation(int id)
         {

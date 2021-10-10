@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace IMWebAPI.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Administrator, PrimaryActor, SupportingActor")]
     [Route("api/[controller]")]
     [ApiController]
     public class StudentsController : ControllerBase
@@ -47,6 +47,7 @@ namespace IMWebAPI.Controllers
         // PUT: api/Students/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [Authorize(Roles = "Administrator")]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutStudent(int id, Student student)
         {
@@ -79,6 +80,7 @@ namespace IMWebAPI.Controllers
         // POST: api/Students
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [Authorize(Roles = "Administrator")]
         [HttpPost]
         public async Task<ActionResult<Student>> PostStudent(Student student)
         {
@@ -89,6 +91,7 @@ namespace IMWebAPI.Controllers
         }
 
         // DELETE: api/Students/5
+        [Authorize(Roles = "Administrator")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<Student>> DeleteStudent(int id)
         {

@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace IMWebAPI.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Administrator, PrimaryActor")]
     [Route("api/[controller]")]
     [ApiController]
     public class SupportersController : ControllerBase
