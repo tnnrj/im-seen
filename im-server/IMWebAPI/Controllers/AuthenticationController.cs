@@ -49,13 +49,18 @@ namespace IMWebAPI.Controllers
                 password = Guid.NewGuid().ToString();
             }
 
-            var regResult = await _userManager.CreateAsync(appUser, password);
-            if (!regResult.Succeeded)
+            var result = await _userManager.CreateAsync(appUser, password);
+            if (!result.Succeeded)
                 return new BadRequestObjectResult(new { Message = "User Registration failed. Could not create new account." });
+
+            result = await _userManager.AddToRoleAsync(appUser, "Observer");
+            if (!result.Succeeded)
+                return new BadRequestObjectResult(new { Message = "User Registration Successful, but could not assign the appropriate role." });
+
 
             if (sendRegLink)
             {
-                _emailer.Send(email, "Create web portal account", "You have been added as a user on Canyons School District's mental web portal. Please follow the link below to activate your account.\n\n"
+                _emailer.Send(email, "Create web portal account", "You have been added as a user on Canyons School District's IMseen web portal. Please follow the link below to activate your account.\n\n"
                      + $"{{webUrl}}/register?username={email}&token={password}");
             }
 

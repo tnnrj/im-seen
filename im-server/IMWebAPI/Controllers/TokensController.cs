@@ -60,11 +60,11 @@ namespace IMWebAPI.Controllers
 
 
 
-        [HttpPost, Authorize]
+        [HttpPost, Authorize(Roles = "Administrator")]
         [Route("Revoke")]
-        public async Task<IActionResult> Revoke()
+        public async Task<IActionResult> Revoke(string username)
         {
-            var username = User.Identity.Name;
+            //var username = User.Identity.Name;
             var user = await userManager.FindByNameAsync(username);
             if (user == null) return BadRequest();
 
