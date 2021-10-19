@@ -69,7 +69,7 @@ export default defineComponent({
       authenticationService.addUser({ email: email.value as string }).then(() => {
         toast.add({severity:'success', summary:'Success', detail:'User invitation sent', life:3000});
         loadUsers();
-      }, () => {
+      }).catch(() => {
         toast.add({severity:'error', summary:'Error', detail:'Failed to add user. Try again later', life:3000});
       });
       showAddUserDialog.value = false;

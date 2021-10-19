@@ -10,15 +10,22 @@
         <span class="text-small p-m-3">(c) Paladin BI systems informatics etc</span>
       </div>
     </div>
+    <Dialog header="Error" v-model:visible="showErrorDialog" :modal="true">
+      <p>An error has occurred. Please try this action again later.</p>
+      <template #footer>
+        <Button label="OK" class="p-button-danger" @click="showErrorDialog = false" />
+      </template>
+    </Dialog>
   </template>
   <!-- don't show side-nav if not logged in -->
   <router-view v-else />
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from "vue";
+import { defineComponent, computed, ref } from "vue";
 import SideNav from '@/components/SideNav.vue';
 import { useStore } from "@/store/index";
+import http from '@/services/base-api.service';
 
 export default defineComponent({
   name: 'App',
@@ -32,7 +39,9 @@ export default defineComponent({
       // need to load user on every refresh
       store.dispatch('getUser');
     }
-    return { isAuthenticated };
+    const showErrorDialog = ref<boolean>(false);
+    http.addErrorHandler(() => showErrorDialog.value = true);
+    return { isAuthenticated, showErrorDialog };
   }
 })
 </script>

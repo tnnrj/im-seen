@@ -13,18 +13,7 @@ class APIProvider {
       // withCredentials: true
     });
     // login redirect on 401 unauth
-    http.interceptors.response.use(undefined, async function (error) {
-      if (error) {
-        const originalRequest = error.config;
-        if (error.response.status === 401 && !originalRequest._retry) {
-          http.defaults.headers.common.Authorization = '';
-          localStorage.removeItem('token');
-          window.location.href = 'login'
-        }
-
-        return Promise.reject(error);
-      }
-    });
+    this.addErrorHandler(undefined);
     // check for existing auth
     let token = localStorage.getItem('token');
     if (token) {
@@ -53,7 +42,7 @@ class APIProvider {
     }).then(response => {
       return response.data;
     }, err => {
-      return err;
+      throw err;
     });
   }
 
@@ -63,7 +52,7 @@ class APIProvider {
     }).then(response => {
       return response.data;
     }, err => {
-      return err;
+      throw err;
     });
   }
 
@@ -73,8 +62,26 @@ class APIProvider {
     }).then(response => {
       return response.data;
     }, err => {
-      return err;
+      throw err;
     });
+  }
+
+  addErrorHandler(callbackFn) {
+    http.interceptors.response.use(undefined, async function (error) {
+      if (error) {
+        const originalRequest = error.config;
+        if (error.response.status === 401 && !originalRequest._retry) {
+          http.defaults.headers.common.Authorization = '';
+          localStorage.removeItem('token');
+          window.location.href = 'login'
+        }
+        else if (callbackFn) {
+          callbackFn(error);
+        }
+        
+        return Promise.reject(error);
+      }
+    })
   }
 }
 
