@@ -51,7 +51,7 @@ namespace IMWebAPI.Controllers
         [Route("Student-Severity")]
         public async Task<ActionResult<IEnumerable<Object>>> GetObservationsSeverity()
         {
-            var query = await _context.Observations.GroupBy(observ => observ.StudentName)
+            var query = await _context.Observations.GroupBy(observ => observ.StudentLastName)
                 .Select(group => new { 
                                         studentName = group.Key, 
                                         severity = group.Sum(g => g.Severity)
@@ -123,6 +123,55 @@ namespace IMWebAPI.Controllers
 
             return CreatedAtAction("GetObservation", new { id = observ.ObservationID }, observ);
         }
+
+        // UPDATE: api/Observations/5
+        [Authorize(Roles = "Administrator, PrimaryActor")]
+        [HttpPost]
+        public async Task<ActionResult<Observation>> UpdateObservation(int id, [Bind("ObservationID,StudentID,StudentFirstName,StudentLastName,Severity,Action,Event")] Observation observ)
+        {
+            if (id != observ.ObservationID)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var old_observ = await _context.Observations.FindAsync(id);
+
+
+                    old_observ.StudentID = observ.StudentID;
+                    old_observ.StudentFirstName = observ.StudentFirstName;
+                    old_observ.StudentLastName = observ.StudentLastName;
+
+                    old_observ.Severity = observ.Severity;
+                    old_observ.Action = observ.Action;
+                    old_observ.Event = observ.Event;
+
+
+                    _context.Update(old_observ);
+                    await _context.SaveChangesAsync();
+                }
+
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!ObservationExists(observ.ObservationID))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+            }
+
+            return NoContent();
+        }
+
+
+
 
         // DELETE: api/Observations/5
         [Authorize(Roles = "Administrator, PrimaryActor")]
