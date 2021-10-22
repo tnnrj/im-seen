@@ -93,6 +93,8 @@ namespace IMWebAPI.Controllers
 
             jwtGenerator.AddClaim(new Claim(ClaimTypes.Email, appUser.Email));
             jwtGenerator.AddClaim(new Claim(ClaimTypes.Name, appUser.UserName));
+
+
             // Add more claims as necessary (ROLES)
             foreach (var role in await _userManager.GetRolesAsync(appUser))
             {
@@ -103,7 +105,7 @@ namespace IMWebAPI.Controllers
             var refreshToken = jwtGenerator.GetRefreshToken();
 
             appUser.RefreshToken = refreshToken;
-            appUser.RefreshTokenExpiryTime = DateTime.Now.AddMinutes(10); // CHANGE THIS VALUE AFTER TESTING
+            appUser.RefreshTokenExpiryTime = DateTime.Now.AddMinutes(5); // CHANGE THIS VALUE AFTER TESTING
             var result = await _userManager.UpdateAsync(appUser);
 
             if (!result.Succeeded)

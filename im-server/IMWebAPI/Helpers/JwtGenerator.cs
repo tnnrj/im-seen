@@ -26,7 +26,7 @@ namespace IMWebAPI.Helpers
             this.jwtHeader = new JwtHeader(credentials);
             this.jwtClaims = new List<Claim>();
             this.jwtDate = DateTime.UtcNow;
-            this.tokenLifetimeInSecs = 7200; //jwtBearerTokenSettings.LifeInSecs;
+            this.tokenLifetimeInSecs = 30; //jwtBearerTokenSettings.LifeInSecs;
         }
 
         public string GetAccessToken()
@@ -62,9 +62,11 @@ namespace IMWebAPI.Helpers
                 ValidAudience = "IMWEBAPI",//jwtBearerTokenSettings.Audience,
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("IMWEBAPI_SECRETKEY")),//jwtBearerTokenSettings.Key)),
-                ValidateLifetime = false,
+                ValidateLifetime = true,
                 RequireAudience = true,
-                RequireExpirationTime = true
+                RequireExpirationTime = true,
+                RequireSignedTokens = true,
+                ClockSkew = TimeSpan.Zero // USED FOR TESTING
             };
 
             var principal = tokenHandler.ValidateToken(token, parameters, out securityToken);
