@@ -8,7 +8,7 @@ namespace IMWebAPI.Data
 {
     public class Report_Seeding
     {
-        public static async void SeedReports(IM_API_Context context)
+        public static void SeedReports(IM_API_Context context)
         {
             // Look for any existing reports.
             if (context.Reports.Any())

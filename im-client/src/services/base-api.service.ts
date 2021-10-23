@@ -14,6 +14,18 @@ class APIProvider {
     });
     // login redirect on 401 unauth
     this.addErrorHandler(undefined);
+    // request interceptor for auth token
+    http.interceptors.request.use(
+      config => {
+        const token = localStorage.getItem('token');
+        if (token) {
+          config.headers['Authorization'] = 'Bearer ' + token;
+        }
+        return config;
+      },
+      error => {
+          Promise.reject(error)
+      });
     // check for existing auth
     let token = localStorage.getItem('token');
     if (token) {
@@ -86,7 +98,7 @@ class APIProvider {
           if (accessToken && refreshToken) {
             originalRequest._retry = true;
             return $this.post("Tokens/refresh", '', { accessToken: accessToken, refreshToken: refreshToken })
-              .then(response => {         
+              .then(response => {
               $this.login(response.token, response.refreshToken);
               return http(originalRequest);
             }, () => {

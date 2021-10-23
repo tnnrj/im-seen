@@ -35,26 +35,30 @@ namespace IMWebAPI.Controllers
             var principal = jwtGenerator.GetPrincipalFromExpiredToken(accessToken);
             var username = principal.Identity.Name; //this is mapped to the Name claim by default
             var user = await userManager.FindByNameAsync(username);
-            if (user == null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.Now)
+            if (user == null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
             {
                 return BadRequest("Invalid client request");
             }
 
             foreach (Claim claim in principal.Claims)
             {
-                jwtGenerator.AddClaim(claim);
+                if (claim.Type != "exp" && claim.Type != "nbf")
+                {
+                    jwtGenerator.AddClaim(claim);
+                }
             }
 
             var newAccessToken = jwtGenerator.GetAccessToken();
             var newRefreshToken = jwtGenerator.GetRefreshToken();
 
             user.RefreshToken = newRefreshToken;
+            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddMinutes(5);
             var result = await userManager.UpdateAsync(user);
 
             if (!result.Succeeded)
                 return new BadRequestObjectResult(new { Message = "Token could not be refreshed. Please log in again." });
 
-            return Ok(new { Token = newAccessToken, RefreshToken = refreshToken, Message = "Token Refresh Successful" });
+            return Ok(new { Token = newAccessToken, RefreshToken = newRefreshToken, Message = "Token Refresh Successful" });
         }
 
 

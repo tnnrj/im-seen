@@ -105,7 +105,7 @@ namespace IMWebAPI.Controllers
             var refreshToken = jwtGenerator.GetRefreshToken();
 
             appUser.RefreshToken = refreshToken;
-            appUser.RefreshTokenExpiryTime = DateTime.Now.AddMinutes(5); // CHANGE THIS VALUE AFTER TESTING
+            appUser.RefreshTokenExpiryTime = DateTime.UtcNow.AddMinutes(5); // CHANGE THIS VALUE AFTER TESTING
             var result = await _userManager.UpdateAsync(appUser);
 
             if (!result.Succeeded)
