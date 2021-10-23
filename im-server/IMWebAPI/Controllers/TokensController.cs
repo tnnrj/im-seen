@@ -18,11 +18,9 @@ namespace IMWebAPI.Controllers
     public class TokensController : ControllerBase
     {
         readonly UserManager<ApplicationUser> userManager;
-        readonly JwtGenerator jwtGenerator;
-        public TokensController(UserManager<ApplicationUser> userManager, JwtGenerator jwtGenerator)
+        public TokensController(UserManager<ApplicationUser> userManager)
         {
             this.userManager = userManager ?? throw new ArgumentNullException(nameof(TokensController.userManager));
-            this.jwtGenerator = this.jwtGenerator ?? throw new ArgumentNullException(nameof(TokensController.jwtGenerator));
         }
         [HttpPost]
         [Route("refresh")]
@@ -33,6 +31,7 @@ namespace IMWebAPI.Controllers
                 return BadRequest("Invalid client request");
             }
 
+            var jwtGenerator = new JwtGenerator();
             var principal = jwtGenerator.GetPrincipalFromExpiredToken(accessToken);
             var username = principal.Identity.Name; //this is mapped to the Name claim by default
             var user = await userManager.FindByNameAsync(username);

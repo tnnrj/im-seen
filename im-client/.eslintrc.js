@@ -20,6 +20,7 @@ module.exports = {
     "vue/no-unused-vars": "off",
     "prefer-const": "off",
     "@typescript-eslint/no-use-before-define": "off",
-    "@typescript-eslint/no-explicit-any": "off"
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-this-alias": "off"
   }
 };

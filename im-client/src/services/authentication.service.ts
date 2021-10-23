@@ -11,7 +11,7 @@ export default {
 async function login(form: { username: string; password: string }): Promise<any> {
   return http.post('Authentication/Login', '', form)
     .then(response => {
-      http.login(response.token);
+      http.login(response.token, response.refreshToken);
       return response;
     });
 }
