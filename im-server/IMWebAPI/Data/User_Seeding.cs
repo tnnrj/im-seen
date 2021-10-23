@@ -10,7 +10,7 @@ namespace IMWebAPI.Data
 {
     public class User_Seeding
     {
-        public static async void SeedUsers(IM_API_Context context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        public static async Task SeedUsers(IM_API_Context context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
 
             // Create roles if they don't exist

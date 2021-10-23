@@ -11,5 +11,5 @@ export function getObservations(): Promise<Observation[]> {
 }
 
 export function saveObservation(observation: Observation): Promise<any> {
-  return http.post('Observations/', '', observation);
+  return http.post('Observations/' + observation.observationId, '', observation);
 }

@@ -32,3 +32,11 @@ export enum UserRole {
   Secondary = 'SecondaryActor',
   Observer = 'Observer'
 }
+
+export enum ObservationStatus {
+  New = 'New',
+  Viewed = 'Viewed',
+  Assigned = 'Assigned',
+  ActionTaken = 'ActionTaken',
+  Closed = 'Closed'
+}

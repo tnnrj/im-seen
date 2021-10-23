@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace IMWebAPI.Data
 {
@@ -12,7 +13,8 @@ namespace IMWebAPI.Data
             context.Database.EnsureDeleted();
             context.Database.EnsureCreated();
 
-            User_Seeding.SeedUsers(context, um, rm);
+            Task t = User_Seeding.SeedUsers(context, um, rm);
+            t.Wait();
             Student_Seeding.SeedStudents(context);
             Observation_Seeding.SeedObservations(context);
             Report_Seeding.SeedReports(context);

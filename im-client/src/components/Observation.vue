@@ -23,14 +23,14 @@ export default defineComponent({
     });
 
     const saving = ref<boolean>(false);
-    async function save () {
+    const save = async function () {
       if (obs.value) {
         saving.value = true;
         await observationService.saveObservation(obs.value);
-        
+        saving.value = false;
       }
-    }
-    return { obs }
+    };
+    return { obs, save };
   }
 });
 </script>

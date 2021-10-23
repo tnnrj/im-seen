@@ -34,6 +34,7 @@ import { useStore } from "@/store";
 import { Observation } from '@/model/observations.model';
 
 interface UiObservation extends Observation {
+  studentName: string;
   fullDescription: string;
   expanded: boolean;
 }
@@ -50,6 +51,7 @@ export default defineComponent({
       setTimeout(() => { // needs to happen async so we show loader immediately
         observations.value = store.state.observations?.map(r => {
           let uir = r as UiObservation;
+          uir.studentName = (r.studentFirstName + ' ' + r.studentLastName).trim();
           uir.observationDate = new Date(r.observationDate);
           uir.fullDescription = r.description;
           uir.expanded = false;

@@ -34,6 +34,10 @@ namespace IMWebAPI.Data
             modelBuilder.Entity<Report>().ToTable("Reports");
             modelBuilder.Entity<Dashboard>().ToTable("Dashboards");
 
+            // fields should default empty not null
+            modelBuilder.Entity<Observation>(entity => entity.Property(m => m.StudentFirstName).HasDefaultValue(""));
+            modelBuilder.Entity<Observation>(entity => entity.Property(m => m.StudentLastName).HasDefaultValue(""));
+
             // for Identity-MySQL compatibility - see https://stackoverflow.com/questions/48678495/net-core-2-0-with-mysql-specified-key-was-too-long-max-key-length-is-3072-byt
             modelBuilder.Entity<ApplicationUser>(entity => entity.Property(m => m.Id).HasMaxLength(85));
             modelBuilder.Entity<ApplicationUser>(entity => entity.Property(m => m.NormalizedEmail).HasMaxLength(85));
@@ -52,7 +56,6 @@ namespace IMWebAPI.Data
             modelBuilder.Entity<IdentityUserClaim<string>>(entity => entity.Property(m => m.UserId).HasMaxLength(85));
             modelBuilder.Entity<IdentityRoleClaim<string>>(entity => entity.Property(m => m.Id).HasMaxLength(85));
             modelBuilder.Entity<IdentityRoleClaim<string>>(entity => entity.Property(m => m.RoleId).HasMaxLength(85));
-
 
             base.OnModelCreating(modelBuilder);
         }

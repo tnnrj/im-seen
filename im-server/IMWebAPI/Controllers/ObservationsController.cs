@@ -47,24 +47,6 @@ namespace IMWebAPI.Controllers
             return observ;
         }
 
-        [HttpGet]//, Authorize]
-        [Route("Student-Severity")]
-        public async Task<ActionResult<IEnumerable<Object>>> GetObservationsSeverity()
-        {
-            var query = await _context.Observations.GroupBy(observ => observ.StudentLastName)
-                .Select(group => new { 
-                                        studentName = group.Key, 
-                                        severity = group.Sum(g => g.Severity)
-                                     }).ToListAsync();
-
-            if (query == null)
-            {
-                return NotFound();
-            }
-
-            return query;
-        }
-
         // PUT: api/Observations/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.

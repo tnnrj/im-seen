@@ -1,7 +1,8 @@
 export type Observation = {
   observationId: string;
   studentId: string;
-  studentName: string;
+  studentFirstName: string;
+  studentLastName: string;
   description: string;
   observationDate: Date;
   severity: number;
