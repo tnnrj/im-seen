@@ -4,24 +4,30 @@
 
 <script>
 import * as d3 from "d3";
-import _ from "lodash";
 
 export default {
   name: "PieChart",
-  props: ["chartData", "id", "axis1Name", "axis2Name"],
+  props: ['chartData', 'id'],
   mounted() {
     this.main();
   },
   methods: {
     main() {
       // height and width should be calculated by element width
-      const width = document.getElementById("chart-" + this.id).clientWidth;
-      const height = document.getElementById("chart-" + this.id).clientHeight;
+      const clientWidth = document.getElementById("chart-" + this.id).clientWidth;
+      const clientHeight = document.getElementById("chart-" + this.id).clientHeight;
       const minDimension = width < height ? width : height;
+
+      let margin = {top: 30, right: 30, bottom: 70, left: 60};
+      const width = clientWidth - margin.left - margin.right;
+      const height = clientHeight - margin.top - margin.bottom;
 
       //We are accessing the div with the id chart using d3's select method and appending svg
       /***** START D3.js CHART CODE *******/
-      
+      const data = this.chartData;
+      //  {severity: 1, value: 51},
+
+
       const svg = d3
         .select("#chart-" + this.id)
         .append("svg")
@@ -30,18 +36,17 @@ export default {
         .attr("viewBox", [0, 0, width, height]) // keeps chart within element bounds
         .attr("font-size", 0.02 * minDimension)
         .attr("font-family", "sans-serif")
-        .attr("text-anchor", "middle")
-        .style("overflow", "visible");
+        .attr("text-anchor", "middle");
 
       color = d3.scaleOrdinal()
-        .domain(data.map(d => d.Severity))
+        .domain(data.map(d => d.name))
         .range(d3.schemeSpectral[5]);
 
-      pie = () => {
+      pie = (d) => {
         return d3.pie()
           .padAngle(0.005)
           .sort(null)
-          .value(d => d.Total);
+          .value(d.value);
       }
 
       arc = () => {
@@ -51,136 +56,76 @@ export default {
           .outerRadius(radius * 0.9);
       }
 
-      const donutChart = () => {
-        const arcs = pie(data);
-        const svg = d3.create("svg")
-          .attr("viewBox", [-width / 2, -height / 2, width, height])
-        
-        svg.selectAll("path")
-          .data(arcs)
-          .join("path")
-            .attr("fill", d => color(d.data.Severity))
-            .attr("d", arc)
-            .on("mouseenter", onMouseEnter)
-            .on("mouseleave", onMouseLeave)
-        
-        svg.append("g")
-          .attr("font-family", "'Work sans', sans-serif")
-          .attr("font-size", 16)
-          .attr("text-anchor", "middle")
-          .selectAll("text")
-          .data(arcs)
-          .join("text")
-            .attr("transform", d => `translate(${arc.centroid(d)})`)
-            .call(text => text.filter(d => (d.endAngle - d.startAngle) > 0.25).append("tspan")
-              .attr("y", "-1.2em")
-              .attr("font-weight", "400")
-              .text(d => d.data.Severity))
-        // 
-        //  .call(text => text.filter(d => (d.endAngle - d.startAngle) > 0.25).append("tspan")
-        //      .attr("x", 0)
-        //      .attr("y", "0.7em")
-        //      .attr("fill-opacity", 0.7)
-        //      .text(d => d.data.Total));
-        
-        svg.append("g")
-          .attr("font-family", "'Work sans', sans-serif")
-          .attr("font-size", 24)
-          .attr("text-anchor", "middle")
-          .append("text")
-            .text("Severity");
-        
-        const chart = svg.node();
-        
-        const tooltip = d3.create("div")
-          .attr("id", "tooltip")
-          .attr("class", "tooltip")
-          .html(`
-            <div class="tooltip-name">Severity 
-              <span id="category"></span>
-            </div>
-            <div class="tooltip-value">
-              <span id="quantity"></span> Reports
-            </div>
-          `)
-        
-        function onMouseEnter(d) {
-          const x = arc.centroid(d)[0] + (width / 2);
-          const y = arc.centroid(d)[1] + (height / 2);
-          
-          tooltip.style("opacity", 1);
-          tooltip.style("transform", `translate(calc( -50% + ${x}px), calc(-100% + ${y}px))`);
-          tooltip.select("#category")
-            .text(d.data.Severity);
-          tooltip.select("#quantity")
-            .text(d.data.Total);
-        }
+      arcs = pie(data);
 
-        function onMouseLeave() {
-          tooltip.style("opacity", 0);
-        }
+      svg.append("g")
+        .attr("font-family", "'Work sans', sans-serif")
+        .attr("font-size", 24)
+        .attr("text-anchor", "middle")
+        .append("text")
+          .text("Severity");
+      
+      svg.append("g")
+        .attr("font-family", "'Work sans', sans-serif")
+        .attr("font-size", 16)
+        .attr("text-anchor", "middle")
+        .selectAll("text")
+        .data(arcs)
+        .join("text")
+          .attr("transform", d => `translate(${arc.centroid(d)})`)
+          .call(text => text.filter(d => (d.endAngle - d.startAngle) > 0.25).append("tspan")
+            .attr("y", "-1.2em")
+            .attr("font-weight", "400")
+            .text(d => d.data.name));
 
-        return html`
-          <figure style="max-width: 100%;">
-            <div id="wrapper" class="wrapper">
-              ${tooltip.node()}
-              ${chart}
-            </div>
-          </figure>
-        </div>`;
-      }
+      svg.selectAll("path")
+        .data(arcs)
+        .join("path")
+          .attr("fill", d => color(6-d.data.name))
+          .attr("d", arc);
+
+      tooltip = d3.select("svg")
+        .append("div")
+        .style("opacity", 0)
+        .attr("class", "tooltip")
+        .style("position", "absolute")
+        .style("text-align", "left")
+        // important for tooltip showing smoothly
+        .style("pointer-events", "none")
+        .style("background-color", "white")
+        .style("border", "solid")
+        .style("border-width", "1px")
+        .style("border-radius", "5px")
+        .style("padding", "5px");
+
+      // add hover effect
+      svg.selectAll("path")
+        .on("mouseover", function (event, d, i) {
+              d3.select(this).transition()
+                .duration('50')
+                .attr('opacity', '.85');
+              // show tooltip
+              tooltip
+                .html("Severity: " + d.value)
+                .style("left", (event.pageX) + "px")
+                .style("top", (event.pageY) + "px");
+              tooltip.transition()
+                .duration(200)          
+                .style("opacity", .9);           
+        })
+        .on("mouseout", function (d, i) {
+              d3.select(this).transition()
+                  .duration('50')
+                  .attr('opacity', '1');
+              // turn off tooltip
+              tooltip.transition()
+                .duration(200)
+                .style("opacity", 0);
+        });
     }
   }
 }
 </script>
 
 <style>
-  .wrapper {
-    position: relative;
-  }
-
-  .tooltip {
-    background-color: #fff;
-    box-shadow: 0 6px 8px rgba(52, 73, 94, .2), 0 1px 1px rgba(52, 73, 94, 0.1);
-    font-family: "Work Sans", sans-serif;
-    left: 0;
-    opacity: 0;
-    padding: 0.5em 1em;
-    pointer-events: none;
-    border-radius: 5px;
-    position: absolute;
-    text-align: center;
-    top: -12px;
-    transition: opacity 0.2s linear, transform 0.2s ease-in-out;
-    z-index: 1;
-  }
-
-  .tooltip:before {
-    background-color: #fff;
-    border-left-color: transparent;
-    border-top-color: transparent;
-    bottom: 0;
-    content: '';
-    height: 12px;
-    left: 50%;
-    position: absolute;
-    transform-origin: center center;
-    transform: translate(-50%, 50%) rotate(45deg);
-    width: 12px;
-    z-index: 1;
-  }
-
-  .tooltip-name {
-    margin-bottom: 0.2em;
-    font-size: 1em;
-    line-height: 1.4;
-    font-weight: 700;
-  }
-
-  .tooltip-value {
-    margin-bottom: 0.2em;
-    font-size: 0.8em;
-    line-height: 1.4;
-    font-weight: 400;
-  }
 </style>
