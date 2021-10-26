@@ -20,16 +20,20 @@ export default {
       const clientHeight = document.getElementById('chart-'+this.id).clientHeight;
 
       // set the dimensions and margins of the graph
-      let margin = {top: 30, right: 30, bottom: 70, left: 60};
+      let margin = {top: 30, right: 30, bottom: 50, left: 30};
       const width = clientWidth - margin.left - margin.right;
       const height = clientHeight - margin.top - margin.bottom;
+
+ const color = d3.scaleOrdinal(data.map(d=>d.name), d3.schemeSpectral[10]);
+    
 
       // append svg
       const svg = d3
         .select("#chart-" + this.id)
         .append("svg")
-          .attr("width", width + margin.left + margin.right)
-          .attr("height", height + margin.top + margin.bottom)
+          .attr("width", "90%")
+          .attr("height", "90%")
+          .attr("viewBox", [0, 0, clientWidth, clientHeight])  // keeps chart within element bounds
         .append("g")
           .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -40,17 +44,17 @@ export default {
 
       // add label
       svg.append("text")
-        .text("Total severity")
-        .style("text-anchor", "middle")
+        .text(this.axis2Name)
+        .style("text-anchor", "left")
         .style("font-size", "12px")
-        .attr('transform', 'translate(' + (0) + ', ' + (-5) + ')');
+        .attr('transform', 'translate(' + (-20) + ', ' + (5) + ')');
 
       // add X axis
       // scale for x axis
       let xScale = d3.scaleBand()
-                .range([ 0, width ])
-                .domain(data.map(function(d) { return d.name; }))
-                .padding(0.2);
+          .range([ 0, width ])
+          .domain(data.map(function(d) { return d.name; }))
+          .padding(0.2);
       svg.append("g")
         .attr("transform", "translate(0," + height + ")")
         .call(d3.axisBottom(xScale))
@@ -62,7 +66,7 @@ export default {
       // scale for y axis
       let yScale = d3.scaleLinear()
         .domain([0, d3.max(data, d => d.value)])
-        .range([ height, 0]);
+        .range([ height, margin.top]);
       svg.append("g")
         .call(d3.axisLeft(yScale));
 
@@ -73,7 +77,7 @@ export default {
         .append("rect")
           .attr("x", function(d) { return xScale(d.name); })         
           .attr("width", xScale.bandwidth())
-          .attr("fill", "#69b3a2") // color
+          .attr("fill", d => color(d.name)) // color
           // at the begninning, no bars, so y is always 0
           .attr("y", function(d) { return yScale(0); })
           .attr("height", function(d) { return height - yScale(0); });
@@ -91,7 +95,7 @@ export default {
         .style("opacity", 0)
         .attr("class", "tooltip")
         .style("position", "absolute")
-        .style("text-align", "left")
+        .style("text-align", "center")
         // important for tooltip showing smoothly
         .style("pointer-events", "none")
         .style("background-color", "white")
@@ -108,8 +112,7 @@ export default {
                 .attr('opacity', '.85');
               // show tooltip
               tooltip
-                .html("Name: " + d.name + "<br>" + 
-                        "Severity: " + d.value)
+                .html( d.name + "<br>" + d.value)
                 .style("left", (event.pageX) + "px")
                 .style("top", (event.pageY) + "px");
               tooltip.transition()

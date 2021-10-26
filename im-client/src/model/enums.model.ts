@@ -2,7 +2,7 @@ export enum ChartType {
   None = 'None',
   Bar = 'Bar',
   Line = 'Line',
-  //Pie = 'Pie',
+  Pie = 'Pie', // only probably should be used in student view for now
   BubbleCloud = 'BubbleCloud'
 }
 

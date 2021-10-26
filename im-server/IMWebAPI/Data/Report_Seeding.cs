@@ -38,6 +38,12 @@ namespace IMWebAPI.Data
                     Query = "SELECT TRIM(CONCAT(StudentFirstName, ' ', StudentLastName)) as name, CAST(ObservationDate AS DATE) as date, SUM(Severity) as value FROM Observations GROUP BY StudentFirstName, StudentLastName, ObservationDate ORDER BY ObservationDate",
                     Axis1Name = "Date",
                     Axis2Name = "Severity of Observations"
+                },
+                new Report {
+                    ReportName = "Observations Grouped by Severity",
+                    Query = "SELECT TRIM(CONCAT(Severity, ' ')) as name, COUNT(Severity) AS value FROM Observations GROUP BY Severity",
+                    Axis1Name = "Severity",
+                    Axis2Name = "Proportion"
                 }
             };
 

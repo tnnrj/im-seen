@@ -3,7 +3,7 @@
     <template v-if="chartData && chartData.data">
       <h4 class="p-mb-0">{{chartData.name}}</h4>
       <BubbleCloudChart v-if="chartType == ChartType.BubbleCloud" :chartData="chartData.data" :id="idx" />
-      
+      <PieChart v-else-if="chartType == ChartType.Pie" :chartData="chartData.data" :id="idx" />
       <LineChart v-else-if="chartType == ChartType.Line" :chartData="chartData.data" :axis1Name="chartData.axis1Name" 
         :axis2Name="chartData.axis2Name" :id="idx" />
       <BarChart v-else-if="chartType == ChartType.Bar" :chartData="chartData.data" :axis1Name="chartData.axis1Name" 
@@ -21,12 +21,13 @@ import { computed, defineComponent, onBeforeUpdate } from "vue";
 import BubbleCloudChart from "@/components/charts/BubbleCloudChart.vue";
 import LineChart from "@/components/charts/LineChart.vue";
 import BarChart from "@/components/charts/BarChart.vue";
+import PieChart from "@/components/charts/PieChart.vue";
 import Loader from "@/components/Loader.vue";
 import { useStore } from "@/store/index";
 
 export default defineComponent({
   name: "DashboardElement",
-  components: { BubbleCloudChart, LineChart, BarChart, Loader },
+  components: { BubbleCloudChart, LineChart, BarChart, PieChart, Loader },
   props: {
     chartType: {
       type: String,

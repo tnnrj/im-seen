@@ -73,19 +73,57 @@ export default {
         .append("use")
         .attr("xlink:href", d => d.leafUid.href);
 
-      // draw the text
-      leaf.append("text")
-        .attr("clip-path", d => d.clipUid)
-        .selectAll("tspan")
-        .data(d => d.data.name.split(/(?=[A-Z][a-z])|\s+/g)) //+ "\n(" + d.data.severity + ")")
-        .join("tspan")
-        .attr("x", 0)
-        .attr("y", (d, i, nodes) => `${i - nodes.length / 2 + 0.8}em`)
-        .text(d => d);
-
       // title is the student's name
       leaf.append("title")
         .text(d => d.data.name === undefined ? "" : d.data.name);
+
+      // draw the text
+      leaf.append("text")
+        .selectAll("tspan")
+        .data(d => d.data.name) //+ "\n(" + d.data.severity + ")")
+        .join("tspan")
+        .text(d => d)
+        .style("font-size", .02 *  minDimension);
+
+        // Create a tooltip to show data for mouse hover
+      let tooltip = d3.select("#chart-" + this.id)
+        .append("div")
+        .style("opacity", 0)
+        .attr("class", "tooltip")
+        .style("position", "absolute")
+        .style("text-align", "center")
+        // important for tooltip showing smoothly
+        .style("pointer-events", "none")
+        .style("background-color", "white")
+        .style("border", "solid")
+        .style("border-width", "1px")
+        .style("border-radius", "5px")
+        .style("padding", "5px");
+          
+      // add hover effect
+      svg.selectAll("g")
+        .on("mouseover", function (event, d, i) {
+              d3.select(this).transition()
+                .duration('50')
+                .attr('opacity', '.85');
+              // show tooltip
+              tooltip
+                .html(d.data.name + "<br>" + d.value)
+                .style("left", (event.pageX) + "px")
+                .style("top", (event.pageY) + "px");
+              tooltip.transition()
+                .duration(200)          
+                .style("opacity", .9);           
+        })
+        .on("mouseout", function (d, i) {
+              d3.select(this).transition()
+                  .duration('50')
+                  .attr('opacity', '1');
+              // turn off tooltip
+              tooltip.transition()
+                .duration(200)
+                .style("opacity", 0);
+        });
 
 //////////////////////////////////// END D3.js CODE
     }
