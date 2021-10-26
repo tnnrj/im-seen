@@ -14,19 +14,32 @@ export default {
   methods: {
     main() {
       // height and width should be calculated by element width
-      const clientWidth = document.getElementById("chart-" + this.id).clientWidth;
-      const clientHeight = document.getElementById("chart-" + this.id).clientHeight;
+      const width = document.getElementById("chart-" + this.id).clientWidth;
+      const height = document.getElementById("chart-" + this.id).clientHeight;
       const minDimension = width < height ? width : height;
-
-      let margin = {top: 30, right: 30, bottom: 70, left: 60};
-      const width = clientWidth - margin.left - margin.right;
-      const height = clientHeight - margin.top - margin.bottom;
 
       //We are accessing the div with the id chart using d3's select method and appending svg
       /***** START D3.js CHART CODE *******/
       const data = this.chartData;
-      //  {severity: 1, value: 51},
+      // format of data: {name: 1, value: 51},
 
+      const color = d3.scaleOrdinal()
+        .domain(data.map(d => d.name))
+        .range(d3.schemeSpectral[5]);
+
+      //////////////////////////////////////////////////////////////////////////////////////////////// this right here is the buggy shit
+      const arc = d3.arc()
+        .innerRadius( 0.5 * height / 2 )
+        .outerRadius( 0.85 * height / 2 );
+
+      const pie = d3.pie()
+        .value(d => d.value);
+
+      const labelArcs = d3.arc()
+        .innerRadius( 0.65 * height /2 )
+        .outerRadius( 0.65 * height / 2 );
+
+      const pieArcs = pie( data );
 
       const svg = d3
         .select("#chart-" + this.id)
@@ -34,62 +47,50 @@ export default {
         .attr("width", "90%")
         .attr("height", "90%")
         .attr("viewBox", [0, 0, width, height]) // keeps chart within element bounds
-        .attr("font-size", 0.02 * minDimension)
         .attr("font-family", "sans-serif")
         .attr("text-anchor", "middle");
+        
+      svg.append('g')
+          .attr('class', 'donut-container')
+          .attr('transform', `translate(${ width / 2 }, ${ height / 2})` )
+          .selectAll('path')
+          .data(pieArcs)
+          .join('path')
+            .style('stroke', 'white')
+            .style('stroke-width', 2)
+            .style('fill', d => color( d.data.name ))
+            .attr('d', arc);
+        
+      const text = svg.append('g')
+          .attr('class', 'lablels-container')
+          .attr('transform', `translate(${width/2},${height/2})`)
+          .selectAll('text')
+          .data(pieArcs)
+          .join('text')
+            .attr('transform', d => `translate(${ labelArcs.centroid(d) })`)
+            .attr('text-anchor', 'middle');
+        
+      text.selectAll('tspan')
+        .data( d => [
+          d.data.name,
+        ])
+        .join('tspan')
+          .attr('x', 0)
+          .style('font-family', 'sans-serif')
+          .style('font-size', 24)
+          .style('font-weight', (d,i) => i ? undefined : 'bold')
+          .style('fill', '#222')
+          .attr('dy', (d,i) => i ? '1.2em' : 0)
+          .text(d => d);
 
-      color = d3.scaleOrdinal()
-        .domain(data.map(d => d.name))
-        .range(d3.schemeSpectral[5]);
+      ///////////////////////////////////////////////////////////////////////////////////////////////
 
-      pie = (d) => {
-        return d3.pie()
-          .padAngle(0.005)
-          .sort(null)
-          .value(d.value);
-      }
-
-      arc = () => {
-        const radius = Math.min(width, height) / 2;
-        return d3.arc()
-          .innerRadius(radius * 0.36)
-          .outerRadius(radius * 0.9);
-      }
-
-      arcs = pie(data);
-
-      svg.append("g")
-        .attr("font-family", "'Work sans', sans-serif")
-        .attr("font-size", 24)
-        .attr("text-anchor", "middle")
-        .append("text")
-          .text("Severity");
-      
-      svg.append("g")
-        .attr("font-family", "'Work sans', sans-serif")
-        .attr("font-size", 16)
-        .attr("text-anchor", "middle")
-        .selectAll("text")
-        .data(arcs)
-        .join("text")
-          .attr("transform", d => `translate(${arc.centroid(d)})`)
-          .call(text => text.filter(d => (d.endAngle - d.startAngle) > 0.25).append("tspan")
-            .attr("y", "-1.2em")
-            .attr("font-weight", "400")
-            .text(d => d.data.name));
-
-      svg.selectAll("path")
-        .data(arcs)
-        .join("path")
-          .attr("fill", d => color(6-d.data.name))
-          .attr("d", arc);
-
-      tooltip = d3.select("svg")
+      const tooltip = d3.select("svg")
         .append("div")
         .style("opacity", 0)
         .attr("class", "tooltip")
         .style("position", "absolute")
-        .style("text-align", "left")
+        .style("text-align", "center")
         // important for tooltip showing smoothly
         .style("pointer-events", "none")
         .style("background-color", "white")
@@ -106,7 +107,7 @@ export default {
                 .attr('opacity', '.85');
               // show tooltip
               tooltip
-                .html("Severity: " + d.value)
+                .html(d.value)
                 .style("left", (event.pageX) + "px")
                 .style("top", (event.pageY) + "px");
               tooltip.transition()
