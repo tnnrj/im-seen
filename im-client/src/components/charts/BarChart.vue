@@ -24,6 +24,9 @@ export default {
       const width = clientWidth - margin.left - margin.right;
       const height = clientHeight - margin.top - margin.bottom;
 
+ const color = d3.scaleOrdinal(data.map(d=>d.name), d3.schemeSpectral[10]);
+    
+
       // append svg
       const svg = d3
         .select("#chart-" + this.id)
@@ -74,7 +77,7 @@ export default {
         .append("rect")
           .attr("x", function(d) { return xScale(d.name); })         
           .attr("width", xScale.bandwidth())
-          .attr("fill", "#69b3a2") // color
+          .attr("fill", d => color(d.name)) // color
           // at the begninning, no bars, so y is always 0
           .attr("y", function(d) { return yScale(0); })
           .attr("height", function(d) { return height - yScale(0); });
