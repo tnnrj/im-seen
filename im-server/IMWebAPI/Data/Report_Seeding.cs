@@ -41,7 +41,7 @@ namespace IMWebAPI.Data
                 },
                 new Report {
                     ReportName = "Observations Grouped by Severity",
-                    Query = "SELECT Severity as name, COUNT(Severity) AS value FROM Observations GROUP BY Severity",
+                    Query = "SELECT TRIM(CONCAT(Severity, ' ')) as name, COUNT(Severity) AS value FROM Observations GROUP BY Severity",
                     Axis1Name = "Severity",
                     Axis2Name = "Proportion"
                 }
