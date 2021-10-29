@@ -4,6 +4,8 @@ import axios, { AxiosInstance } from 'axios';
 let http: AxiosInstance = axios.create({}); // not possible to create a private property in JavaScript, so we move it outside of the class, so that it's only accessible within this module
 
 class APIProvider {
+  isRefreshing: boolean;
+
   constructor (url: string) {
     // singleton axios instance
     http = axios.create({
@@ -31,6 +33,7 @@ class APIProvider {
     if (token) {
       http.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     }
+    this.isRefreshing = false;
   }
 
   // for token auth (call from store)
@@ -88,29 +91,49 @@ class APIProvider {
       if (error) {
         const originalRequest = error.config;
         if (error.response.status === 401 && originalRequest.url.includes("Tokens/refresh")) {
+          // refresh token has expired
           $this.logout();
           window.location.href = 'login';
         }
         if (error.response.status === 401 && !originalRequest._retry) {
-          let accessToken = localStorage.getItem('token');
-          let refreshToken = localStorage.getItem('refreshToken');
-          $this.logout();
-          if (accessToken && refreshToken) {
-            originalRequest._retry = true;
-            return $this.post("Tokens/refresh", '', { accessToken: accessToken, refreshToken: refreshToken })
-              .then(response => {
-              $this.login(response.token, response.refreshToken);
-              return http(originalRequest);
-            }, () => {
+          // unauth error from server
+          if (!$this.isRefreshing) {
+            let accessToken = localStorage.getItem('token');
+            let refreshToken = localStorage.getItem('refreshToken');
+            $this.logout();
+            if (accessToken && refreshToken) {
+              // attempt refresh
+              originalRequest._retry = true;
+              $this.isRefreshing = true;
+              return $this.post("Tokens/refresh", '', { accessToken: accessToken, refreshToken: refreshToken })
+                .then(response => {
+                $this.login(response.token, response.refreshToken);
+                $this.isRefreshing = false;
+                // repeat original request
+                return http(originalRequest);
+              }, () => {
+                window.location.href = 'login';
+                return Promise.reject(error);
+              });
+            }
+            else {
               window.location.href = 'login';
-              return Promise.reject(error);
-            });
+            }
           }
           else {
-            window.location.href = 'login';
+            // if there is a current refresh token request, wait for that to finish
+            return new Promise((resolve) => {
+              const intervalId = setInterval(() => {
+                if (!$this.isRefreshing) {
+                  clearInterval(intervalId);
+                  resolve(http(originalRequest)); // repeat original request
+                }
+              }, 100);
+            });
           }
         }
         else if (callbackFn) {
+          // custom error handling
           callbackFn(error);
         }
         

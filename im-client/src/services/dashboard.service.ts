@@ -12,15 +12,6 @@ export default {
 // fetches user Dashboard pages from API
 export async function getDashPages(): Promise<DashPage[]> {
   return http.get('Dashboards/GetMyDashboard').then(response => {
-    if (!response?.dashboardText) {
-      // if null, construct default dashboard
-      return [
-        dashLayoutToDefaultPage(DashLayout.ThreeOneTB),
-        dashLayoutToDefaultPage(DashLayout.TwoTB),
-        dashLayoutToDefaultPage(DashLayout.ThreeTwoLR),
-      ];
-    }
-
     return JSON.parse(response.dashboardText) as DashPage[];
   });
 }

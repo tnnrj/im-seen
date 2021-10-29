@@ -10,8 +10,15 @@
           <span :class="{ 'clamp-text': !slotProps.data.expanded }">{{slotProps.data.description}}</span>
         </template>
       </Column>
-      <Column field="observationDate" header="Submit Date" :sortable="true" style="flex: 1 1 20%">
+      <Column field="observationDate" header="Submit Date" :sortable="true" style="flex: 1 1 15%">
         <template #body="slotProps">{{slotProps.data.observationDate.toLocaleString('en-US')}}</template>
+      </Column>
+      <Column style="flex: 1 1 5%">
+        <template #body="slotProps">
+          <button class="p-row-toggler p-link" @click="openObs(slotProps.data.observationID)">
+            <span class="p-row-toggler-icon pi pi-window-maximize"></span>
+          </button>
+        </template>
       </Column>
       <template #empty>
         <div style="height:100%; width:100%">
@@ -24,6 +31,9 @@
         </div>
       </template>
     </DataTable>
+    <Dialog header="Observation" v-model:visible="showObsDialog" :modal="true" :contentStyle="{ 'width': '45em', 'max-height': '80vh' }">
+      <ObservationComponent :observation="currentObs" />
+    </Dialog>
   </div>
 </template>
 
@@ -32,6 +42,8 @@ import { defineComponent, ref, watchEffect } from "vue";
 import Loader from "@/components/Loader.vue";
 import { useStore } from "@/store";
 import { Observation } from '@/model/observations.model';
+import ObservationComponent from '@/components/Observation.vue';
+import * as _ from 'lodash';
 
 interface UiObservation extends Observation {
   studentName: string;
@@ -41,7 +53,7 @@ interface UiObservation extends Observation {
 
 export default defineComponent({
   name: 'Observations',
-  components: { Loader },
+  components: { Loader, ObservationComponent },
   setup() {
     const store = useStore();
 
@@ -68,7 +80,14 @@ export default defineComponent({
       event.data.expanded = false;
     }
 
-    return { observations, expandedRows, onRowExpand, onRowCollapse };
+    const showObsDialog = ref<boolean>(false);
+    const currentObs = ref<Observation>();
+    const openObs = (id) => {
+      currentObs.value = _.find(observations.value, o => o.observationID === id);
+      showObsDialog.value = true;
+    }
+
+    return { observations, expandedRows, onRowExpand, onRowCollapse, showObsDialog, currentObs, openObs };
   }
 })
 </script>

@@ -40,7 +40,12 @@ export default defineComponent({
       store.dispatch('getUser');
     }
     const showErrorDialog = ref<boolean>(false);
-    http.addErrorHandler(() => showErrorDialog.value = true);
+    http.addErrorHandler(() => {
+      // interceptor custom error handling
+      if (isAuthenticated.value) {
+        showErrorDialog.value = true;
+      }
+    });
     return { isAuthenticated, showErrorDialog };
   }
 })

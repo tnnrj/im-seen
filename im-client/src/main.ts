@@ -23,6 +23,7 @@ import Menu from 'primevue/menu';
 import ToastService from 'primevue/toastservice';
 import Toast from 'primevue/toast';
 import Dropdown from 'primevue/dropdown';
+import Panel from 'primevue/panel';
 
 // primevue theming
 import 'primevue/resources/themes/saga-blue/theme.css';
@@ -55,6 +56,7 @@ app.component('Password', Password);
 app.component('Menu', Menu);
 app.component('Toast', Toast);
 app.component('Dropdown', Dropdown);
+app.component('Panel', Panel);
 app.directive('tooltip', Tooltip);
 app.use(ConfirmationService);
 app.use(ToastService);

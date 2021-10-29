@@ -20,7 +20,7 @@ namespace IMWebAPI.Data
             {
                 new Dashboard
                 { // default dashboard for everyone, no username
-                    DashboardText = "[{\"layout\":\"ThreeTwoTB\",\"elements\":[{\"reportID\":3,\"chartType\":\"Bar\",\"width\":50,\"height\":50},{\"reportID\":3,\"chartType\":\"BubbleCloud\",\"width\":50,\"height\":50},{\"reportID\":2,\"chartType\":\"Line\",\"width\":100,\"height\":50}]},{\"layout\":\"TwoTB\",\"elements\":[{\"reportID\":3,\"chartType\":\"BubbleCloud\",\"width\":100,\"height\":50},{\"reportID\":3,\"chartType\":\"BubbleCloud\",\"width\":100,\"height\":50}]},{\"layout\":\"ThreeTwoLR\",\"elements\":[{\"reportID\":3,\"chartType\":\"BubbleCloud\",\"width\":50,\"height\":50},{\"reportID\":3,\"chartType\":\"BubbleCloud\",\"width\":50,\"height\":50},{\"reportID\":3,\"chartType\":\"BubbleCloud\",\"width\":50,\"height\":100}]}]"
+                    DashboardText = "[{\"layout\":\"ThreeTwoTB\",\"elements\":[{\"reportID\":4,\"chartType\":\"Bar\",\"width\":50,\"height\":50},{\"reportID\":4,\"chartType\":\"BubbleCloud\",\"width\":50,\"height\":50},{\"reportID\":2,\"chartType\":\"Line\",\"width\":100,\"height\":50}]},{\"layout\":\"TwoTB\",\"elements\":[{\"reportID\":3,\"chartType\":\"BubbleCloud\",\"width\":100,\"height\":50},{\"reportID\":3,\"chartType\":\"BubbleCloud\",\"width\":100,\"height\":50}]},{\"layout\":\"ThreeTwoLR\",\"elements\":[{\"reportID\":3,\"chartType\":\"BubbleCloud\",\"width\":50,\"height\":50},{\"reportID\":3,\"chartType\":\"BubbleCloud\",\"width\":50,\"height\":50},{\"reportID\":3,\"chartType\":\"BubbleCloud\",\"width\":50,\"height\":100}]}]"
                 }
             };
 
