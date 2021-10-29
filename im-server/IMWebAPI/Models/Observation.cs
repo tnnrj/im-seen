@@ -38,6 +38,8 @@ namespace IMWebAPI.Models
 
         public DateTime ObservationDate { get; set; }
 
+        public string Status { get; set; }
+
         public string Action { get; set; }
 
         public string Event { get; set; }
