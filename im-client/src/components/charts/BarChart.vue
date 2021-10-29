@@ -7,7 +7,8 @@ import * as d3 from "d3";
 
 export default {
  name: "BarChart",
-  props: ['chartData', 'id', "axis1Name", "axis2Name"],
+  props: ['chartData', 'id', 'axis1Name', 'axis2Name'],
+  emits: ['openStudent'],
   mounted() {
     this.main();
   },
@@ -24,9 +25,8 @@ export default {
       const width = clientWidth - margin.left - margin.right;
       const height = clientHeight - margin.top - margin.bottom;
 
- const color = d3.scaleOrdinal(data.map(d=>d.name), d3.schemeSpectral[10]);
+      const color = d3.scaleOrdinal(data.map(d=>d.name), d3.schemeSpectral[10]);
     
-
       // append svg
       const svg = d3
         .select("#chart-" + this.id)
@@ -128,6 +128,9 @@ export default {
                 .duration(200)
                 .style("opacity", 0);
         });
+
+      // example of how to open student:
+      // this.$emit('openStudent', d.studentID);
     }
   }
 }

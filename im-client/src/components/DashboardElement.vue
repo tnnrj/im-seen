@@ -2,12 +2,12 @@
   <div v-if="chartType != 'None'" class="element-content p-d-flex p-flex-column p-jc-center p-ai-center">
     <template v-if="chartData && chartData.data">
       <h4 class="p-mb-0">{{chartData.name}}</h4>
-      <BubbleCloudChart v-if="chartType == ChartType.BubbleCloud" :chartData="chartData.data" :id="idx" />
-      <PieChart v-else-if="chartType == ChartType.Pie" :chartData="chartData.data" :id="idx" />
+      <BubbleCloudChart v-if="chartType == ChartType.BubbleCloud" :chartData="chartData.data" :id="idx" @openStudent="openStudent" />
+      <PieChart v-else-if="chartType == ChartType.Pie" :chartData="chartData.data" :id="idx" @openStudent="openStudent" />
       <LineChart v-else-if="chartType == ChartType.Line" :chartData="chartData.data" :axis1Name="chartData.axis1Name" 
-        :axis2Name="chartData.axis2Name" :id="idx" />
+        :axis2Name="chartData.axis2Name" :id="idx" @openStudent="openStudent" />
       <BarChart v-else-if="chartType == ChartType.Bar" :chartData="chartData.data" :axis1Name="chartData.axis1Name" 
-        :axis2Name="chartData.axis2Name" :id="idx" />
+        :axis2Name="chartData.axis2Name" :id="idx" @openStudent="openStudent" />
     </template>
     <template v-else>
       <Loader />
@@ -39,7 +39,13 @@ export default defineComponent({
     },
     idx: Number
   },
-  setup(props) {
+  emits: {
+    // event payload with validation
+    openStudent: (id: string) => {
+      return !!id;
+    }
+  },
+  setup(props, { emit }) {
     const store = useStore();
     const loadData = () => { if (!store.getters.getReportData(props.reportID)) store.dispatch('loadReportData', { reportID: props.reportID }); }
     loadData();
@@ -47,7 +53,11 @@ export default defineComponent({
 
     onBeforeUpdate(loadData);
 
-    return { chartData, ChartType }
+    const openStudent = (id) => {
+      emit('openStudent', id);
+    };
+
+    return { chartData, ChartType, openStudent }
   }
 });
 </script>

@@ -4,7 +4,7 @@
       <div class="dashboard-elements p-d-flex" :class="{'p-flex-column': pages[curPageNum].layout.indexOf('LR') !== -1}">
         <div class="element" v-for="(element, index) in pages[curPageNum].elements" :key="index"
           :style="{ width: element.width + '%', height: element.height + '%', visibility: element.chartType == 'None' ? 'hidden' : '' }">
-          <DashboardElement :chartType="element.chartType" :reportID="element.reportID" :idx="index"></DashboardElement>
+          <DashboardElement :chartType="element.chartType" :reportID="element.reportID" :idx="index" @openStudent="openStudent"></DashboardElement>
         </div>
       </div>
       <div class="sidebar p-d-flex p-flex-column p-ai-end">
@@ -41,6 +41,9 @@
       <Button label="Continue" icon="pi pi-check" @click="onLayoutDialogContinue" />
     </template>
   </Dialog>
+  <!-- <Dialog header="Student" v-model:visible="showStudentDialog" :modal="true" :contentStyle="{'max-height':'80vh', 'width':'45em'}">
+    <Student :student="curStudent" />
+  </Dialog> -->
 </template>
 
 <script lang="ts">
@@ -106,7 +109,7 @@ export default defineComponent({
     };
 
     // configurator setup
-    const showConfigurator = ref(false);
+    const showConfigurator = ref<boolean>(false);
     const onConfiguratorComplete = (newPage: DashPage) => {
       showConfigurator.value = false;
       if (newPage) {
@@ -115,10 +118,19 @@ export default defineComponent({
       }
     };
 
+    // student dialog
+    const showStudentDialog = ref<boolean>(false);
+    const curStudent = ref(); // change to ref<Student>();
+    const openStudent = async (id: string) => {
+      showStudentDialog.value = true;
+      // curStudent.value = await studentService.getStudent(id);
+    };
+
     return { curPageNum, pages, addNewPage, switchPage,
       showLayoutDialog, layoutOptions, onLayoutDialogClose, onLayoutDialogContinue, newLayout,
       dashLayoutToPanelCounts: DashboardService.dashLayoutToPanelCounts, 
-      showConfigurator, onConfiguratorComplete };
+      showConfigurator, onConfiguratorComplete,
+      showStudentDialog, curStudent, openStudent };
   }
 });
 </script>
