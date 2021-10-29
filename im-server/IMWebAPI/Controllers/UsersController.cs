@@ -9,6 +9,7 @@ using IMWebAPI.Data;
 using IMWebAPI.Models;
 using IMWebAPI.Helpers;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace IMWebAPI.Controllers
 {
@@ -18,10 +19,12 @@ namespace IMWebAPI.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IM_API_Context _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public UsersController(IM_API_Context context)
+        public UsersController(IM_API_Context context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: api/Users
@@ -87,6 +90,60 @@ namespace IMWebAPI.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetUser", new { id = user.UserName }, user);
+        }
+
+        [Authorize(Roles = "Administrator")]
+        [HttpPost]
+        public async Task<ActionResult<Observation>> Update(string username, string role, [Bind("UserName,Email,FirstName,LastName,JobTitle")] ApplicationUser user)
+        {
+            if (username != user.UserName)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var old_user = await _userManager.FindByNameAsync(username);
+
+
+                    old_user.FirstName = user.FirstName;
+                    old_user.LastName = user.LastName;
+
+                    old_user.JobTitle = user.JobTitle;
+
+                    if (role == "Administrator" || role == "PrimaryActor" || role == "SupportingActor" || role == "Observer")
+                    {
+                        var currRoles = await _userManager.GetRolesAsync(old_user);
+                        await _userManager.RemoveFromRolesAsync(old_user, currRoles);
+                        await _userManager.AddToRoleAsync(old_user, role);
+                        
+                    }
+
+                    var result = await _userManager.UpdateAsync(old_user);
+
+                    if (!result.Succeeded)
+                        return new BadRequestObjectResult(new { Message = "User update failed." });
+
+                    return Ok(new {Message = "User information has been updated." });
+
+                }
+
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!UserExists(user.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+            }
+
+            return NoContent();
         }
 
         // DELETE: api/Users/5

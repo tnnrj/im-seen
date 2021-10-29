@@ -86,6 +86,13 @@ namespace IMWebAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Observation>> PostObservation(Observation observ)
         {
+            // Match to existing student by name if possible
+            var matchingStudent = _context.Students
+                .Where(s => (s.FirstName == observ.StudentFirstName) && (s.LastName == observ.StudentLastName))
+                .FirstOrDefault();
+            if (matchingStudent != null)
+                observ.StudentID = matchingStudent.StudentID;
+
             _context.Observations.Add(observ);
             try
             {
@@ -106,7 +113,7 @@ namespace IMWebAPI.Controllers
             return CreatedAtAction("GetObservation", new { id = observ.ObservationID }, observ);
         }
 
-        // UPDATE: api/Observations/5
+
         [Authorize(Roles = "Administrator, PrimaryActor")]
         [HttpPost]
         public async Task<ActionResult<Observation>> UpdateObservation(int id, [Bind("ObservationID,StudentID,StudentFirstName,StudentLastName,Severity,Action,Event")] Observation observ)
