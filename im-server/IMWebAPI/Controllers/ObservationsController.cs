@@ -113,9 +113,10 @@ namespace IMWebAPI.Controllers
             return CreatedAtAction("GetObservation", new { id = observ.ObservationID }, observ);
         }
 
-
+        // POST: api/Observations/Update
         [Authorize(Roles = "Administrator, PrimaryActor")]
         [HttpPost]
+        [Route("Update")]
         public async Task<ActionResult<Observation>> UpdateObservation(int id, [Bind("ObservationID,StudentID,StudentFirstName,StudentLastName,Severity,Action,Event")] Observation observ)
         {
             if (id != observ.ObservationID)
@@ -137,6 +138,7 @@ namespace IMWebAPI.Controllers
                     old_observ.Severity = observ.Severity;
                     old_observ.Action = observ.Action;
                     old_observ.Event = observ.Event;
+                    old_observ.Status = observ.Status;
 
 
                     _context.Update(old_observ);

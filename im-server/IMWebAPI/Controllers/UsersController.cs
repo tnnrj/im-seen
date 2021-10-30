@@ -92,8 +92,10 @@ namespace IMWebAPI.Controllers
             return CreatedAtAction("GetUser", new { id = user.UserName }, user);
         }
 
+        // POST: api/Users/Update
         [Authorize(Roles = "Administrator")]
         [HttpPost]
+        [Route("Update")]
         public async Task<ActionResult<Observation>> Update(string username, string role, [Bind("UserName,Email,FirstName,LastName,JobTitle")] ApplicationUser user)
         {
             if (username != user.UserName)
