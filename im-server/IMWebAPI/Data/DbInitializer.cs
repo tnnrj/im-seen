@@ -19,6 +19,10 @@ namespace IMWebAPI.Data
             Observation_Seeding.SeedObservations(context);
             Report_Seeding.SeedReports(context);
             Dashboard_Seeding.SeedDashboards(context);
+
+            Group_Seeding.SeedGroups(context);
+            Group_Seeding.SeedDelegations(context);
+            Group_Seeding.SeedSupporters(context);
         }
     }
 }

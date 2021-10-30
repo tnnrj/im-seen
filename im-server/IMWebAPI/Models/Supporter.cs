@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,9 +11,10 @@ namespace IMWebAPI.Models
     {
         public int SupporterID { get; set; }
 
-        [ForeignKey("Groups.GroupID")]
-        public int GroupID { get; set; }
+        [Required]
+        public Group Group { get; set; }
 
+        [Required]
         [ForeignKey("Users.UserName")]
         public string UserName { get; set; }
     }
