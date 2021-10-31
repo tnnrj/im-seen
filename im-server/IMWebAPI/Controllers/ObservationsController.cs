@@ -10,6 +10,7 @@ using IMWebAPI.Models;
 using Microsoft.AspNetCore.Cors;
 using IMWebAPI.Helpers;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace IMWebAPI.Controllers
 {
@@ -20,16 +21,42 @@ namespace IMWebAPI.Controllers
     public class ObservationsController : ControllerBase
     {
         private readonly IM_API_Context _context;
+        private readonly IQueryable<Observation> myObservQuery;
 
         public ObservationsController(IM_API_Context context)
         {
             _context = context;
+
+            myObservQuery =
+                from observ in _context.Observations
+
+                join student in _context.Students
+                on observ.StudentID equals student.StudentID
+
+                join delegation in _context.Delegations
+                on student.StudentID equals delegation.Student.StudentID
+
+                join g in _context.Groups
+                on delegation.Group.GroupID equals g.GroupID
+
+                join supporter in _context.Supporters
+                on g.GroupID equals supporter.Group.GroupID
+
+                where supporter.UserName == User.Identity.Name
+                select observ;
         }
 
         // GET: api/Observations
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Observation>>> GetObservation()
         {
+            if (User.IsInRole("SupportingActor"))
+            {
+
+                return await myObservQuery.ToListAsync();
+            }
+
+
             return await _context.Observations.ToListAsync();
         }
 
@@ -42,6 +69,15 @@ namespace IMWebAPI.Controllers
             if (observ == null)
             {
                 return NotFound();
+            }
+
+            if (User.IsInRole("SupportingActor"))
+            {
+                var myObservs = await myObservQuery.ToListAsync();
+                if (!myObservs.Contains(observ))
+                {
+                    return NotFound();
+                }
             }
 
             return observ;
@@ -185,5 +221,6 @@ namespace IMWebAPI.Controllers
         {
             return _context.Observations.Any(e => e.ObservationID == id);
         }
+        
     }
 }

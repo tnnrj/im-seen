@@ -94,8 +94,7 @@ namespace IMWebAPI.Data
 
             var supporters = new Supporter[]
             {
-                new Supporter {UserName="filch", Group=context.Groups.Where(g => g.GroupName == "A-F").FirstOrDefault()},
-                new Supporter {UserName="filch", Group=context.Groups.Where(g => g.GroupName == "M-R").FirstOrDefault()},
+                new Supporter {UserName="filch", Group=context.Groups.Where(g => g.GroupName == "A-F").FirstOrDefault()}
             };
 
             context.Supporters.AddRange(supporters);
