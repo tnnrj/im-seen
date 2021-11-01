@@ -17,17 +17,60 @@ namespace IMWebAPI.Controllers
     public class StudentsController : ControllerBase
     {
         private readonly IM_API_Context _context;
+        private readonly IQueryable<Student> supporterQuery;
+        private readonly IQueryable<int> primaryQuery;
 
         public StudentsController(IM_API_Context context)
         {
             _context = context;
+            supporterQuery =
+                from student in _context.Students
+
+                join delegation in _context.Delegations
+                on student.StudentID equals delegation.Student.StudentID
+
+                join g in _context.Groups
+                on delegation.Group.GroupID equals g.GroupID
+
+                join supporter in _context.Supporters
+                on g.GroupID equals supporter.Group.GroupID
+
+                where supporter.UserName == User.Identity.Name
+                select student;
+
+            primaryQuery =
+                from student in _context.Students
+
+                join delegation in _context.Delegations
+                on student.StudentID equals delegation.Student.StudentID
+
+                join g in _context.Groups
+                on delegation.Group.GroupID equals g.GroupID
+
+                where g.PrimaryUserName == User.Identity.Name
+                select student.StudentID;
         }
 
         // GET: api/Students
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Student>>> GetStudent()
         {
+            if (User.IsInRole("SupportingActor"))
+            {
+                return await supporterQuery.ToListAsync();
+            }
+
             return await _context.Students.ToListAsync();
+        }
+
+        // GET: api/Students/MyStudents
+        [Authorize(Roles = "Administrator, PrimaryActor")]
+        [HttpGet]
+        [Route("MyStudents")]
+        public async Task<ActionResult<IEnumerable<int>>> GetMyStudents()
+        {
+
+            return await primaryQuery.ToListAsync();
         }
 
         // GET: api/Students/5
@@ -39,6 +82,15 @@ namespace IMWebAPI.Controllers
             if (student == null)
             {
                 return NotFound();
+            }
+
+            if (User.IsInRole("SupportingActor"))
+            {
+                var myStudents = await supporterQuery.ToListAsync();
+                if (!myStudents.Contains(student))
+                {
+                    return NotFound();
+                }
             }
 
             return student;
