@@ -14,7 +14,7 @@
         <Panel header="Status" class="p-mb-1 p-pl-1 p-pr-1" style="width:40%">
           <span>{{obs.status ?? 'None'}}</span>
         </Panel>
-        <Panel header="Severity" class="p-mb-1" style="width:40%">
+        <Panel header="Action" class="p-mb-1" style="width:40%">
           <span>{{obs.action ?? 'None'}}</span>
         </Panel>
       </div>

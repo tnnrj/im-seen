@@ -11,12 +11,6 @@ import { Observation } from '@/model/observations.model';
 import ObservationTable from '@/components/ObservationTable.vue';
 import * as _ from 'lodash';
 
-interface UiObservation extends Observation {
-  studentName: string;
-  fullDescription: string;
-  expanded: boolean;
-}
-
 export default defineComponent({
   name: 'Observations',
   components: { ObservationTable },
@@ -24,7 +18,7 @@ export default defineComponent({
     const store = useStore();
     if (!store.state.observations) store.dispatch('loadAllObservations');
     const observations = computed(() => {
-      return store.state.observations;
+      return _.filter(store.state.observations);
     })
 
     return { observations };

@@ -10,7 +10,7 @@
       </template>
     </Column>
     <Column field="observationDate" header="Submit Date" :sortable="true" style="flex: 1 1 15%">
-      <template #body="slotProps">{{slotProps.data.observationDate.toLocaleString('en-US')}}</template>
+      <template #body="slotProps">{{slotProps.data.observationDateString}}</template>
     </Column>
     <Column style="flex: 1 1 5%">
       <template #body="slotProps">
@@ -41,11 +41,13 @@ import Loader from "@/components/Loader.vue";
 import { Observation } from '@/model/observations.model';
 import ObservationComponent from '@/components/Observation.vue';
 import * as _ from 'lodash';
+import moment from 'moment';
 
 interface UiObservation extends Observation {
   studentName: string;
   fullDescription: string;
   expanded: boolean;
+  observationDateString: string;
 }
 
 export default defineComponent({
@@ -61,6 +63,7 @@ export default defineComponent({
         let uir = _.cloneDeep(r) as UiObservation;
         uir.studentName = (r.studentFirstName + ' ' + r.studentLastName).trim();
         uir.observationDate = new Date(r.observationDate);
+        uir.observationDateString = moment(uir.observationDate).format('MMM DD, YYYY h:mm A');
         uir.fullDescription = r.description;
         uir.expanded = false;
         return uir;

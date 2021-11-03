@@ -12,6 +12,7 @@
     "core-js": "^3.6.5",
     "d3": "^6.6.2",
     "lodash": "^4.17.21",
+    "moment": "^2.29.1",
     "primeflex": "^2.0.0",
     "primeicons": "^4.1.0",
     "primevue": "^3.3.3",
