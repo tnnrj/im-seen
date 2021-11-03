@@ -8,6 +8,15 @@ using System.Threading.Tasks;
 
 namespace IMWebAPI.Models
 {
+    public enum ObservationStatus
+    {
+        New = 1,
+        Viewed = 2,
+        Assigned = 3,
+        ActionTaken = 4,
+        Closed = 5
+    }
+
     public class Observation
     {
         //[DatabaseGenerated(DatabaseGeneratedOption.None)]
