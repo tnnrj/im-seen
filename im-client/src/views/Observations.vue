@@ -18,7 +18,7 @@ export default defineComponent({
     const store = useStore();
     if (!store.state.observations) store.dispatch('loadAllObservations');
     const observations = computed(() => {
-      return _.filter(store.state.observations);
+      return store.state.observations;
     })
 
     return { observations };

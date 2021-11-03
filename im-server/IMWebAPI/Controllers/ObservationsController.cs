@@ -151,13 +151,13 @@ namespace IMWebAPI.Controllers
 
         // POST: api/Observations/Update
         [Authorize(Roles = "Administrator, PrimaryActor")]
-        [HttpPost]
-        [Route("Update")]
-        public async Task<ActionResult<Observation>> UpdateObservation(int id, [Bind("ObservationID,StudentID,StudentFirstName,StudentLastName,Severity,Action,Event")] Observation observ)
+        [HttpPost("{id}")]
+        [Route("Update/{id}")]
+        public async Task<ActionResult<Observation>> UpdateObservation(int id, [FromBody] Observation observ)
         {
             if (id != observ.ObservationID)
             {
-                return NotFound();
+                return BadRequest();
             }
 
             if (ModelState.IsValid)
@@ -165,7 +165,6 @@ namespace IMWebAPI.Controllers
                 try
                 {
                     var old_observ = await _context.Observations.FindAsync(id);
-
 
                     old_observ.StudentID = observ.StudentID;
                     old_observ.StudentFirstName = observ.StudentFirstName;
@@ -175,7 +174,6 @@ namespace IMWebAPI.Controllers
                     old_observ.Action = observ.Action;
                     old_observ.Event = observ.Event;
                     old_observ.Status = observ.Status;
-
 
                     _context.Update(old_observ);
                     await _context.SaveChangesAsync();
@@ -194,7 +192,7 @@ namespace IMWebAPI.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok();
         }
 
 

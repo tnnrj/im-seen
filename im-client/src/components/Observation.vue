@@ -12,7 +12,16 @@
           <span>{{obs.severity}}</span>
         </Panel>
         <Panel header="Status" class="p-mb-1 p-pl-1 p-pr-1" style="width:40%">
-          <span>{{obs.status ?? 'None'}}</span>
+          <template #icons>
+            <button v-if="editingStatus" class="p-panel-header-icon p-link" @click="save" v-tooltip="'Save'"><i class="pi pi-check" /></button>
+            <button v-else class="p-panel-header-icon p-link" @click="editingStatus = true"><i class="pi pi-pencil" /></button>
+          </template>
+          <template v-if="editingStatus">
+            <Dropdown v-model="obs.status" :options="statusOptions" />
+          </template>
+          <template v-else>
+            <span>{{obs.status ?? 'None'}}</span>
+          </template>
         </Panel>
         <Panel header="Action" class="p-mb-1" style="width:40%">
           <span>{{obs.action ?? 'None'}}</span>
@@ -30,6 +39,7 @@ import { defineComponent, onUpdated, ref } from "vue";
 import Loader from "@/components/Loader.vue";
 import { Observation } from "@/model/observations.model";
 import observationService from "@/services/observations.service";
+import { ObservationStatus } from "@/model/enums.model";
 
 export default defineComponent({
   name: "Observation",
@@ -44,15 +54,25 @@ export default defineComponent({
       obs.value = props.observation as Observation;
     });
 
+    const editingStudent = ref<boolean>(false);
+    const editingStatus = ref<boolean>(false);
+    const statusOptions = ref<ObservationStatus[]>(Object.keys(ObservationStatus) as ObservationStatus[]);
+
     const saving = ref<boolean>(false);
     const save = async function () {
       if (obs.value) {
         saving.value = true;
-        await observationService.saveObservation(obs.value);
-        saving.value = false;
+        try {
+          await observationService.saveObservation(obs.value);
+          editingStudent.value = false;
+          editingStatus.value = false;
+        }
+        finally {
+          saving.value = false;
+        }
       }
     };
-    return { obs, save };
+    return { obs, editingStudent, editingStatus, statusOptions, save, saving };
   }
 });
 </script>
@@ -65,5 +85,12 @@ export default defineComponent({
   width: 100%;
   height: 100%;  
   flex-flow: row wrap;
+}
+.p-panel-header {
+  padding: .5rem 1rem !important;
+}
+.p-panel-title {
+  height: 2rem;
+  padding-top: .5rem;
 }
 </style>

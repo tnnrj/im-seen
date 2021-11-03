@@ -33,7 +33,7 @@ export default {
       // get data from the method above
       const data = this.chartData;
       // initialize color scheme
-      const color = d3.scaleOrdinal(data.map(d=>d), d3.schemeSpectral[10]);
+      const color = d3.scaleOrdinal(data, d3.schemeSpectral[10]);
     
       // this method packs the data into scaled bubbles based off of weighted severity
       const root = d3.pack()
@@ -80,7 +80,7 @@ export default {
       // draw the text
       leaf.append("text")
         .selectAll("tspan")
-        .data(d => d.data.name) //+ "\n(" + d.data.severity + ")")
+        .data(d => d.data.name)
         .join("tspan")
         .text(d => d)
         .style("font-size", .02 *  minDimension);
@@ -108,7 +108,7 @@ export default {
                 .attr('opacity', '.85');
               // show tooltip
               tooltip
-                .html(d.data.name + "<br>" + d.value)
+                .html(d.data.name + "<br>" + d.data.value)
                 .style("left", (event.pageX) + "px")
                 .style("top", (event.pageY) + "px");
               tooltip.transition()
