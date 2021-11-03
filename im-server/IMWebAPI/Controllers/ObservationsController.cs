@@ -129,6 +129,8 @@ namespace IMWebAPI.Controllers
             if (matchingStudent != null)
                 observ.StudentID = matchingStudent.StudentID;
 
+            observ.Status = "New";
+
             _context.Observations.Add(observ);
             try
             {
