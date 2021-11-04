@@ -4,6 +4,7 @@ import reportDataService from '@/services/report-data.service';
 import ObservationsService from '@/services/observations.service';
 import { Observation } from '@/model/observations.model';
 import authenticationService from "@/services/authentication.service";
+import studentsService from '@/services/students.service';
 import { User } from '@/model/user.model';
 
 // define our type for the store state
@@ -11,6 +12,7 @@ export interface State {
   chartDatas: Map<string, any>;
   observations: Observation[] | undefined;
   user: User | undefined;
+  myStudents: string[] | undefined;
   isAuthenticated: boolean;
 }
 
@@ -23,6 +25,7 @@ export const store = createStore<State>({
     chartDatas: new Map<string, any>(),
     observations: undefined,
     user: undefined,
+    myStudents: undefined,
     isAuthenticated: authenticationService.isLoggedIn()
   },
   getters: {
@@ -40,6 +43,9 @@ export const store = createStore<State>({
     setUser(state, user) {
       state.user = user;
       state.isAuthenticated = !!user;
+    },
+    setMyStudents(state, payload) {
+      state.myStudents = payload;
     }
   },
   actions: {
@@ -66,6 +72,10 @@ export const store = createStore<State>({
     async getUser({commit}) {
       let u = await authenticationService.getUser();
       commit('setUser', u);
+    },
+    async getMyStudents({commit}) {
+      let s = await studentsService.getMyStudents();
+      commit('setMyStudents', s);
     }
   }
 })

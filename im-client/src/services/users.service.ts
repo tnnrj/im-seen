@@ -6,5 +6,7 @@ export default {
 }
 
 export async function getAllUsers(): Promise<User[]> {
-  return http.get('Users/');
+  return http.get('Users/').then(response => {
+    return { ...response.User, role: response.Role };
+  });
 }

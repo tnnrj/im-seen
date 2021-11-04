@@ -29,7 +29,7 @@ export enum DashLayout {
 export enum UserRole {
   Admin = 'Administrator',
   Primary = 'PrimaryActor',
-  Secondary = 'SecondaryActor',
+  Secondary = 'SupportingActor',
   Observer = 'Observer'
 }
 

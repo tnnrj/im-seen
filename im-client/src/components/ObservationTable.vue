@@ -1,38 +1,40 @@
 <template>
-  <DataTable :value="observations" sortField="observationDate" :sortOrder="-1" dataKey="observationID"
-      v-model:expandedRows="expandedRows" @row-expand="onRowExpand" @row-collapse="onRowCollapse" :scrollable="true" scrollHeight="flex">
-    <Column :expander="true" style="flex: 1 1 5%"></Column>
-    <Column field="studentName" header="Name" :sortable="true" style="flex: 1 1 15%"></Column>
-    <Column field="severity" header="Severity" :sortable="true" style="flex: 1 1 10%"></Column>
-    <Column field="description" header="Description" style="flex: 1 1 50%">
-      <template #body="slotProps">
-        <span :class="{ 'clamp-text': !slotProps.data.expanded }">{{slotProps.data.description}}</span>
-      </template>
-    </Column>
-    <Column field="observationDate" header="Submit Date" :sortable="true" style="flex: 1 1 15%">
-      <template #body="slotProps">{{slotProps.data.observationDateString}}</template>
-    </Column>
-    <Column style="flex: 1 1 5%">
-      <template #body="slotProps">
-        <button class="p-row-toggler p-link" @click="openObs(slotProps.data.observationID)">
-          <span class="p-row-toggler-icon pi pi-window-maximize"></span>
-        </button>
-      </template>
-    </Column>
-    <template #empty>
-      <div style="height:100%; width:100%">
-        <template v-if="observations">
-          No records to display
+  <div class="observation-table-content">
+    <DataTable :value="observations" sortField="observationDate" :sortOrder="-1" dataKey="observationID"
+        v-model:expandedRows="expandedRows" @row-expand="onRowExpand" @row-collapse="onRowCollapse" :scrollable="true" scrollHeight="flex">
+      <Column :expander="true" style="flex: 1 1 5%"></Column>
+      <Column field="studentName" header="Name" :sortable="true" style="flex: 1 1 15%"></Column>
+      <Column field="severity" header="Severity" :sortable="true" style="flex: 1 1 10%"></Column>
+      <Column field="description" header="Description" style="flex: 1 1 50%">
+        <template #body="slotProps">
+          <span :class="{ 'clamp-text': !slotProps.data.expanded }">{{slotProps.data.description}}</span>
         </template>
-        <template v-else>
-          <Loader />
+      </Column>
+      <Column field="observationDate" header="Submit Date" :sortable="true" style="flex: 1 1 15%">
+        <template #body="slotProps">{{slotProps.data.observationDateString}}</template>
+      </Column>
+      <Column style="flex: 1 1 5%">
+        <template #body="slotProps">
+          <button class="p-row-toggler p-link" @click="openObs(slotProps.data.observationID)">
+            <span class="p-row-toggler-icon pi pi-window-maximize"></span>
+          </button>
         </template>
-      </div>
-    </template>
-  </DataTable>
-  <Dialog header="Observation" v-model:visible="showObsDialog" :modal="true" :contentStyle="{ 'width': '45em', 'max-height': '80vh' }">
-    <ObservationComponent :observation="currentObs" />
-  </Dialog>
+      </Column>
+      <template #empty>
+        <div style="height:100%; width:100%">
+          <template v-if="observations">
+            No records to display
+          </template>
+          <template v-else>
+            <Loader />
+          </template>
+        </div>
+      </template>
+    </DataTable>
+    <Dialog header="Observation" v-model:visible="showObsDialog" :modal="true" :contentStyle="{ 'width': '45em', 'max-height': '80vh' }">
+      <ObservationComponent :observation="currentObs" />
+    </Dialog>
+  </div>
 </template>
 
 <script lang="ts">
@@ -91,6 +93,9 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+.observation-table-content {
+  height: 100%;
+}
 .clamp-text {
   display: -webkit-box;
   -webkit-line-clamp: 1;

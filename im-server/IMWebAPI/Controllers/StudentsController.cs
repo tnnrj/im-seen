@@ -18,7 +18,7 @@ namespace IMWebAPI.Controllers
     {
         private readonly IM_API_Context _context;
         private readonly IQueryable<Student> supporterQuery;
-        private readonly IQueryable<int> primaryQuery;
+        private readonly IQueryable<Student> primaryQuery;
 
         public StudentsController(IM_API_Context context)
         {
@@ -48,7 +48,7 @@ namespace IMWebAPI.Controllers
                 on delegation.Group.GroupID equals g.GroupID
 
                 where g.PrimaryUserName == User.Identity.Name
-                select student.StudentID;
+                select student;
         }
 
         // GET: api/Students
@@ -64,13 +64,24 @@ namespace IMWebAPI.Controllers
         }
 
         // GET: api/Students/MyStudents
-        [Authorize(Roles = "Administrator, PrimaryActor")]
         [HttpGet]
         [Route("MyStudents")]
         public async Task<ActionResult<IEnumerable<int>>> GetMyStudents()
         {
+            if (User.IsInRole("SupportingActor"))
+            {
+                return await supporterQuery.Select(s => s.StudentID).ToListAsync();
+            }
+            else if (User.IsInRole("PrimaryActor"))
+            {
+                return await primaryQuery.Select(s => s.StudentID).ToListAsync();
+            }
+            else if (User.IsInRole("Administrator"))
+            {
+                return await _context.Students.Select(s => s.StudentID).ToListAsync();
+            }
 
-            return await primaryQuery.ToListAsync();
+            return BadRequest();
         }
 
         // GET: api/Students/5

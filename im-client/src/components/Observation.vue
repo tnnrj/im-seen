@@ -40,6 +40,7 @@ import Loader from "@/components/Loader.vue";
 import { Observation } from "@/model/observations.model";
 import observationService from "@/services/observations.service";
 import { ObservationStatus } from "@/model/enums.model";
+import { useStore } from "@/store";
 
 export default defineComponent({
   name: "Observation",
@@ -48,6 +49,7 @@ export default defineComponent({
     observation: Object
   },
   setup(props) {
+    const store = useStore()
     const obs = ref<Observation>();
     obs.value = props.observation as Observation;
     onUpdated(() => {
@@ -64,6 +66,7 @@ export default defineComponent({
         saving.value = true;
         try {
           await observationService.saveObservation(obs.value);
+          store.dispatch('loadAllObservations');
           editingStudent.value = false;
           editingStatus.value = false;
         }
