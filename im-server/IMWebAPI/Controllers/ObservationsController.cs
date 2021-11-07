@@ -152,7 +152,6 @@ namespace IMWebAPI.Controllers
         }
 
         // POST: api/Observations/Update
-        [Authorize(Roles = "Administrator, PrimaryActor")]
         [HttpPost("{id}")]
         [Route("Update/{id}")]
         public async Task<ActionResult<Observation>> UpdateObservation(int id, [FromBody] Observation observ)
