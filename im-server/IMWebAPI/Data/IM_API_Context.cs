@@ -18,7 +18,7 @@ namespace IMWebAPI.Data
 
         public DbSet<IMWebAPI.Models.Student> Students { get; set; }
         public DbSet<IMWebAPI.Models.Observation> Observations { get; set; }
-        public DbSet<IMWebAPI.Models.Group> Groups { get; set; }
+        public DbSet<IMWebAPI.Models.StudentGroup> StudentGroups { get; set; }
         public DbSet<IMWebAPI.Models.Delegation> Delegations { get; set; }
         public DbSet<IMWebAPI.Models.Supporter> Supporters { get; set; }
         public DbSet<IMWebAPI.Models.Report> Reports { get; set; }
@@ -28,7 +28,7 @@ namespace IMWebAPI.Data
         {
             modelBuilder.Entity<Student>().ToTable("Students");
             modelBuilder.Entity<Observation>().ToTable("Observations");
-            modelBuilder.Entity<Group>().ToTable("Groups");
+            modelBuilder.Entity<StudentGroup>().ToTable("StudentGroups");
             modelBuilder.Entity<Delegation>().ToTable("Delegations");
             modelBuilder.Entity<Supporter>().ToTable("Supporters");
             modelBuilder.Entity<Report>().ToTable("Reports");

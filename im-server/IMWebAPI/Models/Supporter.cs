@@ -12,7 +12,7 @@ namespace IMWebAPI.Models
         public int SupporterID { get; set; }
 
         [Required]
-        public Group Group { get; set; }
+        public StudentGroup StudentGroup { get; set; }
 
         [Required]
         [ForeignKey("Users.UserName")]

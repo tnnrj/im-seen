@@ -36,11 +36,11 @@ namespace IMWebAPI.Controllers
                 join delegation in _context.Delegations
                 on student.StudentID equals delegation.Student.StudentID
 
-                join g in _context.Groups
-                on delegation.Group.GroupID equals g.GroupID
+                join g in _context.StudentGroups
+                on delegation.StudentGroup.StudentGroupID equals g.StudentGroupID
 
                 join supporter in _context.Supporters
-                on g.GroupID equals supporter.Group.GroupID
+                on g.StudentGroupID equals supporter.StudentGroup.StudentGroupID
 
                 where supporter.UserName == User.Identity.Name
                 select observ;

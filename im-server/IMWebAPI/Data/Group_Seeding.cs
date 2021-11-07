@@ -11,20 +11,20 @@ namespace IMWebAPI.Data
         public static void SeedGroups(IM_API_Context context)
         {
             // Look for any existing Users.
-            if (context.Groups.Any())
+            if (context.StudentGroups.Any())
             {
                 return;   // DB has been seeded
             }
 
-            var groups = new Group[]
+            var groups = new StudentGroup[]
             {
-                new Group {PrimaryUserName="mcgonogall", GroupName="A-F"},
-                new Group {PrimaryUserName="snape", GroupName="G-L"},
-                new Group {PrimaryUserName="flitwick", GroupName="M-R"},
-                new Group {PrimaryUserName="sprout", GroupName="S-Z"},
+                new StudentGroup {PrimaryUserName="mcgonagall", StudentGroupName="A-F"},
+                new StudentGroup {PrimaryUserName="snape", StudentGroupName="G-L"},
+                new StudentGroup {PrimaryUserName="flitwick", StudentGroupName="M-R"},
+                new StudentGroup {PrimaryUserName="sprout", StudentGroupName="S-Z"},
             };
 
-            context.Groups.AddRange(groups);
+            context.StudentGroups.AddRange(groups);
             context.SaveChanges();
         }
 
@@ -47,7 +47,7 @@ namespace IMWebAPI.Data
                     delegations.Add(
                       new Delegation
                       {
-                          Group = context.Groups.Where(g => g.GroupName == "A-F").FirstOrDefault(),
+                          StudentGroup = context.StudentGroups.Where(g => g.StudentGroupName == "A-F").FirstOrDefault(),
                           Student = student
                       });
                 }
@@ -56,7 +56,7 @@ namespace IMWebAPI.Data
                     delegations.Add(
                       new Delegation
                       {
-                          Group = context.Groups.Where(g => g.GroupName == "G-L").FirstOrDefault(),
+                          StudentGroup = context.StudentGroups.Where(g => g.StudentGroupName == "G-L").FirstOrDefault(),
                           Student = student
                       });
                 }
@@ -65,7 +65,7 @@ namespace IMWebAPI.Data
                     delegations.Add(
                       new Delegation
                       {
-                          Group = context.Groups.Where(g => g.GroupName == "M-R").FirstOrDefault(),
+                          StudentGroup = context.StudentGroups.Where(g => g.StudentGroupName == "M-R").FirstOrDefault(),
                           Student = student
                       });
                 }
@@ -74,7 +74,7 @@ namespace IMWebAPI.Data
                     delegations.Add(
                       new Delegation
                       {
-                          Group = context.Groups.Where(g => g.GroupName == "S-Z").FirstOrDefault(),
+                          StudentGroup = context.StudentGroups.Where(g => g.StudentGroupName == "S-Z").FirstOrDefault(),
                           Student = student
                       });
                 }
@@ -94,7 +94,7 @@ namespace IMWebAPI.Data
 
             var supporters = new Supporter[]
             {
-                new Supporter {UserName="filch", Group=context.Groups.Where(g => g.GroupName == "A-F").FirstOrDefault()}
+                new Supporter {UserName="filch", StudentGroup=context.StudentGroups.Where(g => g.StudentGroupName == "A-F").FirstOrDefault()}
             };
 
             context.Supporters.AddRange(supporters);

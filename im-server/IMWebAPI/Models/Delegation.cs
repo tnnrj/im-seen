@@ -11,7 +11,7 @@ namespace IMWebAPI.Models
         public int DelegationID { get; set; }
 
         [Required]
-        public Group Group { get; set; }
+        public StudentGroup StudentGroup { get; set; }
 
         [Required]
         public Student Student { get; set; }

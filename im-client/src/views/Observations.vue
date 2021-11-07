@@ -11,7 +11,7 @@
       <div class="p-mr-2 filter-field">
         <Dropdown placeholder="Action" v-model="actionFilter" :options="actionFilterOptions" />
       </div>
-      <div v-if="userRole != UserRole.SupportingActor" class="p-mr-2 filter-field">
+      <div v-if="userRole && userRole != 'SupportingActor'" class="p-mr-2 filter-field">
         <Dropdown placeholder="Students" v-model="studentsFilter" :options="studentsFilterOptions" />
       </div>
     </div>
@@ -26,7 +26,7 @@ import { computed, defineComponent, ref } from "vue";
 import { useStore } from "@/store";
 import ObservationTable from '@/components/ObservationTable.vue';
 import * as _ from 'lodash';
-import { ObservationStatus, UserRole } from "@/model/enums.model";
+import { ObservationStatus } from "@/model/enums.model";
 
 export default defineComponent({
   name: 'Observations',
@@ -77,7 +77,7 @@ export default defineComponent({
       actionFilter.value = undefined;
     }
 
-    return { observations, userRole, UserRole,
+    return { observations, userRole,
       statusFilter, statusFilterOptions, studentsFilter, studentsFilterOptions, actionFilter, actionFilterOptions, hasFilter, resetFilters
     };
   }

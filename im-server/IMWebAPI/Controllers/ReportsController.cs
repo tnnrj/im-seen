@@ -20,6 +20,10 @@ namespace IMWebAPI.Controllers
     {
         private readonly IM_API_Context _context;
         private readonly QueryRunner _queryRunner;
+        private readonly string _supportingReportJoin = @"
+JOIN Delegations ON Delegations.StudentID = Observations.StudentID
+JOIN Supporters ON Supporters.StudentGroupID = Delegations.StudentGroupID
+WHERE Supporters.UserName = '{UserName}'";
 
         public ReportsController(IM_API_Context context, QueryRunner queryRunner)
         {
@@ -59,7 +63,17 @@ namespace IMWebAPI.Controllers
                 return NotFound();
             }
 
-            var data = _queryRunner.ExecuteAsJson(report.Query);
+            var sql = report.Query;
+            if (User.IsInRole("SupportingActor"))
+            {
+                sql = sql.Replace("{joinAndWhere}", _supportingReportJoin).Replace("{UserName}", User.Identity.Name);
+            }
+            else
+            {
+                sql = sql.Replace("{joinAndWhere}", "NATURAL JOIN Students WHERE 1=1");
+            }
+
+            var data = _queryRunner.ExecuteAsJson(sql);
 
             var response = new JObject();
             response.Add("name", report.ReportName);

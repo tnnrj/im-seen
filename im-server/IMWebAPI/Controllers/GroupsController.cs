@@ -15,48 +15,48 @@ namespace IMWebAPI.Controllers
     [Authorize(Roles = "Administrator, PrimaryActor, SupportingActor")]
     [Route("api/[controller]")]
     [ApiController]
-    public class GroupsController : ControllerBase
+    public class StudentGroupsController : ControllerBase
     {
         private readonly IM_API_Context _context;
 
-        public GroupsController(IM_API_Context context)
+        public StudentGroupsController(IM_API_Context context)
         {
             _context = context;
         }
 
-        // GET: api/Groups
+        // GET: api/StudentGroups
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Group>>> GetGroup()
+        public async Task<ActionResult<IEnumerable<StudentGroup>>> GetStudentGroup()
         {
-            return await _context.Groups.ToListAsync();
+            return await _context.StudentGroups.ToListAsync();
         }
 
-        // GET: api/Groups/5
+        // GET: api/StudentGroups/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Group>> GetGroup(int id)
+        public async Task<ActionResult<StudentGroup>> GetStudentGroup(int id)
         {
-            var @group = await _context.Groups.FindAsync(id);
+            var @StudentGroup = await _context.StudentGroups.FindAsync(id);
 
-            if (@group == null)
+            if (@StudentGroup == null)
             {
                 return NotFound();
             }
 
-            return @group;
+            return @StudentGroup;
         }
 
-        // PUT: api/Groups/5
+        // PUT: api/StudentGroups/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutGroup(int id, Group @group)
+        public async Task<IActionResult> PutStudentGroup(int id, StudentGroup @StudentGroup)
         {
-            if (id != @group.GroupID)
+            if (id != @StudentGroup.StudentGroupID)
             {
                 return BadRequest();
             }
 
-            _context.Entry(@group).State = EntityState.Modified;
+            _context.Entry(@StudentGroup).State = EntityState.Modified;
 
             try
             {
@@ -64,7 +64,7 @@ namespace IMWebAPI.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!GroupExists(id))
+                if (!StudentGroupExists(id))
                 {
                     return NotFound();
                 }
@@ -77,37 +77,37 @@ namespace IMWebAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/Groups
+        // POST: api/StudentGroups
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Group>> PostGroup(Group @group)
+        public async Task<ActionResult<StudentGroup>> PostStudentGroup(StudentGroup @StudentGroup)
         {
-            _context.Groups.Add(@group);
+            _context.StudentGroups.Add(@StudentGroup);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetGroup", new { id = @group.GroupID }, @group);
+            return CreatedAtAction("GetStudentGroup", new { id = @StudentGroup.StudentGroupID }, @StudentGroup);
         }
 
-        // DELETE: api/Groups/5
+        // DELETE: api/StudentGroups/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Group>> DeleteGroup(int id)
+        public async Task<ActionResult<StudentGroup>> DeleteStudentGroup(int id)
         {
-            var @group = await _context.Groups.FindAsync(id);
-            if (@group == null)
+            var @StudentGroup = await _context.StudentGroups.FindAsync(id);
+            if (@StudentGroup == null)
             {
                 return NotFound();
             }
 
-            _context.Groups.Remove(@group);
+            _context.StudentGroups.Remove(@StudentGroup);
             await _context.SaveChangesAsync();
 
-            return @group;
+            return @StudentGroup;
         }
 
-        private bool GroupExists(int id)
+        private bool StudentGroupExists(int id)
         {
-            return _context.Groups.Any(e => e.GroupID == id);
+            return _context.StudentGroups.Any(e => e.StudentGroupID == id);
         }
     }
 }
