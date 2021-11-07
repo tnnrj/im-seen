@@ -23,8 +23,20 @@
             <span>{{obs.status ?? 'None'}}</span>
           </template>
         </Panel>
-        <Panel header="Action" class="p-mb-1" style="width:40%">
-          <span>{{obs.action ?? 'None'}}</span>
+        <Panel header="Event" class="p-mb-1" style="width:40%">
+          <span>{{obs.event ?? 'None'}}</span>
+        </Panel>
+        <Panel header="Action" class="p-mb-1" style="width:100%" :toggleable="true">
+          <template #icons>
+            <button v-if="editingAction" class="p-panel-header-icon p-link" @click="save" v-tooltip="'Save'"><i class="pi pi-check" /></button>
+            <button v-else class="p-panel-header-icon p-link" @click="editingAction = true"><i class="pi pi-pencil" /></button>
+          </template>
+          <template v-if="editingAction">
+            <textarea v-model="obs.action" rows="4" style="width:100%"></textarea>
+          </template>
+          <template v-else>
+            <span>{{obs.action ?? 'No action taken'}}</span>
+          </template>
         </Panel>
       </div>
     </template>
@@ -58,6 +70,7 @@ export default defineComponent({
 
     const editingStudent = ref<boolean>(false);
     const editingStatus = ref<boolean>(false);
+    const editingAction = ref<boolean>(false);
     const statusOptions = ref<ObservationStatus[]>(Object.keys(ObservationStatus) as ObservationStatus[]);
 
     const saving = ref<boolean>(false);
@@ -68,6 +81,7 @@ export default defineComponent({
           await observationService.saveObservation(obs.value);
           store.dispatch('loadAllObservations');
           editingStudent.value = false;
+          editingAction.value = false;
           editingStatus.value = false;
         }
         finally {
@@ -75,7 +89,7 @@ export default defineComponent({
         }
       }
     };
-    return { obs, editingStudent, editingStatus, statusOptions, save, saving };
+    return { obs, editingStudent, editingStatus, statusOptions, editingAction, save, saving };
   }
 });
 </script>
