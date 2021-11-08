@@ -19,7 +19,6 @@
       </template>
     </DataTable>
     <div class="sidebar p-d-flex p-flex-column p-ai-end">
-      <i class="pi pi-file-o p-mb-3" v-tooltip="'Reporting'" @click="showReportingDialog = true" />
       <i class="pi pi-plus-circle" v-tooltip="'Add User'" @click="showAddUserDialog = true" />
     </div>
   </div>

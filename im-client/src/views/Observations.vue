@@ -35,7 +35,7 @@ export default defineComponent({
     const store = useStore();
     if (!store.state.observations) store.dispatch('loadAllObservations');
     if (!store.state.user) store.dispatch('getUser');
-    if (!store.state.myStudents) store.dispatch('getMyStudents');
+    if (!store.state.myStudentIds) store.dispatch('getMyStudentIds');
 
     const observations = computed(() => {
       if (!store.state.observations) return null;
@@ -45,7 +45,7 @@ export default defineComponent({
         result = _.filter(result, o => o.status == statusFilter.value);
       }
       if (studentsFilter.value === 'My Students') {
-        result = _.filter(result, o => _.includes(myStudents.value, o.studentID));
+        result = _.filter(result, o => _.includes(myStudentIds.value, o.studentID));
       }
       if (studentsFilter.value === 'Unidentified') {
         result = _.filter(result, o => !o.studentID);
@@ -61,7 +61,7 @@ export default defineComponent({
     });
 
     const userRole = computed(() => store.state.user?.role);
-    const myStudents = computed(() => store.state.myStudents);
+    const myStudentIds = computed(() => store.state.myStudentIds);
 
     const statusFilter = ref<ObservationStatus>();
     const statusFilterOptions = ref<ObservationStatus[]>(Object.keys(ObservationStatus) as ObservationStatus[]);
