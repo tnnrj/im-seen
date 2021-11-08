@@ -9,6 +9,7 @@ import _ from "lodash";
 export default {
   name: "LineChart",
   props: ["chartData", "id", "axis1Name", "axis2Name"],
+  emits: ['openStudent'],
   mounted() {
     this.main();
   },
@@ -107,12 +108,14 @@ export default {
             .style("-webkit-tap-highlight-color", "transparent")
             .on("touchmove", moved)
             .on("touchstart", entered)
-            .on("touchend", left);
+            .on("touchend", left)
+            .on("click", click);
         else
           svg
             .on("mousemove", moved)
             .on("mouseenter", entered)
-            .on("mouseleave", left);
+            .on("mouseleave", left)
+            .on("click", click);
 
         const dot = svg.append("g").attr("display", "none");
 
@@ -155,6 +158,10 @@ export default {
             .style("mix-blend-mode", "multiply")
             .attr("stroke", (d) => d.color);
           dot.attr("display", "none");
+        }
+
+        function click() {
+            this.$emit('openStudent', (d) => d.id);
         }
       }
 
