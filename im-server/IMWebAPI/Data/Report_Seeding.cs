@@ -21,7 +21,7 @@ namespace IMWebAPI.Data
                 new Report
                 {
                     ReportName = "Students Grouped by Total Observation Severity",
-                    Query = "SELECT TRIM(CONCAT(StudentFirstName, ' ', StudentLastName)) as name, SUM(Severity) AS value FROM Observations {joinAndWhere} GROUP BY StudentFirstName, StudentLastName, Observations.StudentID",
+                    Query = "SELECT TRIM(CONCAT(StudentFirstName, ' ', StudentLastName)) as name, SUM(Severity) AS value, Observations.StudentID as id FROM Observations {joinAndWhere} GROUP BY StudentFirstName, StudentLastName, Observations.StudentID",
                     Axis1Name = "Student",
                     Axis2Name = "Total Observation Severity",
                     AvailableChartTypes = "Bar,Pie,BubbleCloud"
@@ -29,7 +29,7 @@ namespace IMWebAPI.Data
                 new Report
                 {
                     ReportName = "Observation Frequency by Student and Date",
-                    Query = "SELECT TRIM(CONCAT(StudentFirstName, ' ', StudentLastName)) as name, CAST(ObservationDate AS DATE) as date, COUNT(*) as value FROM Observations {joinAndWhere} GROUP BY StudentFirstName, StudentLastName, Observations.StudentID, ObservationDate ORDER BY ObservationDate",
+                    Query = "SELECT TRIM(CONCAT(StudentFirstName, ' ', StudentLastName)) as name, CAST(ObservationDate AS DATE) as date, COUNT(*) as value, Observations.StudentID as id FROM Observations {joinAndWhere} GROUP BY StudentFirstName, StudentLastName, Observations.StudentID, ObservationDate ORDER BY ObservationDate",
                     Axis1Name = "Date",
                     Axis2Name = "Frequency of Observations",
                     AvailableChartTypes = "Line"
@@ -37,7 +37,7 @@ namespace IMWebAPI.Data
                 new Report
                 {
                     ReportName = "Observation Severity by Student and Date",
-                    Query = "SELECT TRIM(CONCAT(StudentFirstName, ' ', StudentLastName)) as name, CAST(ObservationDate AS DATE) as date, SUM(Severity) as value FROM Observations {joinAndWhere} GROUP BY StudentFirstName, StudentLastName, Observations.StudentID, ObservationDate ORDER BY ObservationDate",
+                    Query = "SELECT TRIM(CONCAT(StudentFirstName, ' ', StudentLastName)) as name, CAST(ObservationDate AS DATE) as date, SUM(Severity) as value, Observations.StudentID as id FROM Observations {joinAndWhere} GROUP BY StudentFirstName, StudentLastName, Observations.StudentID, ObservationDate ORDER BY ObservationDate",
                     Axis1Name = "Date",
                     Axis2Name = "Severity of Observations",
                     AvailableChartTypes = "Line"
