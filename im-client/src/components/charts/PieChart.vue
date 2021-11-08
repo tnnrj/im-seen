@@ -8,6 +8,7 @@ import * as d3 from "d3";
 export default {
   name: "PieChart",
   props: ['chartData', 'id'],
+  emits: ['openStudent'],
   mounted() {
     this.main();
   },
@@ -122,6 +123,16 @@ export default {
               tooltip.transition()
                 .duration(200)
                 .style("opacity", 0);
+        })
+        .on("click", function (d, i) {
+            d3.select(this).transition()
+                  .duration('50')
+                  .attr('opacity', '1');
+            // turn off tooltip
+            tooltip.transition()
+              .duration(200)
+              .style("opacity", 0);
+            this.$emit('openStudent', d.id ? d.id : 0);
         });
     }
   }
