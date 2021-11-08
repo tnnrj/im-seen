@@ -1,18 +1,17 @@
 <template>
 <div>
-    <h1 class="p-mb-0">{{Student_Name}}</h1>
+    <h1 class="p-mb-0">{{student.name}}</h1>
     <div>
-        <h4>Percentiles</h4>
-        <div id="percentile-stats">
+        <h4>Statistics</h4>
+        <div id="stats">
             <!-- todo -->
-            Frequency 
-            <br/>
-            Severity 
-            <br/>
-            Weighted Score
+            <!-- possible fields: X reports in last two weeks; average score increase/decrease over last two weeks -->
+            <!-- Frequency <!-- SELECT count(*) FROM Observations GROUP BY StudentID; find desired student and calculate percentile x students below out of total; do we want a date range?? -->
+            <!-- Average Severity <!-- SELECT avg(Severity) FROM Observations WHERE StudentId = id; do we want percentile or just average? -->
+            <!-- Weighted Score <!-- are weighted scores stored somewhere?? how do I use the weighted score calculator here?  -->
         </div>
     </div>
-    <ObservationTable :records="observations" />
+    <ObservationTable :records="observations" /> <!-- TODO: SELECT * FROM Observations WHERE studentId = student.id -->
   <div v-if="openStudent" class="element-content p-d-flex p-flex-column p-jc-center p-ai-center">
     <template v-if="pieChartData && pieChartData.data">
       <h4 class="p-mb-0">{{pieChartData.name}}</h4>
@@ -37,26 +36,19 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onBeforeUpdate } from "vue";
+import { computed, defineComponent, onBeforeUpdate, ref } from "vue";
 import StudentService from "@/services/students.service";
 import LineChart from "@/components/charts/LineChart.vue";
 import PieChart from "@/components/charts/PieChart.vue";
 import ObservationTable from "@/components/ObservationTable.vue"
 import Loader from "@/components/Loader.vue";
 import { useStore } from "@/store/index";
+import reportsService from "@/services/report-data.service";
 
 export default defineComponent({
   name: "Student",
   components: { LineChart, PieChart, Loader, ObservationTable },
   props: {
-    pieReportID: {
-      type: Number,
-      required: true
-    },
-    lineReportID: {
-      type: Number,
-      required: true
-    },
     idx: Number
   },
   emits: {
@@ -68,14 +60,23 @@ export default defineComponent({
   setup(props, { emit }) {
     const store = useStore();
 
-    const lineLoadData = () => { if (!store.getters.getReportData(props.lineReportID)) store.dispatch('loadReportData', { reportID: props.lineReportID });} 
-    const pieLoadData = () => { if (!store.getters.getReportData(props.pieReportID)) store.dispatch('loadReportData', { reportID: props.pieReportID });}
+    const reportValues = ref<any[]>([]);
+    reportsService.getAllReports().then(reports => {
+        reportValues.value = reports.map(r => { return { label: r.reportName, value: r.reportID }; });
+      });
+
+    const lineReportID = reportValues["Observation Severity by Student and Date"];
+    const pieReportID = reportValues["Observations Grouped by Severity"];
+
+    const lineLoadData = () => { if (!store.getters.getReportData(lineReportID)) store.dispatch('loadReportData', { reportID: lineReportID });} 
+    const pieLoadData = () => { if (!store.getters.getReportData(pieReportID)) store.dispatch('loadReportData', { reportID: pieReportID });}
     
     lineLoadData();
     pieLoadData();
 
-    const lineChartData = computed(() => store.getters.getReportData(props.lineReportID));
-    const pieChartData = computed(() => store.getters.getReportData(props.pieReportID));
+    
+    const lineChartData = [computed(() => store.getters.getReportData(lineReportID))]; 
+    const pieChartData = computed(() => store.getters.getReportData(pieChartData)); 
 
     onBeforeUpdate(lineLoadData);
     onBeforeUpdate(pieLoadData);
@@ -92,9 +93,9 @@ export default defineComponent({
       return store.state.observations;
     });
 
-    //const student = StudentService.getStudent(openStudent);
+    const student = StudentService.getStudent(openStudent);
 
-    return { lineChartData, pieChartData, openStudent , observations}
+    return { student, lineChartData, pieChartData, openStudent , observations}
   }
 });
 </script>
