@@ -15,5 +15,6 @@ namespace IMWebAPI.Models
 
         public string Axis1Name { get; set; }
         public string Axis2Name { get; set; }
+        public string AvailableChartTypes { get; set; }
     }
 }

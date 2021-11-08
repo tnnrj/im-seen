@@ -6,12 +6,12 @@
           <SplitterPanel class="p-d-flex p-ai-center p-jc-center" :ref="el => { splitterRefs[si][pi] = el }"
             v-for="(panel, pi) in splitter" :key="'p-'+pi" :size="isMainAxisVertical ? panel.width : panel.height">
             <div class="selector">
-              <h5>Select Report Data</h5>
-              <Dropdown v-model="panel.reportID" :options="reportValues" optionLabel="label" optionValue="value" />
-            </div>
-            <div class="selector">
               <h5>Select Chart Type</h5>
               <Dropdown v-model="panel.chartType" :options="chartTypes" />
+            </div>
+            <div class="selector" v-if="panel.chartType">
+              <h5>Select Report Data</h5>
+              <Dropdown v-model="panel.reportID" :options="reportValuesForChartType(panel.chartType)" optionLabel="label" optionValue="value" />
             </div>
           </SplitterPanel>
         </Splitter>
@@ -52,8 +52,11 @@ export default defineComponent({
     // load available reports and charts
     const reportValues = ref<any[]>([]);
     reportsService.getAllReports().then(reports => {
-      reportValues.value = reports.map(r => { return { label: r.reportName, value: r.reportID }; });
+      reportValues.value = reports;
     });
+    const reportValuesForChartType = (ct) => {
+      return reportValues.value?.filter(r => r.availableChartTypes.split(',').includes(ct)).map(r => { return { label: r.reportName, value: r.reportID }; })
+    }
     const chartTypes = ref<ChartType[]>(Object.keys(ChartType) as ChartType[]);
 
     // used to set initial value of splitter sizes and bind to element chart types/queries
@@ -119,7 +122,7 @@ export default defineComponent({
       })
     }
 
-    return { isMainAxisVertical, mainAxisSizes, reportValues, chartTypes, elementGrid, mainAxisRefs, splitterRefs, onSubmit, confirmCancel };
+    return { isMainAxisVertical, mainAxisSizes, reportValuesForChartType, chartTypes, elementGrid, mainAxisRefs, splitterRefs, onSubmit, confirmCancel };
   }
 });
 </script>
