@@ -1,9 +1,15 @@
+import { Student } from "@/model/student.model";
 import http from "@/services/base-api.service";
 
 export default {
-  getMyStudents
+  getMyStudentIds,
+  getAllStudents
 }
 
-export function getMyStudents(): Promise<string[]> {
+export function getMyStudentIds(): Promise<string[]> {
   return http.get('Students/MyStudents');
+}
+
+export function getAllStudents(): Promise<Student[]> {
+  return http.get('Students');
 }

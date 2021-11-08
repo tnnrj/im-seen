@@ -12,7 +12,7 @@ export interface State {
   chartDatas: Map<string, any>;
   observations: Observation[] | undefined;
   user: User | undefined;
-  myStudents: string[] | undefined;
+  myStudentIds: string[] | undefined;
   isAuthenticated: boolean;
 }
 
@@ -25,7 +25,7 @@ export const store = createStore<State>({
     chartDatas: new Map<string, any>(),
     observations: undefined,
     user: undefined,
-    myStudents: undefined,
+    myStudentIds: undefined,
     isAuthenticated: authenticationService.isLoggedIn()
   },
   getters: {
@@ -44,8 +44,8 @@ export const store = createStore<State>({
       state.user = user;
       state.isAuthenticated = !!user;
     },
-    setMyStudents(state, payload) {
-      state.myStudents = payload;
+    setMyStudentIds(state, payload) {
+      state.myStudentIds = payload;
     }
   },
   actions: {
@@ -73,9 +73,9 @@ export const store = createStore<State>({
       let u = await authenticationService.getUser();
       commit('setUser', u);
     },
-    async getMyStudents({commit}) {
-      let s = await studentsService.getMyStudents();
-      commit('setMyStudents', s);
+    async getMyStudentIds({commit}) {
+      let s = await studentsService.getMyStudentIds();
+      commit('setMyStudentIds', s);
     }
   }
 })
