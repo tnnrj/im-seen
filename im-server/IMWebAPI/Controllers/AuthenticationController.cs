@@ -35,12 +35,12 @@ namespace IMWebAPI.Controllers
 
         [HttpPost]
         [Route("Register")]
-        public async Task<IActionResult> Register(string email, string password, string role, string job, string firstname, string lastname)
+        public async Task<IActionResult> Register(string email, string password, string job, string firstname, string lastname)
         {
             if (!ModelState.IsValid || email == null)
                 return new BadRequestObjectResult(new { Message = "User Registration failed." });
 
-            var appUser = new ApplicationUser() { UserName = email, Email = email, JobTitle = job, FirstName = firstname, LastName = lastname };
+            var appUser = new ApplicationUser() { UserName = email, Email = email, JobTitle = job, FirstName = firstname, LastName = lastname, Role = "Observer"};
             bool sendRegLink = false;
             if (string.IsNullOrEmpty(password))
             {
@@ -52,19 +52,10 @@ namespace IMWebAPI.Controllers
             var result = await _userManager.CreateAsync(appUser, password);
             if (!result.Succeeded)
                 return new BadRequestObjectResult(new { Message = "User Registration failed. Could not create new account." });
-            if (role == null || (role != "Administrator" && role != "PrimaryActor" && role != "SupportingActor"))
-            { 
-                result = await _userManager.AddToRoleAsync(appUser, "Observer");
-                appUser.Role = "Observer";
-            }
-            else
-            {
-                result = await _userManager.AddToRoleAsync(appUser, role);
-                appUser.Role = role;
-            }
-            
+
+            result = await _userManager.AddToRoleAsync(appUser, "Observer");
             if (!result.Succeeded)
-                return new BadRequestObjectResult(new { Message = "User Registration Successful, but could not assign the appropriate role." });
+                return new BadRequestObjectResult(new { Message = "Role assignment failed." });
 
 
             if (sendRegLink)
@@ -107,7 +98,15 @@ namespace IMWebAPI.Controllers
             var refreshToken = jwtGenerator.GetRefreshToken();
 
             appUser.RefreshToken = refreshToken;
-            appUser.RefreshTokenExpiryTime = DateTime.UtcNow.AddMinutes(5); // CHANGE THIS VALUE AFTER TESTING
+            if (appUser.Role == "Observer")
+            {
+                appUser.RefreshTokenExpiryTime = DateTime.UtcNow.AddMonths(12);
+            }
+            else
+            {
+                appUser.RefreshTokenExpiryTime = DateTime.UtcNow.AddHours(12);
+            }
+
             var result = await _userManager.UpdateAsync(appUser);
 
             if (!result.Succeeded)
