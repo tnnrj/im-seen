@@ -48,6 +48,7 @@ namespace IMWebAPI.Data
                 NormalizedEmail = "DUMBLEDORE@HOGWA.RTS",
                 NormalizedUserName = "DUMBLEDORE",
                 EmailConfirmed = true,
+                Role = "Administrator"
             };
             user.PasswordHash = hasher.HashPassword(user, "test");
             await userManager.CreateAsync(user);
@@ -61,7 +62,8 @@ namespace IMWebAPI.Data
                 FirstName = "Minerva",
                 LastName = "McGonagall",
                 NormalizedEmail = "MCGONAGALL@HOGWA.RTS",
-                NormalizedUserName = "MCGONAGALL"
+                NormalizedUserName = "MCGONAGALL",
+                Role = "PrimaryActor"
             };
             user.PasswordHash = hasher.HashPassword(user, "test");
             await userManager.CreateAsync(user);
@@ -75,7 +77,8 @@ namespace IMWebAPI.Data
                 FirstName = "Pomona",
                 LastName = "Sprout",
                 NormalizedEmail = "SPROUT@HOGWA.RTS",
-                NormalizedUserName = "SPROUT"
+                NormalizedUserName = "SPROUT",
+                Role = "PrimaryActor"
             };
             user.PasswordHash = hasher.HashPassword(user, "test");
             await userManager.CreateAsync(user);
@@ -89,7 +92,8 @@ namespace IMWebAPI.Data
                 FirstName = "Filius",
                 LastName = "Flitwick",
                 NormalizedEmail = "FLITWICK@HOGWA.RTS",
-                NormalizedUserName = "FLITWICK"
+                NormalizedUserName = "FLITWICK",
+                Role = "PrimaryActor"
             };
             user.PasswordHash = hasher.HashPassword(user, "test");
             await userManager.CreateAsync(user);
@@ -101,9 +105,10 @@ namespace IMWebAPI.Data
                 Email = "snape@hogwa.rts",
                 JobTitle = "Head of Slytherin",
                 FirstName = "Severus",
-                LastName = "Sprout",
+                LastName = "Snape",
                 NormalizedEmail = "SNAPE@HOGWA.RTS",
-                NormalizedUserName = "SNAPE"
+                NormalizedUserName = "SNAPE",
+                Role = "PrimaryActor"
             };
             user.PasswordHash = hasher.HashPassword(user, "test");
             await userManager.CreateAsync(user);
@@ -117,7 +122,8 @@ namespace IMWebAPI.Data
                 FirstName = "Argus",
                 LastName = "Filch",
                 NormalizedEmail = "FILCH@HOGWA.RTS",
-                NormalizedUserName = "FILCH"
+                NormalizedUserName = "FILCH",
+                Role = "SupportingActor"
             };
             user.PasswordHash = hasher.HashPassword(user, "test");
             await userManager.CreateAsync(user);

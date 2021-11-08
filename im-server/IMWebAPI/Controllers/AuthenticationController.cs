@@ -53,12 +53,14 @@ namespace IMWebAPI.Controllers
             if (!result.Succeeded)
                 return new BadRequestObjectResult(new { Message = "User Registration failed. Could not create new account." });
             if (role == null || (role != "Administrator" && role != "PrimaryActor" && role != "SupportingActor"))
-            {
+            { 
                 result = await _userManager.AddToRoleAsync(appUser, "Observer");
+                appUser.Role = "Observer";
             }
             else
             {
                 result = await _userManager.AddToRoleAsync(appUser, role);
+                appUser.Role = role;
             }
             
             if (!result.Succeeded)

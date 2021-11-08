@@ -52,7 +52,7 @@ namespace IMWebAPI.Controllers
             var newRefreshToken = jwtGenerator.GetRefreshToken();
 
             user.RefreshToken = newRefreshToken;
-            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddMinutes(5);
+            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddHours(12);
             var result = await userManager.UpdateAsync(user);
 
             if (!result.Succeeded)

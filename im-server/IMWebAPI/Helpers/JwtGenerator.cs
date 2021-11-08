@@ -26,7 +26,7 @@ namespace IMWebAPI.Helpers
             this.jwtHeader = new JwtHeader(credentials);
             this.jwtClaims = new List<Claim>();
             this.jwtDate = DateTime.UtcNow;
-            this.tokenLifetimeInSecs = 30; //jwtBearerTokenSettings.LifeInSecs;
+            this.tokenLifetimeInSecs = 300; //jwtBearerTokenSettings.LifeInSecs;
         }
 
         public string GetAccessToken()

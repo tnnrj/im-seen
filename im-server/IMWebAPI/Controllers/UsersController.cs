@@ -120,6 +120,8 @@ namespace IMWebAPI.Controllers
                         var currRoles = await _userManager.GetRolesAsync(old_user);
                         await _userManager.RemoveFromRolesAsync(old_user, currRoles);
                         await _userManager.AddToRoleAsync(old_user, role);
+
+                        old_user.Role = role;
                         
                     }
 
