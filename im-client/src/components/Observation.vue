@@ -47,7 +47,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onUpdated, ref } from "vue";
+import { defineComponent, ref, watchEffect } from "vue";
 import Loader from "@/components/Loader.vue";
 import { Observation } from "@/model/observations.model";
 import observationService from "@/services/observations.service";
@@ -61,10 +61,10 @@ export default defineComponent({
     observation: Object
   },
   setup(props) {
-    const store = useStore()
+    const store = useStore();
     const obs = ref<Observation>();
     obs.value = props.observation as Observation;
-    onUpdated(() => {
+    watchEffect(() => {
       obs.value = props.observation as Observation;
     });
 
@@ -77,15 +77,16 @@ export default defineComponent({
     const save = async function () {
       if (obs.value) {
         saving.value = true;
-        observationService.saveObservation(obs.value).then(() => {
+        try {
+          await observationService.saveObservation(obs.value);
           store.dispatch('loadAllObservations');
           editingStudent.value = false;
           editingAction.value = false;
           editingStatus.value = false;
-        })
-        .finally(() => {
+        }
+        finally {
           saving.value = false;
-        });
+        }
       }
     };
     return { obs, editingStudent, editingStatus, statusOptions, editingAction, save, saving };
