@@ -5,8 +5,15 @@
       <Column field="lastName" header="Last Name" :sortable="true" style="flex: 1 1 20%"></Column>
       <Column field="firstName" header="First Name" :sortable="true" style="flex: 1 1 20%"></Column>
       <Column field="email" header="Email" :sortable="true" style="flex: 1 1 25%"></Column>      
-      <Column field="jobTitle" header="Job Title" :sortable="true" style="flex: 1 1 20%"></Column>
-      <Column field="userRole" header="Role" :sortable="true" style="flex: 1 1 15%"></Column>
+      <Column field="jobTitle" header="Job Title" :sortable="true" style="flex: 1 1 15%"></Column>
+      <Column field="role" header="Role" :sortable="true" style="flex: 1 1 15%"></Column>
+      <Column style="flex: 1 1 5%">
+        <template #body="slotProps">
+          <button class="p-row-toggler p-link" @click="openUser(slotProps.data.userName)">
+            <span class="p-row-toggler-icon pi pi-pencil"></span>
+          </button>
+        </template>
+      </Column>
       <template #empty>
         <div style="height:100%; width:100%">
           <template v-if="users">
@@ -33,6 +40,9 @@
       <Button label="Add" icon="pi pi-check" :disabled="!emailValid" @click="addUser" />
     </template>
   </Dialog>
+  <Dialog header="User" v-model:visible="showUserDialog" :modal="true" :contentStyle="{ 'width': '45em', 'max-height': '80vh' }">
+    <UserComponent :user="currentUser" />
+  </Dialog>
 </template>
 
 <script lang="ts">
@@ -43,10 +53,12 @@ import { User } from "@/model/user.model";
 import authenticationService from "@/services/authentication.service";
 import validatorService from "@/services/validator.service";
 import { useToast } from "primevue/usetoast";
+import UserComponent from "@/components/User.vue";
+import * as _ from "lodash";
 
 export default defineComponent({
   name: 'Users',
-  components: { Loader },
+  components: { Loader, UserComponent },
   setup() {
     const toast = useToast();
 
@@ -73,9 +85,16 @@ export default defineComponent({
       });
       showAddUserDialog.value = false;
       email.value = '';
+    }    
+    
+    const currentUser = ref<User>();
+    const showUserDialog = ref<boolean>(false);
+    const openUser = (un) => {
+      currentUser.value = _.find(users.value, o => o.userName === un);
+      showUserDialog.value = true;
     }
 
-    return { users, showReportingDialog, showAddUserDialog, email, emailValid, addUser };
+    return { users, showReportingDialog, showAddUserDialog, email, emailValid, addUser, currentUser, showUserDialog, openUser };
   }
 })
 </script>
