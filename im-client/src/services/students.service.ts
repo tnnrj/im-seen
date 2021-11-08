@@ -3,7 +3,8 @@ import http from "@/services/base-api.service";
 
 export default {
   getMyStudentIds,
-  getAllStudents
+  getAllStudents,
+  getStudent
 }
 
 export function getMyStudentIds(): Promise<string[]> {
@@ -12,4 +13,8 @@ export function getMyStudentIds(): Promise<string[]> {
 
 export function getAllStudents(): Promise<Student[]> {
   return http.get('Students');
+}
+
+export function getStudent(id: string): Promise<Student> {
+  return http.get('Students/' + id);
 }
