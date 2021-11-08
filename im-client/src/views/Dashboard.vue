@@ -41,23 +41,26 @@
       <Button label="Continue" icon="pi pi-check" @click="onLayoutDialogContinue" />
     </template>
   </Dialog>
-  <!-- <Dialog header="Student" v-model:visible="showStudentDialog" :modal="true" :contentStyle="{'max-height':'80vh', 'width':'45em'}">
+    <Dialog header="Student" v-model:visible="showStudentDialog" :modal="true" :contentStyle="{'max-height':'80vh', 'width':'45em'}">
     <Student :student="curStudent" />
-  </Dialog> -->
+  </Dialog> 
 </template>
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
 import DashboardService from "@/services/dashboard.service";
+import StudentService from "@/services/students.service";
 import { DashPage } from "@/model/dashboard.model";
 import { DashLayout } from "@/model/enums.model";
 import DashboardElement from "@/components/DashboardElement.vue";
 import DashboardConfigurator from "@/components/DashboardConfigurator.vue";
 import Loader from "@/components/Loader.vue";
 
+import Student from "@/components/Student.vue";
+
 export default defineComponent({
   name: "Dashboard",
-  components: { DashboardElement, DashboardConfigurator, Loader },
+  components: { DashboardElement, DashboardConfigurator, Loader , Student},
   setup() {
     // pages setup
     const curPageNum = ref(0);
@@ -123,7 +126,7 @@ export default defineComponent({
     const curStudent = ref(); // change to ref<Student>();
     const openStudent = async (id: string) => {
       showStudentDialog.value = true;
-      // curStudent.value = await studentService.getStudent(id);
+      curStudent.value = await StudentService.getStudent(id);
     };
 
     return { curPageNum, pages, addNewPage, switchPage,
