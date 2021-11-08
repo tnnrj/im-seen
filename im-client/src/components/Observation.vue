@@ -77,16 +77,15 @@ export default defineComponent({
     const save = async function () {
       if (obs.value) {
         saving.value = true;
-        try {
-          await observationService.saveObservation(obs.value);
+        observationService.saveObservation(obs.value).then(() => {
           store.dispatch('loadAllObservations');
           editingStudent.value = false;
           editingAction.value = false;
           editingStatus.value = false;
-        }
-        finally {
+        })
+        .finally(() => {
           saving.value = false;
-        }
+        });
       }
     };
     return { obs, editingStudent, editingStatus, statusOptions, editingAction, save, saving };
