@@ -15,6 +15,8 @@ export default {
   },
   methods: {
     main() {
+      const component = this;
+
       // height and width should be calculated by element width
       const width = document.getElementById("chart-" + this.id).clientWidth;
       const height = document.getElementById("chart-" + this.id).clientHeight;
@@ -161,7 +163,7 @@ export default {
         }
 
         function click() {
-            this.$emit('openStudent', (d) => d.id);
+            component.$emit('openStudent', (d) => d.id);
         }
       }
 
