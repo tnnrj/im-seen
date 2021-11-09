@@ -2,9 +2,9 @@
   <div class="dashboard-content p-d-flex" v-if="!showConfigurator">
     <template v-if="pages && pages.length">
       <div class="dashboard-elements p-d-flex" :class="{'p-flex-column': pages[curPageNum].layout.indexOf('LR') !== -1}">
-        <div class="element" v-for="(element, index) in pages[curPageNum].elements" :key="index"
+        <div class="element" v-for="(element, index) in pages[curPageNum].elements" :key="'p'+curPageNum+'e'+index"
           :style="{ width: element.width + '%', height: element.height + '%', visibility: element.chartType == 'None' ? 'hidden' : '' }">
-          <DashboardElement :chartType="element.chartType" :reportID="element.reportID" :idx="index" @openStudent="openStudent"></DashboardElement>
+          <DashboardElement :chartType="element.chartType" :reportID="element.reportID" :id="'p'+curPageNum+'e'+index" @openStudent="openStudent"></DashboardElement>
         </div>
       </div>
       <div class="sidebar p-d-flex p-flex-column p-ai-end">
@@ -22,7 +22,7 @@
     </template>
   </div>
   <DashboardConfigurator v-else :page="pages[curPageNum]" @submit="onConfiguratorComplete" />
-  <Dialog class="layout-dialog" header="Configure" v-model:visible="showLayoutDialog" :modal="true" :contentStyle="{'height':'30em', 'width':'31em'}">
+  <Dialog class="layout-dialog" header="Configure" v-model:visible="showLayoutDialog" :modal="true" :closable="false" :closeOnEscape="false" :contentStyle="{'height':'30em', 'width':'31em'}">
     <span>Choose a page preset:</span>
     <Accordion :activeIndex="dashLayoutToPanelCounts(newLayout)[0] - 1">
       <AccordionTab v-for="(opt, index) in layoutOptions" :header="(index + 1) + (index ? ' panels' : ' panel')" :key="index">
@@ -37,6 +37,7 @@
       </AccordionTab>
     </Accordion>
     <template #footer>
+      <Button label="Delete" icon="pi pi-trash" @click="confirmDelete($event)" class="p-button-text p-button-danger"/>
       <Button label="Cancel" icon="pi pi-times" @click="onLayoutDialogClose" class="p-button-text"/>
       <Button label="Continue" icon="pi pi-check" @click="onLayoutDialogContinue" />
     </template>
@@ -44,6 +45,7 @@
     <Dialog header="Student" v-model:visible="showStudentDialog" :modal="true" :contentStyle="{'max-height':'80vh', 'width':'45em'}">
     <Student :student="curStudent" />
   </Dialog> 
+  <ConfirmPopup></ConfirmPopup>
 </template>
 
 <script lang="ts">
@@ -55,6 +57,7 @@ import { DashLayout } from "@/model/enums.model";
 import DashboardElement from "@/components/DashboardElement.vue";
 import DashboardConfigurator from "@/components/DashboardConfigurator.vue";
 import Loader from "@/components/Loader.vue";
+import { useConfirm } from "primevue/useconfirm";
 
 import Student from "@/components/Student.vue";
 
@@ -110,6 +113,20 @@ export default defineComponent({
       showLayoutDialog.value = false;
       showConfigurator.value = true;
     };
+    const confirm = useConfirm();
+    const confirmDelete = (event: Event) => {
+      confirm.require({
+        target: event.currentTarget ?? undefined,
+        message: "Delete current dashboard page?",
+        icon: 'pi pi-info-circle',
+        acceptClass: 'p-button-danger',
+        accept: () => {
+          pages.value[curPageNum.value].elements = [];
+          onLayoutDialogClose();
+          DashboardService.saveDashPages(pages.value);
+        }
+      })
+    }
 
     // configurator setup
     const showConfigurator = ref<boolean>(false);
@@ -130,7 +147,7 @@ export default defineComponent({
     };
 
     return { curPageNum, pages, addNewPage, switchPage,
-      showLayoutDialog, layoutOptions, onLayoutDialogClose, onLayoutDialogContinue, newLayout,
+      showLayoutDialog, layoutOptions, onLayoutDialogClose, onLayoutDialogContinue, confirmDelete, newLayout,
       dashLayoutToPanelCounts: DashboardService.dashLayoutToPanelCounts, 
       showConfigurator, onConfiguratorComplete,
       showStudentDialog, curStudent, openStudent };
@@ -196,5 +213,9 @@ export default defineComponent({
       box-shadow: 0 0 5px var(--surface-600);
     }
   }
+}
+
+.p-confirm-popup {
+  z-index: 99999 !important;
 }
 </style>

@@ -96,33 +96,26 @@ namespace IMWebAPI.Controllers
         [Authorize(Roles = "Administrator")]
         [HttpPost]
         [Route("Update")]
-        public async Task<ActionResult<Observation>> Update(string username, string role, [Bind("UserName,Email,FirstName,LastName,JobTitle")] ApplicationUser user)
+        public async Task<ActionResult<Observation>> Update([FromBody] ApplicationUser user)
         {
-            if (username != user.UserName)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
                 try
                 {
-                    var old_user = await _userManager.FindByNameAsync(username);
-
+                    var old_user = await _userManager.FindByNameAsync(user.UserName);
 
                     old_user.FirstName = user.FirstName;
                     old_user.LastName = user.LastName;
 
                     old_user.JobTitle = user.JobTitle;
 
-                    if (role == "Administrator" || role == "PrimaryActor" || role == "SupportingActor" || role == "Observer")
+                    if (user.Role == "Administrator" || user.Role == "PrimaryActor" || user.Role == "SupportingActor" || user.Role == "Observer")
                     {
                         var currRoles = await _userManager.GetRolesAsync(old_user);
                         await _userManager.RemoveFromRolesAsync(old_user, currRoles);
-                        await _userManager.AddToRoleAsync(old_user, role);
+                        await _userManager.AddToRoleAsync(old_user, user.Role);
 
-                        old_user.Role = role;
-                        
+                        old_user.Role = user.Role;
                     }
 
                     var result = await _userManager.UpdateAsync(old_user);
@@ -130,10 +123,8 @@ namespace IMWebAPI.Controllers
                     if (!result.Succeeded)
                         return new BadRequestObjectResult(new { Message = "User update failed." });
 
-                    return Ok(new {Message = "User information has been updated." });
-
+                    return Ok(new { Message = "User information has been updated." });
                 }
-
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!UserExists(user.Id))

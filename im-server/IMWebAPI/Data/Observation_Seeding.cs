@@ -320,7 +320,7 @@ namespace IMWebAPI.Data
 
                 new Observation {ObservationDate=new DateTime(2021,10,23,0,0,0),
                     // UserName="Kendra",
-                    StudentFirstName = "Gus", StudentLastName="Powell", Status="New",
+                    StudentFirstName = "Gus", StudentLastName="P", Status="New",
                     Severity=3, Description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."},
             };
 
