@@ -8,11 +8,14 @@ import * as d3 from "d3";
 export default {
   name: "PieChart",
   props: ['chartData', 'id'],
+  emits: ['openStudent'],
   mounted() {
     this.main();
   },
   methods: {
     main() {
+      const component = this;
+
       // height and width should be calculated by element width
       const width = document.getElementById("chart-" + this.id).clientWidth;
       const height = document.getElementById("chart-" + this.id).clientHeight;
@@ -122,6 +125,9 @@ export default {
               tooltip.transition()
                 .duration(200)
                 .style("opacity", 0);
+        })
+        .on("click", function (d, i) {
+            if (i.id) component.$emit('openStudent', i.id);
         });
     }
   }
