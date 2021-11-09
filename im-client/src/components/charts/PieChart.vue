@@ -132,7 +132,7 @@ export default {
             tooltip.transition()
               .duration(200)
               .style("opacity", 0);
-            this.$emit('openStudent', d.id ? d.id : 0);
+            if (d.id) this.$emit('openStudent', d.id);
         });
     }
   }
