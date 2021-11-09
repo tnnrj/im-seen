@@ -130,7 +130,7 @@ export default {
                 .style("opacity", 0);
         })
         .on("click", function (d, i) {
-          component.$emit('openStudent', d.id);
+          component.$emit('openStudent', i.id);
         });
     }
   }
