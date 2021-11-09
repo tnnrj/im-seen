@@ -6,9 +6,9 @@
         <div id="stats">
             <!-- todo -->
             <!-- possible fields: X reports in last two weeks; average score increase/decrease over last two weeks -->
-            <!-- Frequency <!-- SELECT count(*) FROM Observations GROUP BY StudentID; find desired student and calculate percentile x students below out of total; do we want a date range?? -->
-            <!-- Average Severity <!-- SELECT avg(Severity) FROM Observations WHERE StudentId = id; do we want percentile or just average? -->
-            <!-- Weighted Score <!-- are weighted scores stored somewhere?? how do I use the weighted score calculator here?  -->
+            <!-- Frequency < SELECT count(*) FROM Observations GROUP BY StudentID; find desired student and calculate percentile x students below out of total; do we want a date range?? -->
+            <!-- Average Severity < SELECT avg(Severity) FROM Observations WHERE StudentId = id; do we want percentile or just average? -->
+            <!-- Weighted Score < are weighted scores stored somewhere?? how do I use the weighted score calculator here?  -->
         </div>
     </div>
     <ObservationTable :records="observations" /> <!-- TODO: SELECT * FROM Observations WHERE studentId = student.id -->
@@ -65,8 +65,8 @@ export default defineComponent({
         reportValues.value = reports.map(r => { return { label: r.reportName, value: r.reportID }; });
       });
 
-    const lineReportID = reportValues["Observation Severity by Student and Date"];
-    const pieReportID = reportValues["Observations Grouped by Severity"];
+    const lineReportID = reportValues.value["Observation Severity by Student and Date"];
+    const pieReportID = reportValues.value["Observations Grouped by Severity"];
 
     const lineLoadData = () => { if (!store.getters.getReportData(lineReportID)) store.dispatch('loadReportData', { reportID: lineReportID });} 
     const pieLoadData = () => { if (!store.getters.getReportData(pieReportID)) store.dispatch('loadReportData', { reportID: pieReportID });}
@@ -93,7 +93,7 @@ export default defineComponent({
       return store.state.observations;
     });
 
-    const student = StudentService.getStudent(openStudent);
+    const student = StudentService.getStudent(openStudent as unknown as string);
 
     return { student, lineChartData, pieChartData, openStudent , observations}
   }
