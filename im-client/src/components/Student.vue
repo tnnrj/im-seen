@@ -1,6 +1,6 @@
 <template>
 <div>
-    <h1 class="p-mb-0">{{student.name}}</h1>
+    <h1 class="p-mb-0">John Doe</h1>
     <div>
         <h4>Statistics</h4>
         <div id="stats">
@@ -11,12 +11,12 @@
             <!-- Weighted Score < are weighted scores stored somewhere?? how do I use the weighted score calculator here?  -->
         </div>
     </div>
-    <ObservationTable :records="observations" /> <!-- TODO: SELECT * FROM Observations WHERE studentId = student.id -->
+    <ObservationTable :records="filteredObservations" /> <!-- TODO: SELECT * FROM Observations WHERE studentId = student.id -->
   <div v-if="openStudent" class="element-content p-d-flex p-flex-column p-jc-center p-ai-center">
-    <template v-if="pieChartData && pieChartData.data">
+  <template v-if="pieChartData && pieChartData.data">
       <h4 class="p-mb-0">{{pieChartData.name}}</h4>
       <PieChart :chartData="pieChartData.data" :id="idx" @openStudent="openStudent" />
-    </template>
+    </template> 
     <template v-else>
       <Loader />
     </template>
@@ -36,20 +36,22 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onBeforeUpdate, ref } from "vue";
-import StudentService from "@/services/students.service";
+import { computed, defineComponent, ref } from "vue";
+//import StudentService from "@/services/students.service";
 import LineChart from "@/components/charts/LineChart.vue";
 import PieChart from "@/components/charts/PieChart.vue";
 import ObservationTable from "@/components/ObservationTable.vue"
 import Loader from "@/components/Loader.vue";
 import { useStore } from "@/store/index";
-import reportsService from "@/services/report-data.service";
+import { Student } from "@/model/student.model";
+//import reportsService from "@/services/report-data.service";
+//import studentsService from "@/services/students.service";
 
 export default defineComponent({
   name: "Student",
   components: { LineChart, PieChart, Loader, ObservationTable },
   props: {
-    idx: Number
+    student : Object,
   },
   emits: {
     // event payload with validation
@@ -58,28 +60,15 @@ export default defineComponent({
     }
   },
   setup(props, { emit }) {
+    const curStudent = props.student as Student;
+    //console.log(curStudent);
+    //const name = curStudent.firstName + " " + curStudent.lastName;
+    //console.log(name);
+
     const store = useStore();
-
-    const reportValues = ref<any[]>([]);
-    reportsService.getAllReports().then(reports => {
-        reportValues.value = reports.map(r => { return { label: r.reportName, value: r.reportID }; });
-      });
-
-    const lineReportID = reportValues.value["Observation Severity by Student and Date"];
-    const pieReportID = reportValues.value["Observations Grouped by Severity"];
-
-    const lineLoadData = () => { if (!store.getters.getReportData(lineReportID)) store.dispatch('loadReportData', { reportID: lineReportID });} 
-    const pieLoadData = () => { if (!store.getters.getReportData(pieReportID)) store.dispatch('loadReportData', { reportID: pieReportID });}
     
-    lineLoadData();
-    pieLoadData();
-
-    
-    const lineChartData = [computed(() => store.getters.getReportData(lineReportID))]; 
-    const pieChartData = computed(() => store.getters.getReportData(pieChartData)); 
-
-    onBeforeUpdate(lineLoadData);
-    onBeforeUpdate(pieLoadData);
+    const lineChartData =  "";
+    const pieChartData = "";
 
     const openStudent = (id) => {
       emit('openStudent', id);
@@ -93,9 +82,13 @@ export default defineComponent({
       return store.state.observations;
     });
 
-    const student = StudentService.getStudent(openStudent as unknown as string);
+// just for demo
+const filteredObservations = observations.value;
+    //const filteredObservations = ref<any>([]);
+    //if(observations.value)
+    //  filteredObservations.value = observations.value.filter(obs => {return obs.studentID == curStudent.studentID});
 
-    return { student, lineChartData, pieChartData, openStudent , observations}
+    return { name, lineChartData, pieChartData, openStudent , filteredObservations}
   }
 });
 </script>
