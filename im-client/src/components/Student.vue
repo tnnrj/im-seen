@@ -1,6 +1,6 @@
 <template>
-<div>
-    <h1 class="p-mb-0">John Doe</h1>
+<div v-if="curStudent">
+    <h1 class="p-mb-0">{{curStudent?.firstName + ' ' + curStudent?.lastName}}</h1>
     <div>
         <h4>Statistics</h4>
         <div id="stats">
@@ -11,8 +11,8 @@
             <!-- Weighted Score < are weighted scores stored somewhere?? how do I use the weighted score calculator here?  -->
         </div>
     </div>
-    <ObservationTable :records="filteredObservations" /> <!-- TODO: SELECT * FROM Observations WHERE studentId = student.id -->
-  <div v-if="openStudent" class="element-content p-d-flex p-flex-column p-jc-center p-ai-center">
+    <ObservationTable :records="observations" /> <!-- TODO: SELECT * FROM Observations WHERE studentId = student.id -->
+  <div class="element-content p-d-flex p-flex-column p-jc-center p-ai-center">
   <template v-if="pieChartData && pieChartData.data">
       <h4 class="p-mb-0">{{pieChartData.name}}</h4>
       <PieChart :chartData="pieChartData.data" :id="idx" @openStudent="openStudent" />
@@ -21,7 +21,7 @@
       <Loader />
     </template>
   </div>
-    <div v-if="openStudent" class="element-content p-d-flex p-flex-column p-jc-center p-ai-center">
+    <div class="element-content p-d-flex p-flex-column p-jc-center p-ai-center">
     <template v-if="lineChartData && lineChartData.data">
       <h4 class="p-mb-0">{{lineChartData.name}}</h4>
       <LineChart :chartData="lineChartData.data" :axis1Name="lineChartData.axis1Name" 
@@ -31,7 +31,7 @@
       <Loader />
     </template>
   </div>
-  </div>
+</div>
   
 </template>
 
@@ -46,6 +46,7 @@ import { useStore } from "@/store/index";
 import { Student } from "@/model/student.model";
 //import reportsService from "@/services/report-data.service";
 //import studentsService from "@/services/students.service";
+import * as _ from "lodash";
 
 export default defineComponent({
   name: "Student",
@@ -60,7 +61,7 @@ export default defineComponent({
     }
   },
   setup(props, { emit }) {
-    const curStudent = props.student as Student;
+    const curStudent = computed(() => props.student as Student);
     //console.log(curStudent);
     //const name = curStudent.firstName + " " + curStudent.lastName;
     //console.log(name);
@@ -79,16 +80,10 @@ export default defineComponent({
 
     const observations = computed(() => {
       if (!store.state.observations) return null;
-      return store.state.observations;
+      return _.filter(store.state.observations, o => o.studentID == curStudent.value.studentID);
     });
 
-// just for demo
-const filteredObservations = observations.value;
-    //const filteredObservations = ref<any>([]);
-    //if(observations.value)
-    //  filteredObservations.value = observations.value.filter(obs => {return obs.studentID == curStudent.studentID});
-
-    return { name, lineChartData, pieChartData, openStudent , filteredObservations}
+    return { curStudent, lineChartData, pieChartData, openStudent , observations}
   }
 });
 </script>

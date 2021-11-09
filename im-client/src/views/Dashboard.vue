@@ -44,7 +44,7 @@
   </Dialog>
     <Dialog header="Student" v-model:visible="showStudentDialog" :modal="true" :contentStyle="{'max-height':'80vh', 'width':'45em'}">
     <Student :student="curStudent" />
-  </Dialog> -->
+  </Dialog> 
   <ConfirmPopup></ConfirmPopup>
 </template>
 
@@ -58,12 +58,12 @@ import DashboardElement from "@/components/DashboardElement.vue";
 import DashboardConfigurator from "@/components/DashboardConfigurator.vue";
 import Loader from "@/components/Loader.vue";
 import { useConfirm } from "primevue/useconfirm";
-
-import Student from "@/components/Student.vue";
+import { Student } from "@/model/student.model";
+import StudentComponent from "@/components/Student.vue";
 
 export default defineComponent({
   name: "Dashboard",
-  components: { DashboardElement, DashboardConfigurator, Loader , Student},
+  components: { DashboardElement, DashboardConfigurator, Loader , StudentComponent},
   setup() {
     // pages setup
     const curPageNum = ref(0);
@@ -140,7 +140,7 @@ export default defineComponent({
 
     // student dialog
     const showStudentDialog = ref<boolean>(false);
-    const curStudent = ref(); // change to ref<Student>();
+    const curStudent = ref<Student>();
     const openStudent = async (id: string) => {
       showStudentDialog.value = true;
       curStudent.value = await StudentService.getStudent(id);
