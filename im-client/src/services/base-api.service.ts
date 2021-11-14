@@ -26,7 +26,7 @@ class APIProvider {
         return config;
       },
       error => {
-          Promise.reject(error)
+        Promise.reject(error)
       });
     // check for existing auth
     let token = localStorage.getItem('token');
@@ -79,6 +79,15 @@ class APIProvider {
     return http.post(resource, data, {
       params: query
     }).then(response => {
+      return response.data;
+    }, err => {
+      throw err;
+    });
+  }
+
+  delete(resource: string, id: string) {
+    return http.delete(resource + '/' + id)
+    .then(response => {
       return response.data;
     }, err => {
       throw err;
