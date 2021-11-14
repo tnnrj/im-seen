@@ -51,7 +51,7 @@ namespace IMWebAPI.Controllers
 
             // checks if email already exists
             var user = await _userManager.FindByNameAsync(email);
-            if (user == null)
+            if (user != null && user.Email == email)
             {
                 return new BadRequestObjectResult(new { Message = "We already have an account under that email. Please try again." });
             }
