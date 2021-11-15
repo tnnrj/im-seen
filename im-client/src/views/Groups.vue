@@ -1,9 +1,13 @@
 <template>
+  <template v-if="studentGroupData">
+  </template>
+  <template v-else>
+    <Loader />
+  </template>
   <Toast />
 </template>
 
 <script lang="ts">
-import Loader from "@/components/Loader.vue";
 import { defineComponent, ref } from "vue";
 import studentGroupsService from "@/services/student-groups.service";
 import * as _ from "lodash";
@@ -13,7 +17,6 @@ import { useToast } from "primevue/usetoast";
 
 export default defineComponent({
   name: 'Groups',
-  components: { Loader },
   setup() {
     const toast = useToast();
 

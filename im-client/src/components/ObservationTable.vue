@@ -39,7 +39,6 @@
 
 <script lang="ts">
 import { defineComponent, ref, watchEffect } from "vue";
-import Loader from "@/components/Loader.vue";
 import { Observation } from '@/model/observations.model';
 import ObservationComponent from '@/components/Observation.vue';
 import * as _ from 'lodash';
@@ -54,7 +53,7 @@ interface UiObservation extends Observation {
 
 export default defineComponent({
   name: 'ObservationTable',
-  components: { Loader, ObservationComponent },
+  components: { ObservationComponent },
   props: {
     records: Object
   },

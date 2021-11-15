@@ -47,7 +47,6 @@
 
 <script lang="ts">
 import { computed, defineComponent, ref } from "vue";
-import Loader from "@/components/Loader.vue";
 import UsersService from '@/services/users.service';
 import { User } from "@/model/user.model";
 import authenticationService from "@/services/authentication.service";
@@ -58,7 +57,7 @@ import * as _ from "lodash";
 
 export default defineComponent({
   name: 'Users',
-  components: { Loader, UserComponent },
+  components: { UserComponent },
   setup() {
     const toast = useToast();
 

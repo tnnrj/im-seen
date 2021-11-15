@@ -56,14 +56,13 @@ import { DashPage } from "@/model/dashboard.model";
 import { DashLayout } from "@/model/enums.model";
 import DashboardElement from "@/components/DashboardElement.vue";
 import DashboardConfigurator from "@/components/DashboardConfigurator.vue";
-import Loader from "@/components/Loader.vue";
 import { useConfirm } from "primevue/useconfirm";
 import { Student } from "@/model/student.model";
 import StudentComponent from "@/components/Student.vue";
 
 export default defineComponent({
   name: "Dashboard",
-  components: { DashboardElement, DashboardConfigurator, Loader, StudentComponent },
+  components: { DashboardElement, DashboardConfigurator, StudentComponent },
   setup() {
     // pages setup
     const curPageNum = ref(0);

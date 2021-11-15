@@ -53,6 +53,12 @@ export default defineComponent({
       link: '/users',
       iconStyle: 'pi-users',
       show: isAdmin
+    },
+    {
+      title: 'Groups',
+      link: '/groups',
+      iconStyle: 'pi-th-large',
+      show: isAdmin
     }];
 
     const userName = computed(() => {

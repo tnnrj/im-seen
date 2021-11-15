@@ -31,7 +31,6 @@
 
 <script lang="ts">
 import { defineComponent, ref, watchEffect } from "vue";
-import Loader from "@/components/Loader.vue";
 import * as _ from "lodash";
 import { User } from "@/model/user.model";
 import usersService from "@/services/users.service";
@@ -39,7 +38,6 @@ import { UserRole } from "@/model/enums.model";
 
 export default defineComponent({
   name: "User",
-  components: { Loader },
   props: {
     user: Object
   },

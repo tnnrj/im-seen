@@ -41,7 +41,6 @@ import { computed, defineComponent, ref } from "vue";
 import LineChart from "@/components/charts/LineChart.vue";
 import PieChart from "@/components/charts/PieChart.vue";
 import ObservationTable from "@/components/ObservationTable.vue"
-import Loader from "@/components/Loader.vue";
 import { useStore } from "@/store/index";
 import { Student } from "@/model/student.model";
 //import reportsService from "@/services/report-data.service";
@@ -50,7 +49,7 @@ import * as _ from "lodash";
 
 export default defineComponent({
   name: "Student",
-  components: { LineChart, PieChart, Loader, ObservationTable },
+  components: { LineChart, PieChart, ObservationTable },
   props: {
     student : Object,
   },
