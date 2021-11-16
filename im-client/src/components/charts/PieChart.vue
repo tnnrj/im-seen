@@ -88,7 +88,7 @@ export default {
 
       ///////////////////////////////////////////////////////////////////////////////////////////////
 
-      const tooltip = d3.select("svg")
+       let tooltip = d3.select("#chart-" + this.id)
         .append("div")
         .style("opacity", 0)
         .attr("class", "tooltip")
@@ -101,7 +101,7 @@ export default {
         .style("border-width", "1px")
         .style("border-radius", "5px")
         .style("padding", "5px");
-
+          
       // add hover effect
       svg.selectAll("path")
         .on("mouseover", function (event, d, i) {
@@ -110,7 +110,7 @@ export default {
                 .attr('opacity', '.85');
               // show tooltip
               tooltip
-                .html(d.value)
+                .html( d.data.name + "<br>" + d.value)
                 .style("left", (event.pageX) + "px")
                 .style("top", (event.pageY) + "px");
               tooltip.transition()
@@ -126,8 +126,8 @@ export default {
                 .duration(200)
                 .style("opacity", 0);
         })
-        .on("click", function (d, i) {
-            if (i.id) component.$emit('openStudent', i.id);
+        .on("click", function (event, d, i) {
+          component.$emit('openStudent', d.data.id);
         });
     }
   }

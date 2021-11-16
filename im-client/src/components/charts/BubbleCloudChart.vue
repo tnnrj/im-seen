@@ -127,8 +127,8 @@ export default {
                 .duration(200)
                 .style("opacity", 0);
         })
-        .on("click", function (d, i) {
-            component.$emit('openStudent', i.id);
+        .on("click", function (event, d, i) {
+          component.$emit('openStudent', d.data.id);
         });
 
 //////////////////////////////////// END D3.js CODE

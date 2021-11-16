@@ -44,7 +44,7 @@ namespace IMWebAPI.Data
                 },
                 new Report {
                     ReportName = "Observations Grouped by Severity",
-                    Query = "SELECT Severity as name, COUNT(Severity) AS value FROM Observations {joinAndWhere} GROUP BY Severity",
+                    Query = "SELECT Severity as name, COUNT(Severity) AS value, StudentID as id FROM Observations {joinAndWhere} GROUP BY Severity",
                     Axis1Name = "Severity",
                     Axis2Name = "Proportion",
                     AvailableChartTypes = "Bar,Pie,BubbleCloud"
