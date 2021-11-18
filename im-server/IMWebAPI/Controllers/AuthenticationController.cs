@@ -49,6 +49,13 @@ namespace IMWebAPI.Controllers
                 password = Guid.NewGuid().ToString();
             }
 
+            // checks if email already exists
+            var user = await _userManager.FindByNameAsync(email);
+            if (user != null && user.Email == email)
+            {
+                return new BadRequestObjectResult(new { Message = "We already have an account under that email. Please try again." });
+            }
+
             var result = await _userManager.CreateAsync(appUser, password);
             if (!result.Succeeded)
                 return new BadRequestObjectResult(new { Message = "User Registration failed. Could not create new account." });

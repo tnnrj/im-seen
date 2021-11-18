@@ -44,14 +44,12 @@
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
-import Loader from "@/components/Loader.vue";
 import { useStore } from "@/store/index";
 import router from "@/router";
 import authenticationService from "@/services/authentication.service";
 
 export default defineComponent({
   name: 'Register',
-  components: { Loader },
   props: {
     username: {
       type: String,

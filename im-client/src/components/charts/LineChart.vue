@@ -9,11 +9,14 @@ import _ from "lodash";
 export default {
   name: "LineChart",
   props: ["chartData", "id", "axis1Name", "axis2Name"],
+  emits: ['openStudent'],
   mounted() {
     this.main();
   },
   methods: {
     main() {
+      const component = this;
+
       // height and width should be calculated by element width
       const width = document.getElementById("chart-" + this.id).clientWidth;
       const height = document.getElementById("chart-" + this.id).clientHeight;
@@ -103,16 +106,21 @@ export default {
       /** Interactive elements! :D **/
       function hover(svg, path) {
         if ("ontouchstart" in document)
-          svg
+          svg.selectAll("g")
             .style("-webkit-tap-highlight-color", "transparent")
             .on("touchmove", moved)
             .on("touchstart", entered)
-            .on("touchend", left);
+            .on("touchend", left)
+            .on("click", click);
         else
-          svg
+          svg.selectAll("g")
             .on("mousemove", moved)
             .on("mouseenter", entered)
-            .on("mouseleave", left);
+            .on("mouseleave", left)
+            .on("click", function(d,i) {
+              console.log(d);
+              component.$emit('openStudent', (d, i) => i.id);
+            });
 
         const dot = svg.append("g").attr("display", "none");
 

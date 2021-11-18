@@ -22,12 +22,11 @@ import BubbleCloudChart from "@/components/charts/BubbleCloudChart.vue";
 import LineChart from "@/components/charts/LineChart.vue";
 import BarChart from "@/components/charts/BarChart.vue";
 import PieChart from "@/components/charts/PieChart.vue";
-import Loader from "@/components/Loader.vue";
 import { useStore } from "@/store/index";
 
 export default defineComponent({
   name: "DashboardElement",
-  components: { BubbleCloudChart, LineChart, BarChart, PieChart, Loader },
+  components: { BubbleCloudChart, LineChart, BarChart, PieChart },
   props: {
     chartType: {
       type: String,

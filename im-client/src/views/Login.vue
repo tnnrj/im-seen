@@ -27,13 +27,11 @@
 
 <script lang='ts'>
 import { defineComponent, ref } from "vue";
-import Loader from "@/components/Loader.vue";
 import { useStore } from "@/store/index";
 import router from "@/router";
 
 export default defineComponent({
   name: 'Login',
-  components: { Loader },
   setup() {
     const store = useStore();
     const form = ref({ username: "", password: "" });

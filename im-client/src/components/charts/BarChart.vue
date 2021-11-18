@@ -14,6 +14,7 @@ export default {
   },
   methods: {
     main() {
+      const component = this;
       const data = this.chartData;
 
       // height and width should be calculated by element width
@@ -127,10 +128,10 @@ export default {
               tooltip.transition()
                 .duration(200)
                 .style("opacity", 0);
+        })
+        .on("click", function (d, i) {
+          component.$emit('openStudent', i.id);
         });
-
-      // example of how to open student:
-      // this.$emit('openStudent', d.studentID);
     }
   }
 }

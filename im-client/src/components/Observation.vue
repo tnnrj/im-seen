@@ -68,7 +68,6 @@
 
 <script lang="ts">
 import { defineComponent, ref, watchEffect } from "vue";
-import Loader from "@/components/Loader.vue";
 import { Observation } from "@/model/observations.model";
 import observationService from "@/services/observations.service";
 import { ObservationStatus } from "@/model/enums.model";
@@ -79,7 +78,6 @@ import * as _ from "lodash";
 
 export default defineComponent({
   name: "Observation",
-  components: { Loader },
   props: {
     observation: Object
   },
