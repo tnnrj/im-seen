@@ -98,7 +98,10 @@ namespace IMWebAPI.Controllers
             var refreshToken = jwtGenerator.GetRefreshToken();
 
             appUser.RefreshToken = refreshToken;
-            if (appUser.Role == "Observer")
+
+            var roles = await _userManager.GetRolesAsync(appUser);
+
+            if (roles.Contains("Observer"))
             {
                 appUser.RefreshTokenExpiryTime = DateTime.UtcNow.AddMonths(12);
             }
