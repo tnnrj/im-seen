@@ -6,7 +6,12 @@ export default {
   getStudentGroups,
   getStudentsForGroups,
   addStudentToGroup,
-  removeStudentFromGroup
+  removeStudentFromGroup,
+  addGroup,
+  deleteGroup,
+  getAllSupporters,
+  addSupporterToGroup,
+  removeSupporterFromGroup
 }
 
 export function getStudentGroups(): Promise<StudentGroup[]> {
@@ -23,4 +28,24 @@ export function addStudentToGroup(studentID: string, studentGroupID: string) {
 
 export function removeStudentFromGroup(delegationID: string) {
   return http.delete('Delegations', delegationID);
+}
+
+export function addGroup(studentGroupName: string, primaryUserName: string) {
+  return http.post('StudentGroups', JSON.stringify({studentGroupName, primaryUserName}));
+}
+
+export function deleteGroup(studentGroupID: string) {
+  return http.delete('StudentGroups', studentGroupID);
+}
+
+export function getAllSupporters() {
+  return http.get('Supporters');
+}
+
+export function addSupporterToGroup(userName: string, studentGroupID: string) {
+  return http.post('Supporters', JSON.stringify({userName, studentGroupID}));
+}
+
+export function removeSupporterFromGroup(supporterID: string) {
+  return http.delete('Supporters', supporterID);
 }
