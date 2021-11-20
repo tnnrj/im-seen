@@ -4,7 +4,7 @@
       <img src="../assets/school.png" />
     </div>
     <div v-for="item in navItems" :key="item.title">
-      <router-link class="p-mb-5" v-bind:to="item.link">
+      <router-link v-if="item.show" class="p-mb-5" v-bind:to="item.link">
         <i class="pi" v-bind:class="item.iconStyle"></i>
         {{ item.title }}
       </router-link>
@@ -21,6 +21,7 @@
 import { computed, defineComponent, ref } from "vue";
 import { useStore } from "@/store/index";
 import router from "@/router";
+import { UserRole } from "@/model/enums.model";
 
 interface NavItem {
   title: string;
@@ -33,33 +34,34 @@ export default defineComponent({
   name: "SideNav",
   setup() {
     const store = useStore();
-    const isAdmin = true;
 
-    const navItems = ref<NavItem[]>([]);
-    navItems.value = [{
-      title: 'Dashboard',
-      link: '/',
-      iconStyle: 'pi-chart-bar',
-      show: true
-    },
-    {
-      title: 'Observations',
-      link: '/observations',
-      iconStyle: 'pi-list',
-      show: true
-    },
-    {
-      title: 'Users',
-      link: '/users',
-      iconStyle: 'pi-users',
-      show: isAdmin
-    },
-    {
-      title: 'Groups',
-      link: '/groups',
-      iconStyle: 'pi-th-large',
-      show: isAdmin
-    }];
+    const navItems = computed(() => {
+      let isAdmin = store.state.user?.role === UserRole.Administrator;
+      return [{
+        title: 'Dashboard',
+        link: '/',
+        iconStyle: 'pi-chart-bar',
+        show: true
+      },
+      {
+        title: 'Observations',
+        link: '/observations',
+        iconStyle: 'pi-list',
+        show: true
+      },
+      {
+        title: 'Users',
+        link: '/users',
+        iconStyle: 'pi-users',
+        show: isAdmin
+      },
+      {
+        title: 'Groups',
+        link: '/groups',
+        iconStyle: 'pi-th-large',
+        show: isAdmin
+      }];
+    });
 
     const userName = computed(() => {
       let u = store.state.user;

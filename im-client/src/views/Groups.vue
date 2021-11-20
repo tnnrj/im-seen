@@ -1,26 +1,28 @@
 <template>
-  <template v-if="studentGroupData">
-    <DataTable class="groups-table" :value="studentGroupData" dataKey="studentGroupID" :scrollable="true" scrollHeight="flex">
-      <Column field="studentGroupName" header="Group Name" :sortable="true" style="flex: 1 1 45%"></Column>
-      <Column field="primaryUserFullName" header="Primary User" :sortable="true" style="flex: 1 1 45%"></Column>
-      <Column style="flex: 1 1 10%">
-        <template #body="slotProps">
-          <button class="p-row-toggler p-link" @click="openGroup(slotProps.data.studentGroupID)">
-            <span class="p-row-toggler-icon pi pi-pencil"></span>
-          </button>
+  <div class="groups-content">
+    <template v-if="studentGroupData">
+      <DataTable :value="studentGroupData" dataKey="studentGroupID" sortField="studentGroupName" :sortOrder="1" :scrollable="true" scrollHeight="flex">
+        <Column field="studentGroupName" header="Group Name" :sortable="true" style="flex: 1 1 45%"></Column>
+        <Column field="primaryUserFullName" header="Primary User" :sortable="true" style="flex: 1 1 45%"></Column>
+        <Column style="flex: 1 1 10%">
+          <template #body="slotProps">
+            <button class="p-row-toggler p-link" @click="openGroup(slotProps.data.studentGroupID)">
+              <span class="p-row-toggler-icon pi pi-pencil"></span>
+            </button>
+          </template>
+        </Column>
+        <template #empty>
+          No records to display
         </template>
-      </Column>
-      <template #empty>
-        No records to display
-      </template>
-    </DataTable>
-  </template>
-  <template v-else>
-    <Loader />
-  </template>
+      </DataTable>
+    </template>
+    <template v-else>
+      <Loader />
+    </template>
+  </div>
   <Dialog header="Edit Group" v-model:visible="showGroupEditDialog" :modal="true" :contentStyle="{'max-height':'80vh', 'width':'45em'}">
     <div class="p-d-flex group-panel">
-      <Panel header="Group Name" class="p-mb-1" style="width:50%"><template #icons>
+      <Panel header="Group Name" class="p-mb-1 p-pr-1" style="width:50%"><template #icons>
           <button v-if="editingName" class="p-panel-header-icon p-link" @click="saveGroup" v-tooltip="'Save'"><i class="pi pi-check" /></button>
           <button v-else class="p-panel-header-icon p-link" @click="editingName = true"><i class="pi pi-pencil" /></button>
         </template>
@@ -36,30 +38,34 @@
           <button v-else class="p-panel-header-icon p-link" @click="editingUser = true"><i class="pi pi-pencil" /></button>
         </template>
         <template v-if="editingUser">
-          <AutoComplete v-model="newGroupPrimary" :suggestions="filteredUsers" @complete="searchUsers($event)" field="fullName" />
+          <AutoComplete v-model="newGroupPrimary" :suggestions="filteredUsers" @complete="searchUsers($event, false)" field="fullName" />
         </template>
         <template v-else>
           <span>{{selectedGroup.primaryUserFullName}}</span>
         </template>
       </Panel>
       <Panel header="Supporting Staff" class="p-mb-1" style="width:100%" :toggleable="true">
-        <div style="width:100%">
-          <AutoComplete v-model="selectedSupporter" :suggestions="filteredUsers" @complete="searchUsers($event)" field="fullName" placeholder="Add user to group" />
-          <Button icon="pi pi-check" class="p-button-rounded p-button-text p-button-success" @click="addSupporterToGroup" />
+        <div class="p-d-flex p-ai-center p-mb-1">
+          <AutoComplete v-model="selectedSupporter" :suggestions="filteredUsers" @complete="searchUsers($event, true)" field="fullName" placeholder="Add user to group" />
+          <Button v-if="selectedSupporter && selectedSupporter.userName" icon="pi pi-check" class="p-button-rounded p-button-text p-button-success" @click="addSupporterToGroup" />
         </div>
-        <div style="width:100%" v-for="sup in selectedGroup.supporters" :key="sup.supporterID">
-          <span>{{sup.user.fullName}}</span>
-          <Button icon="pi pi-times" class="p-button-rounded p-button-text p-button-danger" @click="removeSupporterFromGroup(sup.supporterID)" />
+        <div class="p-d-flex p-flex-wrap">
+          <div class="p-d-flex p-ai-center p-mr-4" v-for="sup in selectedGroup.supporters" :key="sup.supporterID">
+            <span>{{sup.user.fullName}}</span>
+            <Button icon="pi pi-times" class="p-button-rounded p-button-text p-button-secondary p-button-sm" @click="removeSupporterFromGroup(sup.supporterID)" />
+          </div>
         </div>
       </Panel>
       <Panel header="Students in Group" class="p-mb-1" style="width:100%" :toggleable="true">
-        <div style="width:100%">
+        <div class="p-d-flex p-ai-center p-mb-1">
           <AutoComplete v-model="selectedStudent" :suggestions="filteredStudents" @complete="searchStudents($event)" field="fullName" placeholder="Add student to group" />
-          <Button icon="pi pi-check" class="p-button-rounded p-button-text p-button-success" @click="addStudentToGroup" />
+          <Button v-if="selectedStudent && selectedStudent.studentID" icon="pi pi-check" class="p-button-rounded p-button-text p-button-success" @click="addStudentToGroup" />
         </div>
-        <div style="width:100%" v-for="del in selectedGroup.delegations" :key="del.delegationID">
-          <span>{{del.student.fullName}}</span>
-          <Button icon="pi pi-times" class="p-button-rounded p-button-text p-button-danger" @click="removeStudentFromGroup(del.delegationID)" />
+        <div class="p-d-flex p-flex-wrap">
+          <div class="p-d-flex p-ai-center p-mr-4" v-for="del in selectedGroup.delegations" :key="del.delegationID">
+            <span>{{del.student.fullName}}</span>
+            <Button icon="pi pi-times" class="p-button-rounded p-button-text p-button-secondary p-button-sm" @click="removeStudentFromGroup(del.delegationID)" />
+          </div>
         </div>
       </Panel>
     </div>
@@ -76,6 +82,7 @@ import { Student } from "@/model/student.model";
 import { useToast } from "primevue/usetoast";
 import { User } from "@/model/user.model";
 import usersService from "@/services/users.service";
+import { UserRole } from "@/model/enums.model";
 
 export default defineComponent({
   name: 'Groups',
@@ -96,7 +103,7 @@ export default defineComponent({
       let supporters = data[3];
       let users = data[4];
       allStudents.value = students.map(s => { return {...s, fullName: s.firstName+' '+s.lastName}; });
-      allUsers.value = users.map(u => { return {...u, fullName: u.firstName+' '+u.lastName }; })
+      allUsers.value = _.filter(users, u => u.role != UserRole.Observer).map(u => { return {...u, fullName: u.firstName+' '+u.lastName }; })
       studentGroupData.value = studentGroups.map(sg => {
         let sgd = {...sg, primaryUserFullName: undefined, delegations: undefined, supporters: undefined};
         sgd.primaryUserFullName = _.find(allUsers.value, u => u.userName === sg.primaryUserName).fullName;
@@ -141,11 +148,11 @@ export default defineComponent({
         selectedStudent.value = undefined;
       }
     }
-    const removeStudentFromGroup = (studentID: string) => {
-      const delegation = _.find(selectedGroup.value.delegations, d => d.studentID === studentID);
-      studentGroupsService.removeStudentFromGroup(delegation.delegationID).then(() => {
+    const removeStudentFromGroup = (delegationID: string) => {
+      const delegation = _.find(selectedGroup.value.delegations, d => d.delegationID === delegationID);
+      studentGroupsService.removeStudentFromGroup(delegationID).then(() => {
         toast.add({severity:'success', summary:'Success', detail:'Student remove succeeded', life:3000});
-        _.remove(_.find(studentGroupData.value, sgd => sgd.studentGroupID === delegation.studentGroupID).delegations, d => d.delegationID === delegation.delegationID);
+        _.remove(_.find(studentGroupData.value, sgd => sgd.studentGroupID === delegation.studentGroupID).delegations, d => d.delegationID === delegationID);
       }).catch(() => {
         toast.add({severity:'error', summary:'Error', detail:'Student remove failed; please try again later', life:3000});
       });
@@ -154,7 +161,8 @@ export default defineComponent({
       if (selectedSupporter.value) {
         studentGroupsService.addSupporterToGroup(selectedSupporter.value.userName, selectedGroup.value.studentGroupID).then(newSupporter => {        
           toast.add({severity:'success', summary:'Success', detail:'Supporting actor add succeeded', life:3000});
-          _.find(studentGroupData.value, sgd => sgd.studentGroupID === newSupporter.studentGroupID).supporters.push(newSupporter);
+          let user = _.find(allUsers.value, u => u.userName === newSupporter.userName);
+          _.find(studentGroupData.value, sgd => sgd.studentGroupID === newSupporter.studentGroupID).supporters.push({...newSupporter, user: user});
         }).catch(() => {
           toast.add({severity:'error', summary:'Error', detail:'Supporting actor add failed; please try again later', life:3000});
         });
@@ -188,9 +196,9 @@ export default defineComponent({
     const selectedSupporter = ref<User>();
     const allUsers = ref<User[]>();
     const filteredUsers = ref<User[]>();
-    const searchUsers = (event) => {
+    const searchUsers = (event, supportingOnly: boolean) => {
       if (!allUsers.value) {
-        setTimeout(() => searchUsers(event), 250);
+        setTimeout(() => searchUsers(event, supportingOnly), 250);
         return;
       }
       setTimeout(() => {
@@ -198,8 +206,21 @@ export default defineComponent({
           filteredUsers.value = [...allUsers.value];
         }
         else {
-          filteredUsers.value = _.filter(allUsers.value, u => (`${u.firstName} ${u.lastName}`).toLowerCase().startsWith(event.query.toLowerCase()) 
-            || u.lastName.toLowerCase().startsWith(event.query.toLowerCase()) || u.userName.toLowerCase().startsWith(event.query.toLowerCase()));
+          filteredUsers.value = _.filter(allUsers.value, u => {
+            if (supportingOnly) {
+              if (u.role != UserRole.SupportingActor || _.some(selectedGroup.value.supporters, s => s.userName === u.userName)) {
+                return false;
+              }
+            }
+            if (!supportingOnly) {
+              if (u.role == UserRole.SupportingActor || selectedGroup.value.primaryUserName === u.userName) {
+                return false;
+              }
+            }
+            let nameMatches = (`${u.firstName} ${u.lastName}`).toLowerCase().startsWith(event.query.toLowerCase()) 
+            || u.lastName.toLowerCase().startsWith(event.query.toLowerCase()) || u.userName.toLowerCase().startsWith(event.query.toLowerCase());
+            return nameMatches;
+          });
         }
       }, 0);
     }
@@ -218,8 +239,14 @@ export default defineComponent({
           filteredStudents.value = [...allStudents.value];
         }
         else {
-          filteredStudents.value = _.filter(allStudents.value, s => s.fullName.toLowerCase().startsWith(event.query.toLowerCase()) 
-            || s.lastName.toLowerCase().startsWith(event.query.toLowerCase()));
+          filteredStudents.value = _.filter(allStudents.value, s => {
+            if (_.some(selectedGroup.value.delegations, d => d.studentID === s.studentID)) {
+              return false;
+            }
+            let nameMatches = s.fullName.toLowerCase().startsWith(event.query.toLowerCase()) 
+              || s.lastName.toLowerCase().startsWith(event.query.toLowerCase());
+            return nameMatches;
+          });
         }
       }, 0);
     };
@@ -234,9 +261,13 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+.groups-content {
+  height: 100%;
+  padding: 1em;
+}
 .group-panel {  
   width: 100%;
-  height: 100%;  
+  height: 100%;
   flex-flow: row wrap;
 }
 </style>

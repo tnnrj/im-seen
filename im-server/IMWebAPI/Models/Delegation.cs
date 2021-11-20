@@ -14,13 +14,11 @@ namespace IMWebAPI.Models
         [Required]
         [ForeignKey("StudentGroups.StudentGroupID")]
         public int StudentGroupID { get; set; }
-        [Required]
         public StudentGroup StudentGroup { get; set; }
 
         [Required]
         [ForeignKey("Students.StudentID")]
         public int StudentID { get; set; }
-        [Required]
         public Student Student { get; set; }
     }
 }

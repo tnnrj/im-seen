@@ -2,6 +2,7 @@ import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import Login from "../views/Login.vue";
 import Dashboard from "../views/Dashboard.vue";
 import { store } from "@/store";
+import { UserRole } from "@/model/enums.model";
 
 const routes: Array<RouteRecordRaw> = [  
   {
@@ -35,13 +36,13 @@ const routes: Array<RouteRecordRaw> = [
     path: "/users",
     name: "Users",
     component: () => import("@/views/Users.vue"),
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, adminOnly: true }
   },
   {
     path: "/groups",
     name: "Groups",
     component: () => import("@/views/Groups.vue"),
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, adminOnly: true }
   }
 ];
 
@@ -56,13 +57,32 @@ router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth) && !store.state.isAuthenticated) {
     next('/login');
     return;
-  }  
+  }
   // login redirect
   if (to.matched.some(record => record.meta.guest) && store.state.isAuthenticated) {
     next('/');
     return;
   }
-  next();
+  // role check
+  if (to.matched.some(record => record.meta.adminOnly)) {
+    let checkAdminStatus = () => {      
+      if (store.state.user?.role !== UserRole.Administrator) {
+        next('/');
+        return;
+      }
+      next();
+    };
+
+    if (!store.state.user) {
+      store.dispatch('getUser').then(checkAdminStatus);
+    }
+    else {
+      checkAdminStatus();
+    }
+  }
+  else {
+    next();
+  }
 })
 
 export default router;
