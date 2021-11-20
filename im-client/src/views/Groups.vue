@@ -2,7 +2,7 @@
   <template v-if="studentGroupData">
     <DataTable class="groups-table" :value="studentGroupData" dataKey="studentGroupID" :scrollable="true" scrollHeight="flex">
       <Column field="studentGroupName" header="Group Name" :sortable="true" style="flex: 1 1 45%"></Column>
-      <Column field="primaryUserName" header="Primary User" :sortable="true" style="flex: 1 1 45%"></Column>
+      <Column field="primaryUserFullName" header="Primary User" :sortable="true" style="flex: 1 1 45%"></Column>
       <Column style="flex: 1 1 10%">
         <template #body="slotProps">
           <button class="p-row-toggler p-link" @click="openGroup(slotProps.data.studentGroupID)">
@@ -20,11 +20,11 @@
   </template>
   <Dialog header="Edit Group" v-model:visible="showGroupEditDialog" :modal="true" :contentStyle="{'max-height':'80vh', 'width':'45em'}">
     <div class="p-d-flex group-panel">
-      <Panel header="Group Name" class="p-mb-1" style="width:50%" :toggleable="true"><template #icons>
-          <button v-if="editingUser" class="p-panel-header-icon p-link" @click="save" v-tooltip="'Save'"><i class="pi pi-check" /></button>
-          <button v-else class="p-panel-header-icon p-link" @click="editingUser = true"><i class="pi pi-pencil" /></button>
+      <Panel header="Group Name" class="p-mb-1" style="width:50%"><template #icons>
+          <button v-if="editingName" class="p-panel-header-icon p-link" @click="saveGroup" v-tooltip="'Save'"><i class="pi pi-check" /></button>
+          <button v-else class="p-panel-header-icon p-link" @click="editingName = true"><i class="pi pi-pencil" /></button>
         </template>
-        <template v-if="editingUser">
+        <template v-if="editingName">
           <InputText v-model="newGroupName" />
         </template>
         <template v-else>
@@ -32,15 +32,35 @@
         </template>
       </Panel>
       <Panel header="Primary User" class="p-mb-1" style="width:50%"><template #icons>
-          <button v-if="editingUser" class="p-panel-header-icon p-link" @click="save" v-tooltip="'Save'"><i class="pi pi-check" /></button>
+          <button v-if="editingUser" class="p-panel-header-icon p-link" @click="saveGroup" v-tooltip="'Save'"><i class="pi pi-check" /></button>
           <button v-else class="p-panel-header-icon p-link" @click="editingUser = true"><i class="pi pi-pencil" /></button>
         </template>
         <template v-if="editingUser">
-          <AutoComplete v-model="newGroupPrimary" :suggestions="filteredUsers" @complete="searchUsers($event)" field="userName" />
+          <AutoComplete v-model="newGroupPrimary" :suggestions="filteredUsers" @complete="searchUsers($event)" field="fullName" />
         </template>
         <template v-else>
-          <span>{{selectedGroup.primaryUserName}}</span>
+          <span>{{selectedGroup.primaryUserFullName}}</span>
         </template>
+      </Panel>
+      <Panel header="Supporting Staff" class="p-mb-1" style="width:100%" :toggleable="true">
+        <div style="width:100%">
+          <AutoComplete v-model="selectedSupporter" :suggestions="filteredUsers" @complete="searchUsers($event)" field="fullName" placeholder="Add user to group" />
+          <Button icon="pi pi-check" class="p-button-rounded p-button-text p-button-success" @click="addSupporterToGroup" />
+        </div>
+        <div style="width:100%" v-for="sup in selectedGroup.supporters" :key="sup.supporterID">
+          <span>{{sup.user.fullName}}</span>
+          <Button icon="pi pi-times" class="p-button-rounded p-button-text p-button-danger" @click="removeSupporterFromGroup(sup.supporterID)" />
+        </div>
+      </Panel>
+      <Panel header="Students in Group" class="p-mb-1" style="width:100%" :toggleable="true">
+        <div style="width:100%">
+          <AutoComplete v-model="selectedStudent" :suggestions="filteredStudents" @complete="searchStudents($event)" field="fullName" placeholder="Add student to group" />
+          <Button icon="pi pi-check" class="p-button-rounded p-button-text p-button-success" @click="addStudentToGroup" />
+        </div>
+        <div style="width:100%" v-for="del in selectedGroup.delegations" :key="del.delegationID">
+          <span>{{del.student.fullName}}</span>
+          <Button icon="pi pi-times" class="p-button-rounded p-button-text p-button-danger" @click="removeStudentFromGroup(del.delegationID)" />
+        </div>
       </Panel>
     </div>
   </Dialog>
@@ -64,28 +84,50 @@ export default defineComponent({
 
     // student group data
     const studentGroupData = ref();
-    Promise.all([studentGroupsService.getStudentGroups(), studentGroupsService.getStudentsForGroups(), studentsService.getAllStudents(), studentGroupsService.getAllSupporters()])
+    Promise.all([studentGroupsService.getStudentGroups(),
+      studentGroupsService.getStudentsForGroups(),
+      studentsService.getAllStudents(),
+      studentGroupsService.getAllSupporters(),
+      usersService.getAllUsers()])
     .then(data => {
       let studentGroups = data[0];
       let delegations = data[1];
       let students = data[2];
       let supporters = data[3];
+      let users = data[4];
+      allStudents.value = students.map(s => { return {...s, fullName: s.firstName+' '+s.lastName}; });
+      allUsers.value = users.map(u => { return {...u, fullName: u.firstName+' '+u.lastName }; })
       studentGroupData.value = studentGroups.map(sg => {
-        let sgd = {...sg, delegations: undefined, supporters: undefined};
+        let sgd = {...sg, primaryUserFullName: undefined, delegations: undefined, supporters: undefined};
+        sgd.primaryUserFullName = _.find(allUsers.value, u => u.userName === sg.primaryUserName).fullName;
         sgd.delegations = _.filter(delegations, d => d.studentGroupID === sg.studentGroupID)
-          .map(d => { return {...d, student: _.find(students, s => s.studentID === d.studentID)} });
-        sgd.supporters = _.filter(supporters, s => s.studentGroupID === sg.studentGroupID);
+          .map(d => { return {...d, student: _.find(allStudents.value, s => s.studentID === d.studentID)} });
+        sgd.supporters = _.filter(supporters, s => s.studentGroupID === sg.studentGroupID)
+          .map(s => { return {...s, user: _.find(allUsers.value, u => u.userName === s.userName) }; });
         return sgd;
       });
-      allStudents.value = students.map(s => { return {...s, fullName: s.firstName + ' ' + s.lastName}; });
     });
 
     // group editing
     const showGroupEditDialog = ref<boolean>(false);
     const selectedGroup = ref();
+    const editingUser = ref<boolean>(false);
+    const editingName = ref<boolean>(false);
     const openGroup = (studentGroupID: string) => {
       selectedGroup.value = _.find(studentGroupData.value, sgd => sgd.studentGroupID === studentGroupID);
+      newGroupName.value = selectedGroup.value.studentGroupName;
+      newGroupPrimary.value = _.find(allUsers.value, u => u.userName === selectedGroup.value.primaryUserName);
       showGroupEditDialog.value = true;
+    }
+    const saveGroup = () => {
+      if (newGroupName.value !== selectedGroup.value.studentGroupName || newGroupPrimary.value?.userName !== selectedGroup.value.primaryUserName) {
+        selectedGroup.value = newGroupName.value;
+        selectedGroup.value.primaryUserName = newGroupPrimary.value?.userName;
+        selectedGroup.value.primaryUserFullName = newGroupPrimary.value?.firstName+' '+newGroupPrimary.value?.lastName;
+        studentGroupsService.updateGroup(selectedGroup.value.studentGroupID, selectedGroup.value.studentGroupName, selectedGroup.value.primaryUserName);
+        editingUser.value = false;
+        editingName.value = false;
+      }
     }
     const addStudentToGroup = () => {
       if (selectedStudent.value) {
@@ -96,6 +138,7 @@ export default defineComponent({
         }).catch(() => {
           toast.add({severity:'error', summary:'Error', detail:'Student add failed; please try again later', life:3000});
         });
+        selectedStudent.value = undefined;
       }
     }
     const removeStudentFromGroup = (studentID: string) => {
@@ -115,6 +158,7 @@ export default defineComponent({
         }).catch(() => {
           toast.add({severity:'error', summary:'Error', detail:'Supporting actor add failed; please try again later', life:3000});
         });
+        selectedSupporter.value = undefined;
       }
     }
     const removeSupporterFromGroup = (supporterID: string) => {
@@ -143,9 +187,6 @@ export default defineComponent({
     const newGroupPrimary = ref<User>();
     const selectedSupporter = ref<User>();
     const allUsers = ref<User[]>();
-    usersService.getAllUsers().then(u => {
-      allUsers.value = u;
-    });
     const filteredUsers = ref<User[]>();
     const searchUsers = (event) => {
       if (!allUsers.value) {
@@ -183,7 +224,7 @@ export default defineComponent({
       }, 0);
     };
 
-    return { studentGroupData, showGroupEditDialog, selectedGroup, openGroup,
+    return { studentGroupData, showGroupEditDialog, editingUser, editingName, selectedGroup, openGroup, saveGroup,
       addStudentToGroup, removeStudentFromGroup, addSupporterToGroup, removeSupporterFromGroup,
       showGroupAddDialog, newGroupName, addGroup, deleteGroup,
       newGroupPrimary, selectedSupporter, filteredUsers, searchUsers,

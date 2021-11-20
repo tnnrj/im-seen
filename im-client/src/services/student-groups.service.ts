@@ -9,6 +9,7 @@ export default {
   removeStudentFromGroup,
   addGroup,
   deleteGroup,
+  updateGroup,
   getAllSupporters,
   addSupporterToGroup,
   removeSupporterFromGroup
@@ -36,6 +37,10 @@ export function addGroup(studentGroupName: string, primaryUserName: string) {
 
 export function deleteGroup(studentGroupID: string) {
   return http.delete('StudentGroups', studentGroupID);
+}
+
+export function updateGroup(studentGroupID: string, studentGroupName: string, primaryUserName: string) {
+  return http.post('StudentGroups/Update', JSON.stringify({studentGroupID, studentGroupName, primaryUserName}));
 }
 
 export function getAllSupporters() {
