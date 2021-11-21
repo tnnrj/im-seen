@@ -40,7 +40,7 @@ export function deleteGroup(studentGroupID: string) {
 }
 
 export function updateGroup(studentGroupID: string, studentGroupName: string, primaryUserName: string) {
-  return http.post('StudentGroups/Update', JSON.stringify({studentGroupID, studentGroupName, primaryUserName}));
+  return http.post('StudentGroups/Update/' + studentGroupID, JSON.stringify({studentGroupID, studentGroupName, primaryUserName}));
 }
 
 export function getAllSupporters() {
