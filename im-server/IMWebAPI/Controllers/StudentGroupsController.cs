@@ -89,6 +89,44 @@ namespace IMWebAPI.Controllers
             return CreatedAtAction("GetStudentGroup", new { id = @StudentGroup.StudentGroupID }, @StudentGroup);
         }
 
+        // POST: api/StudentGroup/Update
+        [HttpPost("{id}")]
+        [Route("Update/{id}")]
+        public async Task<ActionResult<Observation>> Update(int id, [FromBody] StudentGroup group)
+        {
+            if (id != group.StudentGroupID)
+            {
+                return BadRequest();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var old_group = await _context.StudentGroups.FindAsync(id);
+                    old_group.StudentGroupName = group.StudentGroupName;
+                    old_group.PrimaryUserName = group.PrimaryUserName;
+
+                    _context.Update(old_group);
+                    await _context.SaveChangesAsync();
+                }
+
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!StudentGroupExists(group.StudentGroupID))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+            }
+
+            return Ok("Updated");
+        }
+
         // DELETE: api/StudentGroups/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<StudentGroup>> DeleteStudentGroup(int id)
