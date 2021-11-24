@@ -128,7 +128,7 @@ export default defineComponent({
     }
     const saveGroup = () => {
       if (newGroupName.value !== selectedGroup.value.studentGroupName || newGroupPrimary.value?.userName !== selectedGroup.value.primaryUserName) {
-        selectedGroup.value = newGroupName.value;
+        selectedGroup.value.studentGroupName = newGroupName.value;
         selectedGroup.value.primaryUserName = newGroupPrimary.value?.userName;
         selectedGroup.value.primaryUserFullName = newGroupPrimary.value?.firstName+' '+newGroupPrimary.value?.lastName;
         studentGroupsService.updateGroup(selectedGroup.value.studentGroupID, selectedGroup.value.studentGroupName, selectedGroup.value.primaryUserName);
