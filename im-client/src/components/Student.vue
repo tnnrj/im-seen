@@ -12,27 +12,26 @@
         </div>
     </div>
     <ObservationTable :records="observations" /> <!-- TODO: SELECT * FROM Observations WHERE studentId = student.id -->
-  <div class="element-content p-d-flex p-flex-column p-jc-center p-ai-center">
-  <template v-if="pieChartData && pieChartData.data">
-      <h4 class="p-mb-0">{{pieChartData.name}}</h4>
-      <PieChart :chartData="pieChartData.data" :id="idx" @openStudent="openStudent" />
+  <div class="element-content p-d-flex p-flex-column p-jc-center p-ai-center student-chart">
+    <template v-if="pieChartData && pieChartData.data">
+        <h4 class="p-mb-0">{{pieChartData.name}}</h4>
+        <PieChart :chartData="pieChartData.data" :id="idx" @openStudent="openStudent"/>
     </template> 
     <template v-else>
       <Loader />
     </template>
   </div>
-    <div class="element-content p-d-flex p-flex-column p-jc-center p-ai-center">
+  <div class="element-content p-d-flex p-flex-column p-jc-center p-ai-center student-chart">
     <template v-if="lineChartData && lineChartData.data">
-      <h4 class="p-mb-0">{{lineChartData.name}}</h4>
-      <LineChart :chartData="lineChartData.data" :axis1Name="lineChartData.axis1Name" 
-        :axis2Name="lineChartData.axis2Name" :id="idx" @openStudent="openStudent" />
+        <h4 class="p-mb-0">{{lineChartData.name}}</h4>
+        <LineChart :chartData="lineChartData.data" :axis1Name="lineChartData.axis1Name" 
+          :axis2Name="lineChartData.axis2Name" :id="idx" @openStudent="openStudent" />
     </template>
     <template v-else>
       <Loader />
     </template>
   </div>
-</div>
-  
+</div> 
 </template>
 
 <script lang="ts">
@@ -53,8 +52,6 @@ export default defineComponent({
   components: { LineChart, PieChart, Loader, ObservationTable },
   props: {
     student : Object,
-    lineReportID : 2,
-    pieReportID: 3,
   },
   emits: {
     // event payload with validation
@@ -66,21 +63,38 @@ export default defineComponent({
     const curStudent = computed(() => props.student as Student);
     const store = useStore();
 
-    const loadDataChart = () => { if (!store.getters.getReportData(props.lineReportID)) store.dispatch('loadReportData', { reportID: props.lineReportID }); }
-    loadDataChart();
-    const lineChartData = computed(() => store.getters.getReportData(props.lineReportID));
-    onBeforeUpdate(loadDataChart);
+    const reportValues = ref<any[]>([]);
+    reportsService.getAllReports().then(reports => {
+      reportValues.value = reports;
+    });
 
-    const loadDataPie = () => { if (!store.getters.getReportData(props.pieReportID)) store.dispatch('loadReportData', { reportID: props.pieReportID }); }
+// todo: don't set like this :'(
+    const lineID = 2;
+    const pieID = 1;
+
+    const loadDataLine = () => { if (!store.getters.getReportData(lineID)) store.dispatch('loadReportData', { reportID: lineID }); }
+    loadDataLine();
+    const lineChartData = computed(() => store.getters.getReportData(lineID));
+    onBeforeUpdate(loadDataLine);
+
+    const loadDataPie = () => { if (!store.getters.getReportData(pieID)) store.dispatch('loadReportData', { reportID: pieID }); }
     loadDataPie();
-    const pieChartData = computed(() => store.getters.getReportData(props.pieReportID));
+    const pieChartData = computed(() => store.getters.getReportData(pieID));
     onBeforeUpdate(loadDataPie);
 
     console.log(lineChartData);
 
-    // todo: filter chart data to only include data from that student
+    if (!store.state.observations) store.dispatch('loadAllObservations');
 
-    return { curStudent, lineChartData, pieChartData }
+    const observations = computed(() => {
+      if (!store.state.observations) return null;
+      return _.filter(store.state.observations, o => o.studentID == curStudent.value.studentID);
+    });
+
+    console.log(observations);
+    // todo: filter data for charts to just be individual student
+
+    return { curStudent, lineChartData, pieChartData, observations }
   }
 });
 </script>
@@ -88,9 +102,13 @@ export default defineComponent({
 <style lang="scss">
 .element-content {
   width: 100%;
-  height: 100%;
   background-color: white;
   border-radius: 10px;
   box-shadow: 5px 5px 10px 0px var(--surface-300);
 }
+
+.student-chart {
+  height: 200px;
+}
+
 </style>

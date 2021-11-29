@@ -43,7 +43,7 @@
     </template>
   </Dialog>
     <Dialog header="Student" v-model:visible="showStudentDialog" :modal="true" :contentStyle="{'max-height':'80vh', 'width':'45em'}">
-    <Student :student="curStudent" />
+    <StudentComponent :student="curStudent" />
   </Dialog> 
   <ConfirmPopup></ConfirmPopup>
 </template>
