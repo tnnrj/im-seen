@@ -36,7 +36,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from "vue";
+import { computed, defineComponent, onBeforeUpdate, ref } from "vue";
 //import StudentService from "@/services/students.service";
 import LineChart from "@/components/charts/LineChart.vue";
 import PieChart from "@/components/charts/PieChart.vue";
@@ -44,8 +44,8 @@ import ObservationTable from "@/components/ObservationTable.vue"
 import Loader from "@/components/Loader.vue";
 import { useStore } from "@/store/index";
 import { Student } from "@/model/student.model";
-//import reportsService from "@/services/report-data.service";
-//import studentsService from "@/services/students.service";
+import reportsService from "@/services/report-data.service";
+import studentsService from "@/services/students.service";
 import * as _ from "lodash";
 
 export default defineComponent({
@@ -53,6 +53,8 @@ export default defineComponent({
   components: { LineChart, PieChart, Loader, ObservationTable },
   props: {
     student : Object,
+    lineReportID : 2,
+    pieReportID: 3,
   },
   emits: {
     // event payload with validation
@@ -62,28 +64,23 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const curStudent = computed(() => props.student as Student);
-    //console.log(curStudent);
-    //const name = curStudent.firstName + " " + curStudent.lastName;
-    //console.log(name);
-
     const store = useStore();
-    
-    const lineChartData =  "";
-    const pieChartData = "";
 
-    const openStudent = (id) => {
-      emit('openStudent', id);
-    };
+    const loadDataChart = () => { if (!store.getters.getReportData(props.lineReportID)) store.dispatch('loadReportData', { reportID: props.lineReportID }); }
+    loadDataChart();
+    const lineChartData = computed(() => store.getters.getReportData(props.lineReportID));
+    onBeforeUpdate(loadDataChart);
 
-// need to get only student observations for this student (id)
-    if (!store.state.observations) store.dispatch('loadAllObservations');
+    const loadDataPie = () => { if (!store.getters.getReportData(props.pieReportID)) store.dispatch('loadReportData', { reportID: props.pieReportID }); }
+    loadDataPie();
+    const pieChartData = computed(() => store.getters.getReportData(props.pieReportID));
+    onBeforeUpdate(loadDataPie);
 
-    const observations = computed(() => {
-      if (!store.state.observations) return null;
-      return _.filter(store.state.observations, o => o.studentID == curStudent.value.studentID);
-    });
+    console.log(lineChartData);
 
-    return { curStudent, lineChartData, pieChartData, openStudent , observations}
+    // todo: filter chart data to only include data from that student
+
+    return { curStudent, lineChartData, pieChartData }
   }
 });
 </script>
