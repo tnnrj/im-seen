@@ -104,8 +104,14 @@ namespace IMWebAPI.Controllers
                 try
                 {
                     var old_group = await _context.StudentGroups.FindAsync(id);
+
+                    var primary_user = await _context.Users.Where(u => u.UserName == group.PrimaryUserName).SingleOrDefaultAsync();
+                    if (primary_user.UserName == group.PrimaryUserName && primary_user.Role == "PrimaryActor")
+                        old_group.PrimaryUserName = group.PrimaryUserName;
+                    else
+
                     old_group.StudentGroupName = group.StudentGroupName;
-                    old_group.PrimaryUserName = group.PrimaryUserName;
+
 
                     _context.Update(old_group);
                     await _context.SaveChangesAsync();

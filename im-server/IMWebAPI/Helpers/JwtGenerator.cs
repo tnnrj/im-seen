@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using IMWebAPI.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -12,29 +13,30 @@ namespace IMWebAPI.Helpers
 {
     public class JwtGenerator
     {
+        private readonly JwtSettings jwtSettings;
         private readonly JwtHeader jwtHeader;
         private readonly IList<Claim> jwtClaims;
         private readonly DateTime jwtDate;
         private readonly int tokenLifetimeInSecs;
-        //private readonly JwtBearerTokenSettings jwtBearerTokenSettings;
 
-        public JwtGenerator()//JwtBearerTokenSettings jbts)
+
+        public JwtGenerator(JwtSettings settings)
         {
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("IMWEBAPI_SECRETKEY")); //jwtBearerTokenSettings.Key));
+            jwtSettings = settings;
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             this.jwtHeader = new JwtHeader(credentials);
             this.jwtClaims = new List<Claim>();
             this.jwtDate = DateTime.UtcNow;
-            this.tokenLifetimeInSecs = 300; //jwtBearerTokenSettings.LifeInSecs;
+            this.tokenLifetimeInSecs = jwtSettings.AccessLifeInSecs;
         }
 
         public string GetAccessToken()
         {
             JwtSecurityToken jwt = new JwtSecurityToken(
                 jwtHeader,
-                new JwtPayload("IMWEBAPI", "IMWEBAPI", jwtClaims, jwtDate, jwtDate.AddSeconds(tokenLifetimeInSecs))
-                //new JwtPayload(jwtBearerTokenSettings.Issuer, jwtBearerTokenSettings.Audience, jwtClaims, jwtDate, jwtDate.AddSeconds(tokenLifetimeInSecs))
+                new JwtPayload(jwtSettings.Issuer, jwtSettings.Audience, jwtClaims, jwtDate, jwtDate.AddSeconds(tokenLifetimeInSecs))
             );
 
             return new JwtSecurityTokenHandler().WriteToken(jwt);
@@ -57,11 +59,11 @@ namespace IMWebAPI.Helpers
             var parameters = new TokenValidationParameters()
             {
                 ValidateIssuer = true,
-                ValidIssuer = "IMWEBAPI",//jwtBearerTokenSettings.Issuer,
+                ValidIssuer = jwtSettings.Issuer,
                 ValidateAudience = true,
-                ValidAudience = "IMWEBAPI",//jwtBearerTokenSettings.Audience,
+                ValidAudience = jwtSettings.Audience,
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("IMWEBAPI_SECRETKEY")),//jwtBearerTokenSettings.Key)),
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key)),
                 ValidateLifetime = false,
                 RequireAudience = true,
                 RequireExpirationTime = true,
