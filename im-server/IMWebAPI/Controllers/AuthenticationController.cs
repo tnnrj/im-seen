@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using IMWebAPI.Configuration;
 using IMWebAPI.Data;
 using IMWebAPI.Helpers;
 using IMWebAPI.Models;
@@ -13,6 +14,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.Options;
 
 namespace IMWebAPI.Controllers
 {
@@ -24,13 +26,14 @@ namespace IMWebAPI.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IM_API_Context _context;
         private readonly IEmailer _emailer;
-        //private readonly JwtBearerTokenSettings jwtBearerTokenSettings;
+        private readonly JwtSettings _jwtSettings;
 
-        public AuthenticationController(UserManager<ApplicationUser> userManager, IM_API_Context context, IEmailer emailer)
+        public AuthenticationController(UserManager<ApplicationUser> userManager, IM_API_Context context, IEmailer emailer, IOptions<JwtSettings> jwtSettingsAccessor)
         {
             _userManager = userManager;
             _context = context;
             _emailer = emailer;
+            _jwtSettings = jwtSettingsAccessor.Value;
         }
 
         [HttpPost]
@@ -89,7 +92,7 @@ namespace IMWebAPI.Controllers
             if (passResult == PasswordVerificationResult.Failed)
                 return new BadRequestObjectResult(new { Message = "Login failed. Incorrect password." });
 
-            var jwtGenerator = new JwtGenerator();
+            var jwtGenerator = new JwtGenerator(_jwtSettings);
 
             jwtGenerator.AddClaim(new Claim(ClaimTypes.Email, appUser.Email));
             jwtGenerator.AddClaim(new Claim(ClaimTypes.Name, appUser.UserName));
@@ -110,11 +113,11 @@ namespace IMWebAPI.Controllers
 
             if (roles.Contains("Observer"))
             {
-                appUser.RefreshTokenExpiryTime = DateTime.UtcNow.AddMonths(12);
+                appUser.RefreshTokenExpiryTime = DateTime.UtcNow.AddSeconds(_jwtSettings.ObserverRefreshLifeInSecs);
             }
             else
             {
-                appUser.RefreshTokenExpiryTime = DateTime.UtcNow.AddHours(12);
+                appUser.RefreshTokenExpiryTime = DateTime.UtcNow.AddSeconds(_jwtSettings.RefreshLifeInSecs);
             }
 
             var result = await _userManager.UpdateAsync(appUser);
