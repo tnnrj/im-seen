@@ -12,31 +12,30 @@
         </div>
     </div>
     <ObservationTable :records="observations" /> <!-- TODO: SELECT * FROM Observations WHERE studentId = student.id -->
-  <div class="element-content p-d-flex p-flex-column p-jc-center p-ai-center">
-  <template v-if="pieChartData && pieChartData.data">
-      <h4 class="p-mb-0">{{pieChartData.name}}</h4>
-      <PieChart :chartData="pieChartData.data" :id="idx" @openStudent="openStudent" />
+  <div class="element-content p-d-flex p-flex-column p-jc-center p-ai-center student-chart">
+    <template v-if="pieChartData && pieChartData.data">
+        <h4 class="p-mb-0">{{pieChartData.name}}</h4>
+        <PieChart :chartData="pieChartData.data" :id="idx" @openStudent="openStudent"/>
     </template> 
     <template v-else>
       <Loader />
     </template>
   </div>
-    <div class="element-content p-d-flex p-flex-column p-jc-center p-ai-center">
+  <div class="element-content p-d-flex p-flex-column p-jc-center p-ai-center student-chart">
     <template v-if="lineChartData && lineChartData.data">
-      <h4 class="p-mb-0">{{lineChartData.name}}</h4>
-      <LineChart :chartData="lineChartData.data" :axis1Name="lineChartData.axis1Name" 
-        :axis2Name="lineChartData.axis2Name" :id="idx" @openStudent="openStudent" />
+        <h4 class="p-mb-0">{{lineChartData.name}}</h4>
+        <LineChart :chartData="lineChartData.data" :axis1Name="lineChartData.axis1Name" 
+          :axis2Name="lineChartData.axis2Name" :id="idx" @openStudent="openStudent" />
     </template>
     <template v-else>
       <Loader />
     </template>
   </div>
-</div>
-  
+</div> 
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from "vue";
+import { computed, defineComponent, onBeforeUpdate, ref } from "vue";
 //import StudentService from "@/services/students.service";
 import LineChart from "@/components/charts/LineChart.vue";
 import PieChart from "@/components/charts/PieChart.vue";
@@ -44,8 +43,8 @@ import ObservationTable from "@/components/ObservationTable.vue"
 import Loader from "@/components/Loader.vue";
 import { useStore } from "@/store/index";
 import { Student } from "@/model/student.model";
-//import reportsService from "@/services/report-data.service";
-//import studentsService from "@/services/students.service";
+import reportsService from "@/services/report-data.service";
+import studentsService from "@/services/students.service";
 import * as _ from "lodash";
 
 export default defineComponent({
@@ -62,20 +61,29 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const curStudent = computed(() => props.student as Student);
-    //console.log(curStudent);
-    //const name = curStudent.firstName + " " + curStudent.lastName;
-    //console.log(name);
-
     const store = useStore();
-    
-    const lineChartData =  "";
-    const pieChartData = "";
 
-    const openStudent = (id) => {
-      emit('openStudent', id);
-    };
+    const reportValues = ref<any[]>([]);
+    reportsService.getAllReports().then(reports => {
+      reportValues.value = reports;
+    });
 
-// need to get only student observations for this student (id)
+// todo: don't set like this :'(
+    const lineID = 2;
+    const pieID = 1;
+
+    const loadDataLine = () => { if (!store.getters.getReportData(lineID)) store.dispatch('loadReportData', { reportID: lineID }); }
+    loadDataLine();
+    const lineChartData = computed(() => store.getters.getReportData(lineID));
+    onBeforeUpdate(loadDataLine);
+
+    const loadDataPie = () => { if (!store.getters.getReportData(pieID)) store.dispatch('loadReportData', { reportID: pieID }); }
+    loadDataPie();
+    const pieChartData = computed(() => store.getters.getReportData(pieID));
+    onBeforeUpdate(loadDataPie);
+
+    console.log(lineChartData);
+
     if (!store.state.observations) store.dispatch('loadAllObservations');
 
     const observations = computed(() => {
@@ -83,7 +91,10 @@ export default defineComponent({
       return _.filter(store.state.observations, o => o.studentID == curStudent.value.studentID);
     });
 
-    return { curStudent, lineChartData, pieChartData, openStudent , observations}
+    console.log(observations);
+    // todo: filter data for charts to just be individual student
+
+    return { curStudent, lineChartData, pieChartData, observations }
   }
 });
 </script>
@@ -91,9 +102,13 @@ export default defineComponent({
 <style lang="scss">
 .element-content {
   width: 100%;
-  height: 100%;
   background-color: white;
   border-radius: 10px;
   box-shadow: 5px 5px 10px 0px var(--surface-300);
 }
+
+.student-chart {
+  height: 200px;
+}
+
 </style>
