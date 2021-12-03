@@ -29,7 +29,7 @@ namespace IMWebAPI.Data
                 new Report
                 {
                     ReportName = "Observation Frequency by Student and Date",
-                    Query = "SELECT TRIM(CONCAT(StudentFirstName, ' ', StudentLastName)) as name, CAST(ObservationDate AS DATE) as date, COUNT(*) as value, Observations.StudentID as id FROM Observations {joinAndWhere} GROUP BY StudentFirstName, StudentLastName, Observations.StudentID, ObservationDate ORDER BY ObservationDate",
+                    Query = "SELECT TRIM(CONCAT(StudentFirstName, ' ', StudentLastName)) as name, CAST(ObservationDate AS DATE) as date, COUNT(*) as value, Observations.StudentID as id FROM Observations {joinAndWhere} GROUP BY StudentFirstName, StudentLastName, Observations.StudentID, Observations.ObservationDate ORDER BY ObservationDate",
                     Axis1Name = "Date",
                     Axis2Name = "Frequency of Observations",
                     AvailableChartTypes = "Line"
@@ -37,7 +37,7 @@ namespace IMWebAPI.Data
                 new Report
                 {
                     ReportName = "Observation Severity by Student and Date",
-                    Query = "SELECT TRIM(CONCAT(StudentFirstName, ' ', StudentLastName)) as name, CAST(ObservationDate AS DATE) as date, SUM(Severity) as value, Observations.StudentID as id FROM Observations {joinAndWhere} GROUP BY StudentFirstName, StudentLastName, Observations.StudentID, ObservationDate ORDER BY ObservationDate",
+                    Query = "SELECT TRIM(CONCAT(StudentFirstName, ' ', StudentLastName)) as name, CAST(ObservationDate AS DATE) as date, SUM(Severity) as value, Observations.StudentID as id FROM Observations {joinAndWhere} GROUP BY StudentFirstName, StudentLastName, Observations.StudentID, Observations.ObservationDate ORDER BY ObservationDate",
                     Axis1Name = "Date",
                     Axis2Name = "Severity of Observations",
                     AvailableChartTypes = "Line"
