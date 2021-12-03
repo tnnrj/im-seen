@@ -42,7 +42,7 @@
       <Button label="Continue" icon="pi pi-check" @click="onLayoutDialogContinue" />
     </template>
   </Dialog>
-    <Dialog header="Student" v-model:visible="showStudentDialog" :modal="true" :contentStyle="{'max-height':'80vh', 'width':'45em'}">
+  <Dialog header="Student" v-model:visible="showStudentDialog" :modal="true" :contentStyle="{'max-height':'80vh', 'width':'45em'}">
     <StudentComponent :student="curStudent" />
   </Dialog> 
   <ConfirmPopup></ConfirmPopup>
@@ -56,7 +56,6 @@ import { DashPage } from "@/model/dashboard.model";
 import { DashLayout } from "@/model/enums.model";
 import DashboardElement from "@/components/DashboardElement.vue";
 import DashboardConfigurator from "@/components/DashboardConfigurator.vue";
-import Loader from "@/components/Loader.vue";
 import { useConfirm } from "primevue/useconfirm";
 import { Student } from "@/model/student.model";
 import StudentComponent from "@/components/Student.vue";
@@ -64,6 +63,7 @@ import StudentComponent from "@/components/Student.vue";
 export default defineComponent({
   name: "Dashboard",
   components: { DashboardElement, DashboardConfigurator, Loader , StudentComponent},
+
   setup() {
     // pages setup
     const curPageNum = ref(0);

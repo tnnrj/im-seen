@@ -36,6 +36,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, onBeforeUpdate, ref } from "vue";
+
 //import StudentService from "@/services/students.service";
 import LineChart from "@/components/charts/LineChart.vue";
 import PieChart from "@/components/charts/PieChart.vue";
@@ -45,11 +46,13 @@ import { useStore } from "@/store/index";
 import { Student } from "@/model/student.model";
 import reportsService from "@/services/report-data.service";
 import studentsService from "@/services/students.service";
+
 import * as _ from "lodash";
 
 export default defineComponent({
   name: "Student",
   components: { LineChart, PieChart, Loader, ObservationTable },
+
   props: {
     student : Object,
   },
@@ -80,7 +83,7 @@ export default defineComponent({
       return chartData;
     });
     onBeforeUpdate(loadDataLine);
-
+    
     if (!store.state.observations) store.dispatch('loadAllObservations');
 
     const observations = computed(() => {
@@ -110,6 +113,7 @@ export default defineComponent({
   border-radius: 10px;
   box-shadow: 5px 5px 10px 0px var(--surface-300);
 }
+
 
 .student-chart {
   height: 200px;

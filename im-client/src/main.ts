@@ -2,6 +2,7 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router';
 import { store, key } from "@/store";
+import Loader from "@/components/Loader.vue";
 
 // primevue components
 import PrimeVue from 'primevue/config';
@@ -34,6 +35,8 @@ import 'primeicons/primeicons.css';
 import 'primeflex/primeflex.css';
 
 const app = createApp(App);
+
+app.component('Loader', Loader);
 
 // vue-router
 app.use(router);

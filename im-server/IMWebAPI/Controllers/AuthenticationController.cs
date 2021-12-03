@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using IMWebAPI.Configuration;
 using IMWebAPI.Data;
 using IMWebAPI.Helpers;
 using IMWebAPI.Models;
@@ -13,6 +14,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.Options;
 
 namespace IMWebAPI.Controllers
 {
@@ -24,13 +26,14 @@ namespace IMWebAPI.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IM_API_Context _context;
         private readonly IEmailer _emailer;
-        //private readonly JwtBearerTokenSettings jwtBearerTokenSettings;
+        private readonly JwtSettings _jwtSettings;
 
-        public AuthenticationController(UserManager<ApplicationUser> userManager, IM_API_Context context, IEmailer emailer)
+        public AuthenticationController(UserManager<ApplicationUser> userManager, IM_API_Context context, IEmailer emailer, IOptions<JwtSettings> jwtSettingsAccessor)
         {
             _userManager = userManager;
             _context = context;
             _emailer = emailer;
+            _jwtSettings = jwtSettingsAccessor.Value;
         }
 
         [HttpPost]
@@ -47,6 +50,13 @@ namespace IMWebAPI.Controllers
                 // adding user from admin UI - create a temporary password and send a registration link
                 sendRegLink = true;
                 password = Guid.NewGuid().ToString();
+            }
+
+            // checks if email already exists
+            var user = await _userManager.FindByNameAsync(email);
+            if (user != null && user.Email == email)
+            {
+                return new BadRequestObjectResult(new { Message = "We already have an account under that email. Please try again." });
             }
 
             var result = await _userManager.CreateAsync(appUser, password);
@@ -82,7 +92,7 @@ namespace IMWebAPI.Controllers
             if (passResult == PasswordVerificationResult.Failed)
                 return new BadRequestObjectResult(new { Message = "Login failed. Incorrect password." });
 
-            var jwtGenerator = new JwtGenerator();
+            var jwtGenerator = new JwtGenerator(_jwtSettings);
 
             jwtGenerator.AddClaim(new Claim(ClaimTypes.Email, appUser.Email));
             jwtGenerator.AddClaim(new Claim(ClaimTypes.Name, appUser.UserName));
@@ -98,13 +108,16 @@ namespace IMWebAPI.Controllers
             var refreshToken = jwtGenerator.GetRefreshToken();
 
             appUser.RefreshToken = refreshToken;
-            if (appUser.Role == "Observer")
+
+            var roles = await _userManager.GetRolesAsync(appUser);
+
+            if (roles.Contains("Observer"))
             {
-                appUser.RefreshTokenExpiryTime = DateTime.UtcNow.AddMonths(12);
+                appUser.RefreshTokenExpiryTime = DateTime.UtcNow.AddSeconds(_jwtSettings.ObserverRefreshLifeInSecs);
             }
             else
             {
-                appUser.RefreshTokenExpiryTime = DateTime.UtcNow.AddHours(12);
+                appUser.RefreshTokenExpiryTime = DateTime.UtcNow.AddSeconds(_jwtSettings.RefreshLifeInSecs);
             }
 
             var result = await _userManager.UpdateAsync(appUser);

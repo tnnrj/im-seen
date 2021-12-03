@@ -129,6 +129,7 @@ export default {
         })
         .on("click", function (event, d, i) {
           component.$emit('openStudent', d.data.id);
+
         });
 
 //////////////////////////////////// END D3.js CODE

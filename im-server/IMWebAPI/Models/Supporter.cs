@@ -12,6 +12,8 @@ namespace IMWebAPI.Models
         public int SupporterID { get; set; }
 
         [Required]
+        [ForeignKey("StudentGroups.StudentGroupID")]
+        public int StudentGroupID { get; set; }
         public StudentGroup StudentGroup { get; set; }
 
         [Required]

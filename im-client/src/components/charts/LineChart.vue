@@ -107,14 +107,14 @@ export default {
       /** Interactive elements! :D **/
       function hover(svg, path) {
         if ("ontouchstart" in document)
-          svg
+          svg.selectAll("g")
             .style("-webkit-tap-highlight-color", "transparent")
             .on("touchmove", moved)
             .on("touchstart", entered)
             .on("touchend", left)
             .on("click", click);
         else
-          svg
+          svg.selectAll("g")
             .on("mousemove", moved)
             .on("mouseenter", entered)
             .on("mouseleave", left)
