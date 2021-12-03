@@ -62,7 +62,7 @@ import StudentComponent from "@/components/Student.vue";
 
 export default defineComponent({
   name: "Dashboard",
-  components: { DashboardElement, DashboardConfigurator, Loader , StudentComponent},
+  components: { DashboardElement, DashboardConfigurator, StudentComponent},
 
   setup() {
     // pages setup
