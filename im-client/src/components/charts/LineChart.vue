@@ -46,8 +46,8 @@ export default {
 
       /** Parse data from prop **/
       const columns = _.uniq(this.chartData.map((cd) => cd.date));
-      const names = _.uniq(this.chartData.map((cd) => { return { name: cd.name, id: cd.id };}))
-
+      const names = _.uniqBy(this.chartData.map((cd) => { return { name: cd.name, id: cd.id };}), cd => cd.id);
+      console.log(names);
       const data = {
         y: this.axis2Name,
         series: names.map((n) => ({
@@ -64,6 +64,8 @@ export default {
         })),
         dates: columns.map((d) => parser(d)),
       };
+
+      console.log(data);
 
       /** Format x and y axis **/
       const x = d3

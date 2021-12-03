@@ -42,7 +42,7 @@
       <Button label="Continue" icon="pi pi-check" @click="onLayoutDialogContinue" />
     </template>
   </Dialog>
-  <Dialog header="Student" v-model:visible="showStudentDialog" :modal="true" :contentStyle="{'max-height':'80vh', 'width':'45em'}">
+  <Dialog :header="curStudent?.firstName + ' ' + curStudent?.lastName" v-model:visible="showStudentDialog" :modal="true" :contentStyle="{'max-height':'80vh', 'width':'70em'}">
     <StudentComponent :student="curStudent" />
   </Dialog> 
   <ConfirmPopup></ConfirmPopup>

@@ -35,6 +35,7 @@ export default {
           .attr("width", "90%")
           .attr("height", "90%")
           .attr("viewBox", [0, 0, clientWidth, clientHeight])  // keeps chart within element bounds
+          .attr("overflow", "visible")
         .append("g")
           .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
