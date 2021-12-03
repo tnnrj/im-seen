@@ -46,16 +46,17 @@ export default {
 
       /** Parse data from prop **/
       const columns = _.uniq(this.chartData.map((cd) => cd.date));
-      const names = _.uniq(this.chartData.map((cd) => cd.name));
+      const names = _.uniq(this.chartData.map((cd) => { return { name: cd.name, id: cd.id };}))
 
       const data = {
         y: this.axis2Name,
         series: names.map((n) => ({
-          name: n,
+          name: n.name,
+          id: n.id,
           values: columns.map((d) => {
             let match = _.find(
               this.chartData,
-              (cd) => cd.date == d && cd.name == n
+              (cd) => cd.date == d && cd.name == n.name
             );
             return match ? match.value : 0;
           }),
@@ -117,10 +118,7 @@ export default {
             .on("mousemove", moved)
             .on("mouseenter", entered)
             .on("mouseleave", left)
-            .on("click", function(d,i) {
-              console.log(d);
-              component.$emit('openStudent', (d, i) => i.id);
-            });
+            .on("click", click);
 
         const dot = svg.append("g").attr("display", "none");
 
@@ -129,7 +127,7 @@ export default {
         dot
           .append("text")
           .attr("font-family", "sans-serif")
-          .attr("font-size", 10)
+          .attr("font-size", 14)
           .attr("text-anchor", "middle")
           .attr("y", -8);
 
@@ -148,14 +146,14 @@ export default {
             "transform",
             `translate(${x(data.dates[i])},${y(s.values[i])})`
           );
-          dot.select("text").text(s.name);
+          dot.select("text").text(s.name + ", \n" + s.values[i]);
         }
 
-        function entered() {
+        function entered(d, i) {
           path
             .style("mix-blend-mode", null)
             .attr("stroke", (d) => d.color);
-          dot.attr("display", null);
+          dot.attr("display", null);       
         }
 
         function left() {
@@ -163,6 +161,15 @@ export default {
             .style("mix-blend-mode", "multiply")
             .attr("stroke", (d) => d.color);
           dot.attr("display", "none");
+        }
+
+        function click(event) {
+          const pointer = d3.pointer(event, this);
+          const xm = x.invert(pointer[0]);
+          const ym = y.invert(pointer[1]);
+          const i = d3.bisectCenter(data.dates, xm);
+          const s = d3.least(data.series, (d) => Math.abs(d.values[i] - ym));
+          component.$emit('openStudent', s.id);
         }
       }
 
@@ -187,7 +194,7 @@ export default {
         .attr("stroke", (d) => d.color);
 
       svg.call(hover, path);
-    },
+    }
   },
 };
 </script>

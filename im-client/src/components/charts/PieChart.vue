@@ -19,7 +19,6 @@ export default {
       // height and width should be calculated by element width
       const width = document.getElementById("chart-" + this.id).clientWidth;
       const height = document.getElementById("chart-" + this.id).clientHeight;
-      const minDimension = width < height ? width : height;
 
       //We are accessing the div with the id chart using d3's select method and appending svg
       /***** START D3.js CHART CODE *******/
@@ -30,7 +29,6 @@ export default {
         .domain(data.map(d => d.name))
         .range(d3.schemeSpectral[5]);
 
-      //////////////////////////////////////////////////////////////////////////////////////////////// this right here is the buggy shit
       const arc = d3.arc()
         .innerRadius( 0.5 * height / 2 )
         .outerRadius( 0.85 * height / 2 );
@@ -42,7 +40,7 @@ export default {
         .innerRadius( 0.65 * height /2 )
         .outerRadius( 0.65 * height / 2 );
 
-      const pieArcs = pie( data );
+      let pieArcs = pie( data );
 
       const svg = d3
         .select("#chart-" + this.id)
@@ -86,9 +84,9 @@ export default {
           .attr('dy', (d,i) => i ? '1.2em' : 0)
           .text(d => d);
 
-      ///////////////////////////////////////////////////////////////////////////////////////////////
+      //////////////////////// INTERACTIVE ELEMENTS ///
 
-      const tooltip = d3.select("svg")
+      let tooltip = d3.select("#chart-" + this.id)
         .append("div")
         .style("opacity", 0)
         .attr("class", "tooltip")
@@ -101,7 +99,7 @@ export default {
         .style("border-width", "1px")
         .style("border-radius", "5px")
         .style("padding", "5px");
-
+          
       // add hover effect
       svg.selectAll("path")
         .on("mouseover", function (event, d, i) {
@@ -110,7 +108,7 @@ export default {
                 .attr('opacity', '.85');
               // show tooltip
               tooltip
-                .html(d.value)
+                .html( d.data.name + "<br>" + d.value)
                 .style("left", (event.pageX) + "px")
                 .style("top", (event.pageY) + "px");
               tooltip.transition()
@@ -126,9 +124,10 @@ export default {
                 .duration(200)
                 .style("opacity", 0);
         })
-        .on("click", function (d, i) {
-            if (i.id) component.$emit('openStudent', i.id);
+        .on("click", function (event, d, i) {
+          component.$emit('openStudent', d.data.id);
         });
+
     }
   }
 }
