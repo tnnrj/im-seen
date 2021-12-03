@@ -68,21 +68,18 @@ export default defineComponent({
       reportValues.value = reports;
     });
 
-// todo: don't set like this :'(
+    // todo: don't set like this :'(
     const lineID = 2;
     const pieID = 1;
 
     const loadDataLine = () => { if (!store.getters.getReportData(lineID)) store.dispatch('loadReportData', { reportID: lineID }); }
     loadDataLine();
-    const lineChartData = computed(() => store.getters.getReportData(lineID));
+    const lineChartData = computed(() => {
+      let chartData = store.getters.getReportData(lineID);
+      chartData.data = _.filter(chartData.data, d => d.id == curStudent.value.studentID);
+      return chartData;
+    });
     onBeforeUpdate(loadDataLine);
-
-    const loadDataPie = () => { if (!store.getters.getReportData(pieID)) store.dispatch('loadReportData', { reportID: pieID }); }
-    loadDataPie();
-    const pieChartData = computed(() => store.getters.getReportData(pieID));
-    onBeforeUpdate(loadDataPie);
-
-    console.log(lineChartData);
 
     if (!store.state.observations) store.dispatch('loadAllObservations');
 
@@ -91,8 +88,15 @@ export default defineComponent({
       return _.filter(store.state.observations, o => o.studentID == curStudent.value.studentID);
     });
 
-    console.log(observations);
-    // todo: filter data for charts to just be individual student
+    const pieChartData = computed(() => {
+      let axis1Name =  "Severity";
+      let data = Object.values(_.groupBy(observations.value, o => o.severity)).map(olst => { return {name: (olst as any)[0].severity, value: (olst as any).length}});
+      let name = "Observations Grouped by Severity";
+      console.log(data);
+      if(!data.length)
+        return null;
+      return {name, data, axis1Name};
+      });
 
     return { curStudent, lineChartData, pieChartData, observations }
   }

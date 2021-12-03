@@ -194,7 +194,7 @@ export default {
         .attr("stroke", (d) => d.color);
 
       svg.call(hover, path);
-    },
+    }
   },
 };
 </script>

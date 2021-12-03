@@ -29,7 +29,6 @@ export default {
         .domain(data.map(d => d.name))
         .range(d3.schemeSpectral[5]);
 
-      //////////////////////////////////////////////////////////////////////////////////////////////// this right here is the buggy shit
       const arc = d3.arc()
         .innerRadius( 0.5 * height / 2 )
         .outerRadius( 0.85 * height / 2 );
@@ -41,7 +40,7 @@ export default {
         .innerRadius( 0.65 * height /2 )
         .outerRadius( 0.65 * height / 2 );
 
-      const pieArcs = pie( data );
+      let pieArcs = pie( data );
 
       const svg = d3
         .select("#chart-" + this.id)
@@ -85,9 +84,9 @@ export default {
           .attr('dy', (d,i) => i ? '1.2em' : 0)
           .text(d => d);
 
-      ///////////////////////////////////////////////////////////////////////////////////////////////
+      //////////////////////// INTERACTIVE ELEMENTS ///
 
-       let tooltip = d3.select("#chart-" + this.id)
+      let tooltip = d3.select("#chart-" + this.id)
         .append("div")
         .style("opacity", 0)
         .attr("class", "tooltip")
@@ -128,6 +127,7 @@ export default {
         .on("click", function (event, d, i) {
           component.$emit('openStudent', d.data.id);
         });
+
     }
   }
 }

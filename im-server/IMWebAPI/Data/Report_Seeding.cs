@@ -21,7 +21,7 @@ namespace IMWebAPI.Data
                 new Report
                 {
                     ReportName = "Students Grouped by Total Observation Severity",
-                    Query = "SELECT TRIM(CONCAT(StudentFirstName, ' ', StudentLastName)) as name, SUM(Severity) AS value, Observations.StudentID as id FROM Observations {joinAndWhere} GROUP BY StudentFirstName, StudentLastName, Observations.StudentID",
+                    Query = "SELECT TRIM(CONCAT(StudentFirstName, ' ', StudentLastName)) as name, SUM(Severity) AS value, Observations.StudentID as id, CAST(ObservationDate AS DATE) as date FROM Observations {joinAndWhere} GROUP BY StudentFirstName, StudentLastName, Observations.StudentID",
                     Axis1Name = "Student",
                     Axis2Name = "Total Observation Severity",
                     AvailableChartTypes = "Bar,Pie,BubbleCloud"
@@ -44,7 +44,7 @@ namespace IMWebAPI.Data
                 },
                 new Report {
                     ReportName = "Observations Grouped by Severity",
-                    Query = "SELECT Severity as name, COUNT(Severity) AS value, StudentID as id FROM Observations {joinAndWhere} GROUP BY Severity",
+                    Query = "SELECT Severity as name, COUNT(Severity) AS value, StudentID as id, CAST(ObservationDate AS DATE) as date FROM Observations {joinAndWhere} GROUP BY Severity",
                     Axis1Name = "Severity",
                     Axis2Name = "Proportion",
                     AvailableChartTypes = "Bar,Pie,BubbleCloud"
