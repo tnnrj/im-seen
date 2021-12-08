@@ -43,7 +43,7 @@
     </template>
   </Dialog>
   <Dialog :header="curStudent?.firstName + ' ' + curStudent?.lastName" v-model:visible="showStudentDialog" :modal="true" :contentStyle="{'max-height':'80vh', 'width':'70em'}">
-    <StudentComponent :student="curStudent" />
+    <StudentComponent v-if="showStudentDialog && curStudent" :student="curStudent" />
   </Dialog> 
   <ConfirmPopup></ConfirmPopup>
 </template>
@@ -57,7 +57,6 @@ import { DashLayout } from "@/model/enums.model";
 import DashboardElement from "@/components/DashboardElement.vue";
 import DashboardConfigurator from "@/components/DashboardConfigurator.vue";
 import { useConfirm } from "primevue/useconfirm";
-import { Student } from "@/model/student.model";
 import StudentComponent from "@/components/Student.vue";
 
 export default defineComponent({
@@ -140,8 +139,9 @@ export default defineComponent({
 
     // student dialog
     const showStudentDialog = ref<boolean>(false);
-    const curStudent = ref<Student>();
+    const curStudent = ref();
     const openStudent = async (id: string) => {
+      curStudent.value = { studentID: id };
       showStudentDialog.value = true;
       curStudent.value = await StudentService.getStudent(id);
     };

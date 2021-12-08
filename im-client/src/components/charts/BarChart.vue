@@ -1,5 +1,14 @@
 <template>
-  <div :id="'chart-' + id" style="width: 100%; height: 100%"></div>
+  <div style="height:100%;width:100%; position:relative;">
+    <template v-if="showFilter">
+      <Button class="p-button-rounded p-button-text p-button-plain" icon="pi pi-filter" @click="toggle" />
+      <OverlayPanel ref="overlay">
+        <span class="overlay-label">Show: {{count}}</span>
+        <Slider v-model="count" @slideend="render" :min="1" :max="max" style="width:10em" />
+      </OverlayPanel>
+    </template>
+    <div :id="'chart-' + id" style="width: 100%; height: 100%"></div>
+  </div>
 </template>
 
 <script>
@@ -7,15 +16,33 @@ import * as d3 from "d3";
 
 export default {
  name: "BarChart",
-  props: ['chartData', 'id', 'axis1Name', 'axis2Name'],
+  props: ['chartData', 'id', 'axis1Name', 'axis2Name', 'showFilter'],
   emits: ['openStudent'],
+  data() {
+    return { count: 10, max: 10 }
+  },
   mounted() {
-    this.main();
+    this.render();
   },
   methods: {
-    main() {
+    render() {
       const component = this;
-      const data = this.chartData;
+      this.max = this.chartData.length;
+      if (this.count > this.max) {
+        this.count = this.max;
+      }
+
+      // sort data
+      let data = this.chartData;
+      data.sort(function(b, a) {
+        return a.value - b.value;
+      });
+
+      // only take certain number of bars based on slider
+      data = data.slice(0, this.count);
+
+      // if redrawing, need to ensure the canvas is blank
+      d3.selectAll("#chart-" + this.id + " > *").remove();
 
       // height and width should be calculated by element width
       const clientWidth = document.getElementById('chart-'+this.id).clientWidth;
@@ -38,11 +65,6 @@ export default {
           .attr("overflow", "visible")
         .append("g")
           .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-      // sort data
-      data.sort(function(b, a) {
-        return a.value - b.value;
-      });
 
       // add label
       svg.append("text")
@@ -115,8 +137,8 @@ export default {
               // show tooltip
               tooltip
                 .html( d.name + "<br>" + d.value)
-                .style("left", (event.pageX) + "px")
-                .style("top", (event.pageY) + "px");
+                .style("left", (event.layerX) + "px")
+                .style("top", (event.layerY) + "px");
               tooltip.transition()
                 .duration(200)          
                 .style("opacity", .9);           
@@ -133,10 +155,23 @@ export default {
         .on("click", function (d, i) {
           component.$emit('openStudent', i.id);
         });
+    },
+    toggle(event) {
+      this.$refs.overlay.toggle(event);
     }
   }
 }
 </script>
 
-<style>
+<style scoped>
+.p-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+.overlay-label {
+  display: block;
+  margin-bottom: .5em;
+  font-size: .8em;
+}
 </style>

@@ -1,5 +1,13 @@
 <template>
-  <div :id="'chart-'+id" style="width:100%;height:100%;">
+  <div style="height:100%;width:100%; position:relative;">
+    <template v-if="showFilter">
+      <Button class="p-button-rounded p-button-text p-button-plain" icon="pi pi-filter" @click="toggle" />
+      <OverlayPanel ref="overlay">
+        <span class="overlay-label">Show: {{count}}</span>
+        <Slider v-model="count" @slideend="render" :min="1" :max="max" style="width:10em" />
+      </OverlayPanel>
+    </template>
+    <div :id="'chart-'+id" style="width:100%;height:100%;"></div>
   </div>
 </template>
 
@@ -8,14 +16,33 @@ import * as d3 from "d3";
 
 export default {
   name: "BubbleCloudChart",
-  props: ['chartData', 'id'],
+  props: ['chartData', 'id', 'showFilter'],
   emits: ['openStudent'],
+  data() {
+    return { count: 10, max: 10 }
+  },
   mounted() {
-    this.main();
+    this.render();
   },
   methods: {
-    main() { 
+    render() { 
       const component = this;
+      this.max = this.chartData.length;
+      if (this.count > this.max) {
+        this.count = this.max;
+      }
+
+      // sort data
+      let data = this.chartData;
+      data.sort(function(b, a) {
+        return a.value - b.value;
+      });
+
+      // only take certain number of bubbles based on slider
+      data = data.slice(0, this.count);
+
+      // if redrawing, need to ensure the canvas is blank
+      d3.selectAll("#chart-" + this.id + " > *").remove();
 
       // height and width should be calculated by element width
       const width = document.getElementById('chart-'+this.id).clientWidth;
@@ -33,8 +60,6 @@ export default {
         .attr("font-family", "sans-serif") 
         .attr("text-anchor", "middle");
 
-      // get data from the method above
-      const data = this.chartData;
       // initialize color scheme
       const color = d3.scaleOrdinal(data, d3.schemeSpectral[10]);
     
@@ -106,14 +131,15 @@ export default {
       // add hover effect
       svg.selectAll("g")
         .on("mouseover", function (event, d, i) {
+          console.log(event);
               d3.select(this).transition()
                 .duration('50')
                 .attr('opacity', '.85');
               // show tooltip
               tooltip
                 .html(d.data.name + "<br>" + d.data.value)
-                .style("left", (event.pageX) + "px")
-                .style("top", (event.pageY) + "px");
+                .style("left", (event.layerX) + "px")
+                .style("top", (event.layerY) + "px");
               tooltip.transition()
                 .duration(200)          
                 .style("opacity", .9);           
@@ -133,10 +159,23 @@ export default {
         });
 
 //////////////////////////////////// END D3.js CODE
+    },
+    toggle(event) {
+      this.$refs.overlay.toggle(event);
     }
   }
 }
 </script>
 
-<style>
+<style scoped>
+.p-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+.overlay-label {
+  display: block;
+  margin-bottom: .5em;
+  font-size: .8em;
+}
 </style>

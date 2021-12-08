@@ -1,5 +1,14 @@
 <template>
-  <div :id="'chart-' + id" style="width: 100%; height: 100%"></div>
+  <div style="height:100%;width:100%; position:relative;">
+    <template v-if="showFilter">
+      <Button class="p-button-rounded p-button-text p-button-plain" icon="pi pi-filter" @click="toggle" />
+      <OverlayPanel ref="overlay">
+        <span class="overlay-label">Show: {{count}}</span>
+        <Slider v-model="count" @slideend="render" :min="1" :max="max" style="width:10em" />
+      </OverlayPanel>
+    </template>
+    <div :id="'chart-' + id" style="width: 100%; height: 100%"></div>
+  </div>
 </template>
 
 <script>
@@ -7,14 +16,46 @@ import * as d3 from "d3";
 
 export default {
   name: "PieChart",
-  props: ['chartData', 'id'],
+  props: ['chartData', 'id', 'showFilter'],
   emits: ['openStudent'],
+  watch: {
+    chartData: {
+      immediate: false,
+      handler: function () {
+        console.log("h");
+        if (this.id && document.getElementById("chart-"+this.id)) {
+          console.log("i");
+          this.render();
+        }
+      }
+    }
+  },
+  data() {
+    return { count: 10, max: 10 }
+  },
   mounted() {
-    this.main();
+    this.render();
   },
   methods: {
-    main() {
+    render() {
+      console.log("e");
       const component = this;
+      this.max = this.chartData.length;
+      if (this.count > this.max) {
+        this.count = this.max;
+      }
+
+      // sort data
+      let data = this.chartData;
+      data.sort(function(b, a) {
+        return a.value - b.value;
+      });
+
+      // only take certain number of slices based on slider
+      data = data.slice(0, this.count);
+
+      // if redrawing, need to ensure the canvas is blank
+      d3.selectAll("#chart-" + this.id + " > *").remove();
 
       // height and width should be calculated by element width
       const width = document.getElementById("chart-" + this.id).clientWidth;
@@ -22,7 +63,6 @@ export default {
 
       //We are accessing the div with the id chart using d3's select method and appending svg
       /***** START D3.js CHART CODE *******/
-      const data = this.chartData;
       // format of data: {name: 1, value: 51},
 
       const color = d3.scaleOrdinal()
@@ -108,9 +148,9 @@ export default {
                 .attr('opacity', '.85');
               // show tooltip
               tooltip
-                .html( d.data.name + "<br>" + d.value)
-                .style("left", (event.pageX) + "px")
-                .style("top", (event.pageY) + "px");
+                .html("Count: " + d.value)
+                .style("left", (event.layerX) + "px")
+                .style("top", (event.layerY) + "px");
               tooltip.transition()
                 .duration(200)          
                 .style("opacity", .9);           
@@ -128,10 +168,23 @@ export default {
           component.$emit('openStudent', d.data.id);
         });
 
+    },
+    toggle(event) {
+      this.$refs.overlay.toggle(event);
     }
   }
 }
 </script>
 
-<style>
+<style scoped>
+.p-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+.overlay-label {
+  display: block;
+  margin-bottom: .5em;
+  font-size: .8em;
+}
 </style>

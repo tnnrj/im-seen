@@ -2,12 +2,12 @@
   <div v-if="chartType != 'None'" class="element-content p-d-flex p-flex-column p-jc-center p-ai-center">
     <template v-if="chartData && chartData.data">
       <h4 class="p-mb-0">{{chartData.name}}</h4>
-      <BubbleCloudChart v-if="chartType == ChartType.BubbleCloud" :chartData="chartData.data" :id="id" @openStudent="openStudent" />
-      <PieChart v-else-if="chartType == ChartType.Pie" :chartData="chartData.data" :id="id" @openStudent="openStudent" />
+      <BubbleCloudChart v-if="chartType == ChartType.BubbleCloud" :chartData="chartData.data" :id="id" @openStudent="openStudent" :showFilter="true" />
+      <PieChart v-else-if="chartType == ChartType.Pie" :chartData="chartData.data" :id="id" @openStudent="openStudent" :showFilter="true" />
       <LineChart v-else-if="chartType == ChartType.Line" :chartData="chartData.data" :axis1Name="chartData.axis1Name" 
-        :axis2Name="chartData.axis2Name" :id="id" @openStudent="openStudent" />
+        :axis2Name="chartData.axis2Name" :id="id" @openStudent="openStudent" :showFilter="true" />
       <BarChart v-else-if="chartType == ChartType.Bar" :chartData="chartData.data" :axis1Name="chartData.axis1Name" 
-        :axis2Name="chartData.axis2Name" :id="id" @openStudent="openStudent" />
+        :axis2Name="chartData.axis2Name" :id="id" @openStudent="openStudent" :showFilter="true" />
     </template>
     <template v-else>
       <Loader />

@@ -27,6 +27,8 @@ import Dropdown from 'primevue/dropdown';
 import Panel from 'primevue/panel';
 import AutoComplete from 'primevue/autocomplete';
 import TextArea from 'primevue/textarea';
+import Slider from 'primevue/slider';
+import OverlayPanel from 'primevue/overlaypanel';
 
 // primevue theming
 import 'primevue/resources/themes/saga-blue/theme.css';
@@ -64,6 +66,8 @@ app.component('Dropdown', Dropdown);
 app.component('Panel', Panel);
 app.component('AutoComplete', AutoComplete);
 app.component('TextArea', TextArea);
+app.component('Slider', Slider);
+app.component('OverlayPanel', OverlayPanel);
 app.directive('tooltip', Tooltip);
 app.use(ConfirmationService);
 app.use(ToastService);

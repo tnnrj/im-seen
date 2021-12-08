@@ -13,7 +13,7 @@
     <div class="p-d-flex p-flex-column p-jc-center p-ai-center student-chart">
       <template v-if="pieChartData && pieChartData.data">
           <h4 class="p-mb-0">{{pieChartData.name}}</h4>
-          <PieChart :chartData="pieChartData.data" :id="1" />
+          <PieChart :chartData="pieChartData.data" :id="curStudent.studentID+'-'+1" />
       </template> 
       <template v-else>
         <Loader />
@@ -23,7 +23,7 @@
       <template v-if="lineChartData && lineChartData.data">
           <h4 class="p-mb-0">{{lineChartData.name}}</h4>
           <LineChart :chartData="lineChartData.data" :axis1Name="lineChartData.axis1Name" 
-            :axis2Name="lineChartData.axis2Name" :id="2" />
+            :axis2Name="lineChartData.axis2Name" :id="curStudent.studentID+'-'+2" />
       </template>
       <template v-else>
         <Loader />
@@ -35,8 +35,6 @@
 
 <script lang="ts">
 import { computed, defineComponent } from "vue";
-
-//import StudentService from "@/services/students.service";
 import LineChart from "@/components/charts/LineChart.vue";
 import PieChart from "@/components/charts/PieChart.vue";
 import ObservationTable from "@/components/ObservationTable.vue"
