@@ -46,7 +46,7 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const store = useStore();
-    const loadData = () => { if (!store.getters.getReportData(props.reportID)) store.dispatch('loadReportData', { reportID: props.reportID }); }
+    const loadData = () => { if (!store.getters.getReportData(props.reportID) && props.reportID) store.dispatch('loadReportData', { reportID: props.reportID }); }
     loadData();
     const chartData = computed(() => store.getters.getReportData(props.reportID));
 

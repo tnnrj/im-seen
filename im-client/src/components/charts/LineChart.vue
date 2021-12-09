@@ -235,5 +235,15 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+.p-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+.overlay-label {
+  display: block;
+  margin-bottom: .5em;
+  font-size: .8em;
+}
 </style>
