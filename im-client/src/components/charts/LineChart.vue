@@ -141,15 +141,13 @@ export default {
 
       /** Interactive elements! :D **/
       function hover(svg, path) {
-        if ("ontouchstart" in document)
-          svg.selectAll("g")
+        if ("ontouchstart" in document) svg
             .style("-webkit-tap-highlight-color", "transparent")
             .on("touchmove", moved)
             .on("touchstart", entered)
             .on("touchend", left)
             .on("click", click);
-        else
-          svg.selectAll("g")
+        else svg
             .on("mousemove", moved)
             .on("mouseenter", entered)
             .on("mouseleave", left)
@@ -217,16 +215,16 @@ export default {
 
       const path = svg
         .append("g")
-        .attr("fill", "none")
-        .attr("stroke-width", 1.5)
-        .attr("stroke-linejoin", "round")
-        .attr("stroke-linecap", "round")
+          .attr("fill", "none")
+          .attr("stroke-width", 1.5)
+          .attr("stroke-linejoin", "round")
+          .attr("stroke-linecap", "round")
         .selectAll("path")
         .data(data.series)
         .join("path")
-        .style("mix-blend-mode", "multiply")
-        .attr("d", (d) => line(d.values))
-        .attr("stroke", (d) => d.color);
+          .style("mix-blend-mode", "multiply")
+          .attr("d", (d) => line(d.values))
+          .attr("stroke", (d) => d.color);
 
       svg.call(hover, path);
     },    
