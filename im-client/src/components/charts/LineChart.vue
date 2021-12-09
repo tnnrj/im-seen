@@ -1,21 +1,59 @@
 <template>
-  <div :id="'chart-' + id" style="width: 100%; height: 100%"></div>
+  <div style="height:100%;width:100%; position:relative;">
+    <template v-if="showFilter">
+      <Button class="p-button-rounded p-button-text p-button-plain" icon="pi pi-filter" @click="toggle" />
+      <OverlayPanel ref="overlay">
+        <span class="overlay-label">Range: {{range[0]}} to {{range[1]}}</span>
+        <Slider v-model="range" @slideend="render" :min="min" :max="max" :range="true" :step="86400" style="width:10em" />
+      </OverlayPanel>
+    </template>
+    <div :id="'chart-' + id" style="width: 100%; height: 100%"></div>
+  </div>
 </template>
 
 <script>
 import * as d3 from "d3";
+import * as moment from 'moment';
 import _ from "lodash";
 
 export default {
   name: "LineChart",
-  props: ["chartData", "id", "axis1Name", "axis2Name"],
+  props: ["chartData", "id", "axis1Name", "axis2Name", "showFilter"],
   emits: ['openStudent'],
+  data() {
+    return { range: [0,0], min: Math.floor(moment().subtract(2, 'weeks').toDate().getTime() / 1000), max: Math.floor(moment().toDate().getTime() / 1000) }
+  },
   mounted() {
-    this.main();
+    this.render();
   },
   methods: {
-    main() {
+    render() {
       const component = this;
+      let cdata = this.chartData;
+      const dates = _.uniq(cdata.map((cd) => new Date(cd.date).getTime()));
+
+      if (this.range[0] == 0 && this.range[1] == 0) {
+        this.range[0] = Math.floor(_.min(dates) / 1000);
+        this.range[1] = Math.floor(_.max(dates) / 1000);
+
+        if (this.range[0] < this.min) {
+          // if data is older than 2wks
+          this.min = this.range[0];
+          this.range[0] = Math.floor(moment().subtract(2, 'weeks').toDate().getTime() / 1000);
+        }
+        if (this.range[1] > this.max) {
+          // shouldn't happen, quick fix for timezone bugs
+          this.max = this.range[1];
+        }
+      }
+
+      cdata = _.filter(cdata, cd => {
+        let val = Math.floor(new Date(cd.date).getTime() / 1000);
+        return val > this.range[0] && val < this.range[1];
+      });
+      
+      // if redrawing, need to ensure the canvas is blank
+      d3.selectAll("#chart-" + this.id + " > *").remove();
 
       // height and width should be calculated by element width
       const width = document.getElementById("chart-" + this.id).clientWidth;
@@ -41,13 +79,10 @@ export default {
       /** Helper for parsing date strings **/
       const parser = d3.utcParse("%Y-%m-%dT%H:%M:%S");
 
-      /** Color styling vars **/
-      const colorscheme = d3.interpolateTurbo;
-
       /** Parse data from prop **/
-      const columns = _.uniq(this.chartData.map((cd) => cd.date));
-      const names = _.uniqBy(this.chartData.map((cd) => { return { name: cd.name, id: cd.id };}), cd => cd.id);
-      console.log(names);
+      const columns = _.uniq(cdata.map((cd) => cd.date));
+      const names = _.uniqBy(cdata.map((cd) => { return { name: cd.name, id: cd.id };}), cd => cd.id);
+      const color = d3.scaleOrdinal(names, d3.schemeSpectral[10]);
       const data = {
         y: this.axis2Name,
         series: names.map((n) => ({
@@ -55,17 +90,15 @@ export default {
           id: n.id,
           values: columns.map((d) => {
             let match = _.find(
-              this.chartData,
+              cdata,
               (cd) => cd.date == d && cd.name == n.name
             );
             return match ? match.value : 0;
           }),
-          color: colorscheme(Math.random())
+          color: color(Math.random()*11)
         })),
         dates: columns.map((d) => parser(d)),
       };
-
-      console.log(data);
 
       /** Format x and y axis **/
       const x = d3
@@ -196,6 +229,9 @@ export default {
         .attr("stroke", (d) => d.color);
 
       svg.call(hover, path);
+    },    
+    toggle(event) {
+      this.$refs.overlay.toggle(event);
     }
   },
 };
