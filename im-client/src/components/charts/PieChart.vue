@@ -18,27 +18,14 @@ export default {
   name: "PieChart",
   props: ['chartData', 'id', 'showFilter'],
   emits: ['openStudent'],
-  watch: {
-    chartData: {
-      immediate: false,
-      handler: function () {
-        console.log("h");
-        if (this.id && document.getElementById("chart-"+this.id)) {
-          console.log("i");
-          this.render();
-        }
-      }
-    }
-  },
   data() {
-    return { count: 10, max: 10 }
+    return { count: 8, max: 10 }
   },
   mounted() {
     this.render();
   },
   methods: {
     render() {
-      console.log("e");
       const component = this;
       this.max = this.chartData.length;
       if (this.count > this.max) {
@@ -60,6 +47,7 @@ export default {
       // height and width should be calculated by element width
       const width = document.getElementById("chart-" + this.id).clientWidth;
       const height = document.getElementById("chart-" + this.id).clientHeight;
+      const smallerBound = width < height ? width : height;
 
       //We are accessing the div with the id chart using d3's select method and appending svg
       /***** START D3.js CHART CODE *******/
@@ -70,15 +58,15 @@ export default {
         .range(d3.schemeSpectral[5]);
 
       const arc = d3.arc()
-        .innerRadius( 0.5 * height / 2 )
-        .outerRadius( 0.85 * height / 2 );
+        .innerRadius( 0.5 * smallerBound / 2 )
+        .outerRadius( 0.85 * smallerBound / 2 );
 
       const pie = d3.pie()
         .value(d => d.value);
 
       const labelArcs = d3.arc()
-        .innerRadius( 0.65 * height /2 )
-        .outerRadius( 0.65 * height / 2 );
+        .innerRadius( 0.65 * smallerBound /2 )
+        .outerRadius( 0.65 * smallerBound / 2 );
 
       let pieArcs = pie( data );
 
@@ -88,6 +76,7 @@ export default {
         .attr("width", "90%")
         .attr("height", "90%")
         .attr("viewBox", [0, 0, width, height]) // keeps chart within element bounds
+        .attr("overflow", "visible")
         .attr("font-family", "sans-serif")
         .attr("text-anchor", "middle");
         
@@ -118,10 +107,10 @@ export default {
         .join('tspan')
           .attr('x', 0)
           .style('font-family', 'sans-serif')
-          .style('font-size', 24)
+          .style('font-size', function (d) { return Math.min(24, 120/d.toString().length) + "px"; })
           .style('font-weight', (d,i) => i ? undefined : 'bold')
           .style('fill', '#222')
-          .attr('dy', (d,i) => i ? '1.2em' : 0)
+          .attr('dy', '.25em')//(d,i) => i ? '1.2em' : 0)
           .text(d => d);
 
       //////////////////////// INTERACTIVE ELEMENTS ///
@@ -148,7 +137,7 @@ export default {
                 .attr('opacity', '.85');
               // show tooltip
               tooltip
-                .html("Count: " + d.value)
+                .html(d.data.name.length > 1 ? d.data.name + "<br>" + d.value : "Value: " + d.value)
                 .style("left", (event.layerX) + "px")
                 .style("top", (event.layerY) + "px");
               tooltip.transition()
@@ -165,7 +154,9 @@ export default {
                 .style("opacity", 0);
         })
         .on("click", function (event, d, i) {
-          component.$emit('openStudent', d.data.id);
+          if (d.data.id) {
+            component.$emit('openStudent', d.data.id);
+          }
         });
 
     },
@@ -179,7 +170,7 @@ export default {
 <style scoped>
 .p-button {
   position: absolute;
-  top: 20px;
+  top: 10px;
   right: 20px;
 }
 .overlay-label {

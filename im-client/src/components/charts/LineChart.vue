@@ -3,8 +3,8 @@
     <template v-if="showFilter">
       <Button class="p-button-rounded p-button-text p-button-plain" icon="pi pi-filter" @click="toggle" />
       <OverlayPanel ref="overlay">
-        <span class="overlay-label">Range: {{range[0]}} to {{range[1]}}</span>
-        <Slider v-model="range" @slideend="render" :min="min" :max="max" :range="true" :step="86400" style="width:10em" />
+        <span class="overlay-label">Range: {{new Date(range[0]*1000).toLocaleDateString()}} to {{new Date(range[1]*1000).toLocaleDateString()}}</span>
+        <Slider v-model="range" @slideend="render" :min="min" :max="max" :range="true" style="width:10em" />
       </OverlayPanel>
     </template>
     <div :id="'chart-' + id" style="width: 100%; height: 100%"></div>
@@ -21,7 +21,7 @@ export default {
   props: ["chartData", "id", "axis1Name", "axis2Name", "showFilter"],
   emits: ['openStudent'],
   data() {
-    return { range: [0,0], min: Math.floor(moment().subtract(2, 'weeks').toDate().getTime() / 1000), max: Math.floor(moment().toDate().getTime() / 1000) }
+    return { range: [0,0], min: 0, max: Math.floor(moment().toDate().getTime() / 1000) }
   },
   mounted() {
     this.render();
@@ -30,27 +30,27 @@ export default {
     render() {
       const component = this;
       let cdata = this.chartData;
-      const dates = _.uniq(cdata.map((cd) => new Date(cd.date).getTime()));
 
-      if (this.range[0] == 0 && this.range[1] == 0) {
-        this.range[0] = Math.floor(_.min(dates) / 1000);
-        this.range[1] = Math.floor(_.max(dates) / 1000);
+      if (this.showFilter) {
+        const dates = cdata.map((cd) => new Date(cd.date).getTime());
+        this.min = Math.floor(_.min(dates) / 1000);
 
-        if (this.range[0] < this.min) {
-          // if data is older than 2wks
-          this.min = this.range[0];
-          this.range[0] = Math.floor(moment().subtract(2, 'weeks').toDate().getTime() / 1000);
+        if (this.range[0] == 0 && this.range[1] == 0) {
+          let ordered = _.orderBy(dates, d => d, 'desc');
+          this.range[0] = Math.floor(ordered[ordered.length > 20 ? 20 : ordered.length-1] / 1000);
+          this.range[1] = Math.floor(_.max(dates) / 1000);
+
+          if (this.range[1] > this.max) {
+            // shouldn't happen, quick fix for timezone bugs
+            this.max = this.range[1];
+          }
         }
-        if (this.range[1] > this.max) {
-          // shouldn't happen, quick fix for timezone bugs
-          this.max = this.range[1];
-        }
+
+        cdata = _.filter(cdata, cd => {
+          let val = Math.floor(new Date(cd.date).getTime() / 1000);
+          return val >= this.range[0] && val <= this.range[1];
+        });
       }
-
-      cdata = _.filter(cdata, cd => {
-        let val = Math.floor(new Date(cd.date).getTime() / 1000);
-        return val > this.range[0] && val < this.range[1];
-      });
       
       // if redrawing, need to ensure the canvas is blank
       d3.selectAll("#chart-" + this.id + " > *").remove();
@@ -69,6 +69,7 @@ export default {
         .attr("height", "90%")
         .attr("viewBox", [0, 0, width, height]) // keeps chart within element bounds
         .attr("font-size", 0.02 * minDimension)
+        .style("cursor", "pointer")
         .attr("font-family", "sans-serif")
         .attr("text-anchor", "middle")
         .style("overflow", "visible");
@@ -113,16 +114,19 @@ export default {
         .range([height - margin.bottom, margin.top]);
 
       const xAxis = (g) =>
-        g.attr("transform", `translate(0,${height - margin.bottom})`).call(
-          d3
-            .axisBottom(x)
-            .ticks(width / 80)
-            .tickSizeOuter(0)
+        g.attr("transform", `translate(0,${height - margin.bottom})`)
+          .style("font-size", "12px")
+          .call(
+            d3
+              .axisBottom(x)
+              .ticks(width / 80)
+              .tickSizeOuter(0)
         );
 
       const yAxis = (g) =>
         g
           .attr("transform", `translate(${margin.left},0)`)
+          .style("font-size", "14px")
           .call(d3.axisLeft(y))
           .call((g) => g.select(".domain").remove())
           .call((g) =>
@@ -159,8 +163,8 @@ export default {
 
         dot
           .append("text")
-          .attr("font-family", "sans-serif")
-          .attr("font-size", 14)
+          .attr("font-family", "Open Sans")
+          .attr("font-size", "14px")
           .attr("text-anchor", "middle")
           .attr("y", -8);
 
@@ -202,7 +206,9 @@ export default {
           const ym = y.invert(pointer[1]);
           const i = d3.bisectCenter(data.dates, xm);
           const s = d3.least(data.series, (d) => Math.abs(d.values[i] - ym));
-          component.$emit('openStudent', s.id);
+          if (s.id) {
+            component.$emit('openStudent', s.id);
+          }
         }
       }
 
@@ -238,7 +244,7 @@ export default {
 <style scoped>
 .p-button {
   position: absolute;
-  top: 20px;
+  top: 10px;
   right: 20px;
 }
 .overlay-label {

@@ -23,7 +23,7 @@
       <template v-if="lineChartData && lineChartData.data">
           <h4 class="p-mb-0">{{lineChartData.name}}</h4>
           <LineChart :chartData="lineChartData.data" :axis1Name="lineChartData.axis1Name" 
-            :axis2Name="lineChartData.axis2Name" :id="curStudent.studentID+'-'+2" />
+            :axis2Name="lineChartData.axis2Name" :id="curStudent.studentID+'-'+2" :showFilter="true" />
       </template>
       <template v-else>
         <Loader />
@@ -72,7 +72,7 @@ export default defineComponent({
       let axis1Name = "Date";
       let axis2Name = "Severity of Observations";
       let name = "Observation Severity by Date";
-      let data = _.sortBy(observations.value?.map(o => { return { name: curStudent.value.firstName + ' ' + curStudent.value.lastName, value: o.severity, date: o.observationDate, id: o.studentID }}), d => d.date);
+      let data = _.sortBy(observations.value?.map(o => { return { name: o.studentFirstName + ' ' + o.studentLastName, value: o.severity, date: o.observationDate, id: o.studentID }}), d => d.date);
       if (!data?.length)
         return null;
       return { axis1Name, axis2Name, name, data };
@@ -99,7 +99,7 @@ export default defineComponent({
 }
 
 .student-chart {
-  height: 200px;
+  height: 20em;
   width: 50%;
 }
 

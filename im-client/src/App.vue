@@ -7,7 +7,7 @@
     <div class="app-footer p-d-flex">
       <span class="spacer"></span>
       <div class="p-d-flex p-jc-center">
-        <span class="text-small p-m-3">(c) Paladin BI systems informatics etc</span>
+        <span class="text-small p-m-3">(c) IMseen, Paladin BI Systems</span>
       </div>
     </div>
     <Dialog header="Error" v-model:visible="showErrorDialog" :modal="true">

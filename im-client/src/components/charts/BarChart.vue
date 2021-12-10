@@ -70,7 +70,8 @@ export default {
       svg.append("text")
         .text(this.axis2Name)
         .style("text-anchor", "left")
-        .style("font-size", "12px")
+        .style("font-size", ".8em")
+        .style("font-family", "Open Sans")
         .attr('transform', 'translate(' + (-20) + ', ' + (5) + ')');
 
       // add X axis
@@ -84,6 +85,8 @@ export default {
         .call(d3.axisBottom(xScale))
         .selectAll("text")
         .attr("transform", "translate(-10,0)rotate(-45)") // text tilts 45 degrees
+        .style("font-size", "1.3em")
+        .style("font-family", "Open Sans")
         .style("text-anchor", "end"); // coordinate at the end
 
       // add Y axis
@@ -92,6 +95,8 @@ export default {
         .domain([0, d3.max(data, d => d.value)])
         .range([ height, margin.top]);
       svg.append("g")
+        .style("font-size", ".8em")
+        .style("font-family", "Open Sans")
         .call(d3.axisLeft(yScale));
 
       // draw bars
@@ -133,6 +138,7 @@ export default {
         .on("mouseover", function (event, d, i) {
               d3.select(this).transition()
                 .duration('50')
+                .style("cursor", "pointer")
                 .attr('opacity', '.85');
               // show tooltip
               tooltip
@@ -153,7 +159,9 @@ export default {
                 .style("opacity", 0);
         })
         .on("click", function (d, i) {
-          component.$emit('openStudent', i.id);
+          if (i.id) {
+            component.$emit('openStudent', i.id);
+          }
         });
     },
     toggle(event) {
@@ -166,7 +174,7 @@ export default {
 <style scoped>
 .p-button {
   position: absolute;
-  top: 20px;
+  top: 10px;
   right: 20px;
 }
 .overlay-label {

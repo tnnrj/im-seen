@@ -101,17 +101,15 @@ export default {
         .append("use")
         .attr("xlink:href", d => d.leafUid.href);
 
-      // title is the student's name
-      leaf.append("title")
-        .text(d => d.data.name === undefined ? "" : d.data.name);
-
       // draw the text
       leaf.append("text")
         .selectAll("tspan")
-        .data(d => d.data.name)
+        .data(d => d)
         .join("tspan")
-        .text(d => d)
-        .style("font-size", .02 *  minDimension);
+        .text(d => d.data.name)
+        .style("font-family", "Open Sans")
+        .style("font-size", d => d.r / 4 + "px")
+        .attr("dy", ".35em");
 
         // Create a tooltip to show data for mouse hover
       let tooltip = d3.select("#chart-" + this.id)
@@ -120,6 +118,7 @@ export default {
         .attr("class", "tooltip")
         .style("position", "absolute")
         .style("text-align", "center")
+        .style("font-family", "Open Sans")
         // important for tooltip showing smoothly
         .style("pointer-events", "none")
         .style("background-color", "white")
@@ -131,10 +130,10 @@ export default {
       // add hover effect
       svg.selectAll("g")
         .on("mouseover", function (event, d, i) {
-          console.log(event);
               d3.select(this).transition()
                 .duration('50')
-                .attr('opacity', '.85');
+                .attr('opacity', '.85')
+                .style('cursor', 'pointer');
               // show tooltip
               tooltip
                 .html(d.data.name + "<br>" + d.data.value)
@@ -154,8 +153,9 @@ export default {
                 .style("opacity", 0);
         })
         .on("click", function (event, d, i) {
-          component.$emit('openStudent', d.data.id);
-
+          if (d.data.id) {
+            component.$emit('openStudent', d.data.id);
+          }
         });
 
 //////////////////////////////////// END D3.js CODE
@@ -170,7 +170,7 @@ export default {
 <style scoped>
 .p-button {
   position: absolute;
-  top: 20px;
+  top: 10px;
   right: 20px;
 }
 .overlay-label {
