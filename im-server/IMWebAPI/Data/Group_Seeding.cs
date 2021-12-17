@@ -1,4 +1,9 @@
-﻿using IMWebAPI.Models;
+﻿/**
+ * This file contains methods for seeding the StudentGroups table of the IM_API_Context
+ * Written by Steven Carpadakis & Tanner Jorgensen, U of U School of Computing, Senior Capstone 2021
+ **/
+
+using IMWebAPI.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

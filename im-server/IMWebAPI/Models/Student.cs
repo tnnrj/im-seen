@@ -1,3 +1,8 @@
+/**
+ * This file defines the model class for a Student.
+ * Written by Steven Carpadakis, U of U School of Computing, Senior Capstone 2021
+ **/
+
 using System;
 using System.Collections.Generic;
 using System.Linq;

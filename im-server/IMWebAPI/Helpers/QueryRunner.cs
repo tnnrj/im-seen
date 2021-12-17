@@ -1,4 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿/**
+ * This file defines a helper class for running MySQL querries passed as JSON objects.
+ * Written by Tanner Jorgensen, U of U School of Computing, Senior Capstone 2021
+ **/
+
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;

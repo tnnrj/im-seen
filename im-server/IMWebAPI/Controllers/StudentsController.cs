@@ -1,4 +1,9 @@
-﻿using System;
+﻿/**
+ * This file contains several API endpoints involving the creation, modification, retrieval, and deletion of individual and collections of Students
+ * Written by Steven Carpadakis, U of U School of Computing, Senior Capstone 2021
+ **/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using IMWebAPI.Data;
 using IMWebAPI.Models;
+using IMWebAPI.Helpers;
 using Microsoft.AspNetCore.Authorization;
 
 namespace IMWebAPI.Controllers
@@ -20,9 +26,12 @@ namespace IMWebAPI.Controllers
         private readonly IQueryable<Student> supporterQuery;
         private readonly IQueryable<Student> primaryQuery;
 
+        private readonly WeightedScoreCalculator calculator;
+
         public StudentsController(IM_API_Context context)
         {
             _context = context;
+            calculator = new WeightedScoreCalculator(context);
             supporterQuery =
                 from student in _context.Students
 
@@ -105,6 +114,21 @@ namespace IMWebAPI.Controllers
             }
 
             return student;
+        }
+
+        [HttpGet]
+        [Route("WeightedScore")]
+        public async Task<ActionResult<double>> GetWeightedScore(int id)
+        {
+            double score = 0;
+
+            List<Observation> observs = await _context.Observations.Where(o => o.StudentID == id).ToListAsync();
+
+            foreach (Observation observ in observs)
+                score += calculator.CalculateObservationWeightedScore(observ);
+
+            return score;
+
         }
 
         // PUT: api/Students/5

@@ -1,4 +1,9 @@
-﻿using IMWebAPI.Data;
+﻿/**
+ * This file defines a helper class for calculating weighted scores of Observations. These calculations should be altered as needed by administrators.
+ * Written by Steven Carpadakis, U of U School of Computing, Senior Capstone 2021
+ **/
+
+using IMWebAPI.Data;
 using IMWebAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,23 +17,28 @@ namespace IMWebAPI.Helpers
     public class WeightedScoreCalculator
     {
         private readonly IM_API_Context _context;
-        private readonly double numDays;
+        private readonly int numDays;
+        private readonly double decayRate;
 
         public WeightedScoreCalculator(IM_API_Context context)
         {
             _context = context;
-            numDays = 7;
+            numDays = 2;
+            decayRate = 0.5;
         }
 
-        public double CalculateObservationFrequencyIncrease (Student student, double prevFrequency, out double newFrequency)
+        public double CalculateObservationWeightedScore (Observation observ)
         {
-            var observs = _context.Observations
-                .Where(o => o.StudentID == student.StudentID)
-                .Where(o => o.ObservationDate >= DateTime.Now.AddDays(-numDays)).ToList();
+            double score = observ.Severity;
+            TimeSpan threshold = new TimeSpan(numDays, 0, 0, 0);
 
-            newFrequency = observs.Count / numDays;
+            TimeSpan timeSinceCreated = DateTime.UtcNow.Subtract(observ.ObservationDate);
 
-            return newFrequency / prevFrequency;
+            if (timeSinceCreated.Days > numDays)
+                score = score * decayRate * (timeSinceCreated.Days / numDays);
+
+            return score;
         }
+
     }
 }

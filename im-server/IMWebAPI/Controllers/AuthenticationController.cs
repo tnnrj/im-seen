@@ -1,4 +1,9 @@
-﻿using System;
+﻿/**
+ * This file contains several API endpoints involving the registration, logging, and retrieval of user-role information
+ * Written by Steven Carpadakis, U of U School of Computing, Senior Capstone 2021
+ **/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;

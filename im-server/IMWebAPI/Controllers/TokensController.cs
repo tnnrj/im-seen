@@ -1,4 +1,9 @@
-﻿using System;
+﻿/**
+ * This file contains API endpoints for refreshing JWT access tokens and revoking refresh tokens
+ * Written by Steven Carpadakis, U of U School of Computing, Senior Capstone 2021
+ **/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -79,7 +84,6 @@ namespace IMWebAPI.Controllers
         [Route("Revoke")]
         public async Task<IActionResult> Revoke(string username)
         {
-            //var username = User.Identity.Name;
             var user = await userManager.FindByNameAsync(username);
             if (user == null) return BadRequest();
 

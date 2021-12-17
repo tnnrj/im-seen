@@ -1,4 +1,9 @@
-﻿using IMWebAPI.Configuration;
+﻿/**
+ * This file defines a helper class for generating unique JWT access and refresh tokens based on the JWTSettings pattern values found in the appsettings.json file.
+ * Written by Steven Carpadakis, U of U School of Computing, Senior Capstone 2021
+ **/
+
+using IMWebAPI.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;

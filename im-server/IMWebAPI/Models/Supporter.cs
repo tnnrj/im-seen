@@ -1,4 +1,9 @@
-﻿using System;
+﻿/**
+ * This file defines the model class for a Supporter.
+ * Written by Steven Carpadakis, U of U School of Computing, Senior Capstone 2021
+ **/
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
