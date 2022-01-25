@@ -16,23 +16,27 @@ using Microsoft.AspNetCore.Cors;
 using IMWebAPI.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using IMWebAPI.Models.Exceptions;
 
 namespace IMWebAPI.Controllers
 {
-    [Authorize(Roles = "Administrator, PrimaryActor, SupportingActor")]
+    [Authorize(Policy = "WebAppUser")]
     [ApiController]
     [EnableCors]
     [Route("api/Observations")]
     public class ObservationsController : ControllerBase
     {
         private readonly IM_API_Context _context;
-        private readonly IQueryable<Observation> myObservQuery;
+        private readonly IQueryable<Observation> _myObservations;
+        private readonly bool _allowAnonymous;
 
-        public ObservationsController(IM_API_Context context)
+        public ObservationsController(IM_API_Context context, IConfiguration configuration)
         {
             _context = context;
+            _allowAnonymous = configuration.GetSection("AppSettings").GetValue<bool>("AllowAnonymousObservation");
 
-            myObservQuery =
+            _myObservations =
                 from observ in _context.Observations
 
                 join student in _context.Students
@@ -58,7 +62,7 @@ namespace IMWebAPI.Controllers
             if (User.IsInRole("SupportingActor"))
             {
 
-                return await myObservQuery.ToListAsync();
+                return await _myObservations.ToListAsync();
             }
 
 
@@ -69,20 +73,13 @@ namespace IMWebAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Observation>> GetObservation(int id)
         {
-            var observ = await _context.Observations.FindAsync(id);
+            var observ = User.IsInRole("SupportingActor")
+                ? await _myObservations.FirstOrDefaultAsync(o => o.ObservationID == id)
+                : await _context.Observations.FindAsync(id);
 
             if (observ == null)
             {
                 return NotFound();
-            }
-
-            if (User.IsInRole("SupportingActor"))
-            {
-                var myObservs = await myObservQuery.ToListAsync();
-                if (!myObservs.Contains(observ))
-                {
-                    return NotFound();
-                }
             }
 
             return observ;
@@ -127,6 +124,11 @@ namespace IMWebAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Observation>> PostObservation(Observation observ)
         {
+            if (!_allowAnonymous && (!User?.Claims.Any() ?? false))
+            {
+                throw new NotAuthorizedException();
+            }
+
             // Match to existing student by name if possible
             var matchingStudent = _context.Students
                 .Where(s => (s.FirstName == observ.StudentFirstName) && (s.LastName == observ.StudentLastName))

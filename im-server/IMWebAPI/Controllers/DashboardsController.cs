@@ -1,9 +1,4 @@
-﻿/**
- * This file contains several API endpoints involving the creation, modification, retrieval, and deletion of individual and collections of Dashboards
- * Written by Steven Carpadakis, U of U School of Computing, Senior Capstone 2021
- **/
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,7 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace IMWebAPI.Controllers
 {
-    [Authorize(Roles = "Administrator, PrimaryActor, SupportingActor")]
+    [Authorize(Policy = "WebAppUser")]
     [Route("api/[controller]")]
     [ApiController]
     public class DashboardsController : ControllerBase
@@ -29,26 +24,28 @@ namespace IMWebAPI.Controllers
             _context = context;
         }
 
+        // unused actions are commented for now
+
         // GET: api/Dashboards
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Dashboard>>> GetDashboard()
-        {
-            return await _context.Dashboards.ToListAsync();
-        }
+        //[HttpGet]
+        //public async Task<ActionResult<IEnumerable<Dashboard>>> GetDashboard()
+        //{
+        //    return await _context.Dashboards.ToListAsync();
+        //}
 
-        // GET: api/Dashboards/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Dashboard>> GetDashboard(int id)
-        {
-            var dashboard = await _context.Dashboards.FindAsync(id);
+        //// GET: api/Dashboards/5
+        //[HttpGet("{id}")]
+        //public async Task<ActionResult<Dashboard>> GetDashboard(int id)
+        //{
+        //    var dashboard = await _context.Dashboards.FindAsync(id);
 
-            if (dashboard == null)
-            {
-                return NotFound();
-            }
+        //    if (dashboard == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return dashboard;
-        }
+        //    return dashboard;
+        //}
 
         // GET: api/GetMyDashboard
         [HttpGet]
@@ -66,7 +63,9 @@ namespace IMWebAPI.Controllers
             return dashboard;
         }
 
+        // POST: api/UpdateMyDashboard
         [HttpPost]
+        [Authorize(Policy = "Dashboards.Update")]
         [Route("UpdateMyDashboard")]
         public async Task<IActionResult> UpdateMyDashboard([FromBody] string dashboardText)
         {
@@ -90,70 +89,36 @@ namespace IMWebAPI.Controllers
             return Ok();
         }
 
-        // PUT: api/Dashboards/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutDashboard(int id, Dashboard dashboard)
-        {
-            if (id != dashboard.DashboardID)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(dashboard).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!DashboardExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
         // POST: api/Dashboards
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPost]
-        public async Task<ActionResult<Dashboard>> PostDashboard(Dashboard dashboard)
-        {
-            _context.Dashboards.Add(dashboard);
-            await _context.SaveChangesAsync();
+        //[HttpPost]
+        //public async Task<ActionResult<Dashboard>> PostDashboard(Dashboard dashboard)
+        //{
+        //    _context.Dashboards.Add(dashboard);
+        //    await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetDashboard", new { id = dashboard.DashboardID }, dashboard);
-        }
+        //    return CreatedAtAction("GetDashboard", new { id = dashboard.DashboardID }, dashboard);
+        //}
 
         // DELETE: api/Dashboards/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<Dashboard>> DeleteDashboard(int id)
-        {
-            var dashboard = await _context.Dashboards.FindAsync(id);
-            if (dashboard == null)
-            {
-                return NotFound();
-            }
+        //[HttpDelete("{id}")]
+        //public async Task<ActionResult<Dashboard>> DeleteDashboard(int id)
+        //{
+        //    var dashboard = await _context.Dashboards.FindAsync(id);
+        //    if (dashboard == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            _context.Dashboards.Remove(dashboard);
-            await _context.SaveChangesAsync();
+        //    _context.Dashboards.Remove(dashboard);
+        //    await _context.SaveChangesAsync();
 
-            return dashboard;
-        }
+        //    return dashboard;
+        //}
 
-        private bool DashboardExists(int id)
-        {
-            return _context.Dashboards.Any(e => e.DashboardID == id);
-        }
+        //private bool DashboardExists(int id)
+        //{
+        //    return _context.Dashboards.Any(e => e.DashboardID == id);
+        //}
     }
 }
 

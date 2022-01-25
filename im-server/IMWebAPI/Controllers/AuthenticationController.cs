@@ -1,9 +1,4 @@
-﻿/**
- * This file contains several API endpoints involving the registration, logging, and retrieval of user-role information
- * Written by Steven Carpadakis, U of U School of Computing, Senior Capstone 2021
- **/
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -169,7 +164,8 @@ namespace IMWebAPI.Controllers
             return Ok(new { Message = "Password changed successfully" });
         }
 
-        [HttpGet, Authorize(Roles = "Administrator, PrimaryActor, SupportingActor")]
+        [HttpGet]
+        [Authorize(Policy = "WebAppUser")]
         [Route("User")]
         public async Task<IActionResult> GetUserInfo()
         {

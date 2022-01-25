@@ -1,9 +1,4 @@
-﻿/**
- * This file contains several API endpoints involving the creation, modification, retrieval, and deletion of individual and collections of Delegations
- * Written by Steven Carpadakis, U of U School of Computing, Senior Capstone 2021
- **/
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,7 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace IMWebAPI.Controllers
 {
-    [Authorize(Roles = "Administrator, PrimaryActor, SupportingActor")]
+    [Authorize(Policy = "Delegations")]
     [Route("api/[controller]")]
     [ApiController]
     public class DelegationsController : ControllerBase

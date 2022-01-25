@@ -25,5 +25,11 @@ namespace IMWebAPI.Models
         public DateTime RefreshTokenExpiryTime { get; set; }
 
         public string Role { get; set; }
+
+        // these are here to consolidate references to roles
+        public static readonly string Administrator = "Administrator";
+        public static readonly string PrimaryActor = "PrimaryActor";
+        public static readonly string SupportingActor = "SupportingActor";
+        public static readonly string Observer = "Observer";
     }
 }

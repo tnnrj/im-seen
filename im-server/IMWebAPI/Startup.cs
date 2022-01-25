@@ -60,10 +60,10 @@ namespace IMWebAPI
             });
 
 
-            // configure settings for jwt bearer tokens
-
+            // authentication settings
             services.AddAuthentication(options =>
             {
+                // set schemes to jwt defaults
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -87,8 +87,14 @@ namespace IMWebAPI
                         RequireSignedTokens = true,
                         ClockSkew = TimeSpan.Zero // USED FOR TESTING
                     };
-
                 });
+
+            services.AddAuthorization(options =>
+            {
+                // role/claim based access control
+                // add permission policies for new actions here as necessary
+                options.AddPolicy("WebAppUser", policy => policy.RequireRole(ApplicationUser.Administrator, ApplicationUser.PrimaryActor, ApplicationUser.SupportingActor));
+            });
 
             // Register JwtSettings from appsettings.json to JwtSettings options pattern
             var jwtSettingsSection = Configuration.GetSection("JwtSettings");
