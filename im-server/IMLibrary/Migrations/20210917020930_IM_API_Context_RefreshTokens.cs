@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace IMWebAPI.Migrations
+namespace IMLibrary.Migrations
 {
     public partial class IM_API_Context_RefreshTokens : Migration
     {

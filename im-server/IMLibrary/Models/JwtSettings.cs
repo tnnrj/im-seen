@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace IMWebAPI.Configuration
+namespace IMLibrary.Configuration
 {
     public class JwtSettings
     {

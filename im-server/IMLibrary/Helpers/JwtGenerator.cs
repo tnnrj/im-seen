@@ -3,7 +3,7 @@
  * Written by Steven Carpadakis, U of U School of Computing, Senior Capstone 2021
  **/
 
-using IMWebAPI.Configuration;
+using IMLibrary.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -14,7 +14,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IMWebAPI.Helpers
+namespace IMLibrary.Helpers
 {
     public class JwtGenerator
     {

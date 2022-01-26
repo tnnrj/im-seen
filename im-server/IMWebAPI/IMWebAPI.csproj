@@ -31,5 +31,9 @@
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="5.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\IMLibrary\IMLibrary.csproj" />
+  </ItemGroup>
+
 
 </Project>

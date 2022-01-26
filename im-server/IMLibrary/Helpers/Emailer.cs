@@ -13,7 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace IMWebAPI.Helpers
+namespace IMLibrary.Helpers
 {
     public interface IEmailer
     {

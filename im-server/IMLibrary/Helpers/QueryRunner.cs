@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 using MySql.Data.MySqlClient;
 using Newtonsoft.Json.Linq;
 
-namespace IMWebAPI.Helpers
+namespace IMLibrary.Helpers
 {
     public interface IQueryRunner
     {

@@ -3,13 +3,13 @@
  * Written by Steven Carpadakis, U of U School of Computing, Senior Capstone 2021
  **/
 
-using IMWebAPI.Models;
+using IMLibrary.Models;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace IMWebAPI.Data
+namespace IMLibrary.Data
 {
     public class DbInitializer
     {

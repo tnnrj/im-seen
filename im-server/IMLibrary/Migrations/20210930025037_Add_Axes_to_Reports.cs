@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace IMWebAPI.Migrations
+namespace IMLibrary.Migrations
 {
     public partial class Add_Axes_to_Reports : Migration
     {

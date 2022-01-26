@@ -9,10 +9,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using IMWebAPI.Models;
+using IMLibrary.Models;
 using Microsoft.AspNetCore.Identity;
 
-namespace IMWebAPI.Data
+namespace IMLibrary.Data
 {
     public class IM_API_Context : IdentityDbContext<ApplicationUser>
     {
@@ -21,13 +21,13 @@ namespace IMWebAPI.Data
         {
         }
 
-        public DbSet<IMWebAPI.Models.Student> Students { get; set; }
-        public DbSet<IMWebAPI.Models.Observation> Observations { get; set; }
-        public DbSet<IMWebAPI.Models.StudentGroup> StudentGroups { get; set; }
-        public DbSet<IMWebAPI.Models.Delegation> Delegations { get; set; }
-        public DbSet<IMWebAPI.Models.Supporter> Supporters { get; set; }
-        public DbSet<IMWebAPI.Models.Report> Reports { get; set; }
-        public DbSet<IMWebAPI.Models.Dashboard> Dashboards { get; set; }
+        public DbSet<IMLibrary.Models.Student> Students { get; set; }
+        public DbSet<IMLibrary.Models.Observation> Observations { get; set; }
+        public DbSet<IMLibrary.Models.StudentGroup> StudentGroups { get; set; }
+        public DbSet<IMLibrary.Models.Delegation> Delegations { get; set; }
+        public DbSet<IMLibrary.Models.Supporter> Supporters { get; set; }
+        public DbSet<IMLibrary.Models.Report> Reports { get; set; }
+        public DbSet<IMLibrary.Models.Dashboard> Dashboards { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

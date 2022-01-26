@@ -3,8 +3,8 @@
  * Written by Steven Carpadakis, U of U School of Computing, Senior Capstone 2021
  **/
 
-using IMWebAPI.Data;
-using IMWebAPI.Models;
+using IMLibrary.Data;
+using IMLibrary.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace IMWebAPI.Helpers
+namespace IMLibrary.Helpers
 {
     public class WeightedScoreCalculator
     {

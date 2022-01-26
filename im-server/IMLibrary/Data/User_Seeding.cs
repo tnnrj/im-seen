@@ -3,7 +3,7 @@
  * Written by Steven Carpadakis & Tanner Jorgensen, U of U School of Computing, Senior Capstone 2021
  **/
 
-using IMWebAPI.Models;
+using IMLibrary.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using System;
@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace IMWebAPI.Data
+namespace IMLibrary.Data
 {
     public class User_Seeding
     {
