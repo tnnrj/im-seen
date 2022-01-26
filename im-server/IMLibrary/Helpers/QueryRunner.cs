@@ -1,9 +1,4 @@
-﻿/**
- * This file defines a helper class for running MySQL querries passed as JSON objects.
- * Written by Tanner Jorgensen, U of U School of Computing, Senior Capstone 2021
- **/
-
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -15,7 +10,12 @@ using Newtonsoft.Json.Linq;
 
 namespace IMWebAPI.Helpers
 {
-    public class QueryRunner
+    public interface IQueryRunner
+    {
+        JArray ExecuteAsJson(string sql);
+    }
+
+    public class QueryRunner : IQueryRunner
     {
         private readonly string _connectionString;
 

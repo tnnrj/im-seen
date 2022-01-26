@@ -19,6 +19,7 @@ using System.Text;
 using Microsoft.AspNetCore.Http;
 using System.Text.Json;
 using IMWebAPI.Configuration;
+using IMWebAPI.Logic;
 
 namespace IMWebAPI
 {
@@ -45,7 +46,8 @@ namespace IMWebAPI
 
             // custom services for dependency injection
             services.AddScoped<IEmailer, Emailer>();
-            services.AddScoped<QueryRunner>();
+            services.AddScoped<IQueryRunner, QueryRunner>();
+            services.AddScoped<IObservationLogic, ObservationLogic>();
 
 
             services.Configure<IdentityOptions>(options =>
