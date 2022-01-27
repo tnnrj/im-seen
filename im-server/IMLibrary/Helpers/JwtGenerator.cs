@@ -3,7 +3,7 @@
  * Written by Steven Carpadakis, U of U School of Computing, Senior Capstone 2021
  **/
 
-using IMLibrary.Configuration;
+using IMLibrary.Models;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;

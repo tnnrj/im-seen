@@ -1,4 +1,5 @@
-﻿using IMWebAPI.Logic;
+﻿using IMLibrary.Logic;
+using IMLibrary.Models;
 using Microsoft.Extensions.Logging;
 using Quartz;
 using System;
@@ -26,7 +27,7 @@ namespace BatchService.Jobs
         public Task Execute(IJobExecutionContext context)
         {
             _logger.LogInformation("Starting weighted score recalculation...");
-            _observationLogic.CalculateWeightedScore(new IMWebAPI.Models.Observation());
+            _observationLogic.CalculateWeightedScore(new Observation());
             return Task.CompletedTask;
         }
     }

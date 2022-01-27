@@ -5,6 +5,10 @@ VisualStudioVersion = 16.0.30611.23
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IMWebAPI", "IMWebAPI\IMWebAPI.csproj", "{247A13EF-6A06-493D-B392-767220879767}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BatchService", "BatchService\BatchService.csproj", "{A3FBF65E-D08F-4BCF-9B51-96F9788FF963}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IMLibrary", "IMLibrary\IMLibrary.csproj", "{798E2DC9-36B7-4A5F-B26C-8779972049C5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{247A13EF-6A06-493D-B392-767220879767}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{247A13EF-6A06-493D-B392-767220879767}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{247A13EF-6A06-493D-B392-767220879767}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3FBF65E-D08F-4BCF-9B51-96F9788FF963}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3FBF65E-D08F-4BCF-9B51-96F9788FF963}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3FBF65E-D08F-4BCF-9B51-96F9788FF963}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3FBF65E-D08F-4BCF-9B51-96F9788FF963}.Release|Any CPU.Build.0 = Release|Any CPU
+		{798E2DC9-36B7-4A5F-B26C-8779972049C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{798E2DC9-36B7-4A5F-B26C-8779972049C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{798E2DC9-36B7-4A5F-B26C-8779972049C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{798E2DC9-36B7-4A5F-B26C-8779972049C5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

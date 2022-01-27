@@ -32,7 +32,7 @@ namespace IMLibrary.Data
             }
             catch (Exception e)
             {
-                Console.WriteLine("Error creating role.");
+                Console.WriteLine("Error creating role.", e);
             }
 
             // Look for any existing Users.

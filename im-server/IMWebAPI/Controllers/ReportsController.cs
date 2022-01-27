@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using IMWebAPI.Data;
-using IMWebAPI.Models;
-using IMWebAPI.Helpers;
+using IMLibrary.Data;
+using IMLibrary.Models;
+using IMLibrary.Helpers;
 using Newtonsoft.Json.Linq;
 using Microsoft.AspNetCore.Authorization;
 

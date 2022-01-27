@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using IMWebAPI.Data;
-using IMWebAPI.Helpers;
-using IMWebAPI.Models;
+using IMLibrary.Data;
+using IMLibrary.Helpers;
+using IMLibrary.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -18,8 +18,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Http;
 using System.Text.Json;
-using IMWebAPI.Configuration;
-using IMWebAPI.Logic;
+using IMLibrary.Logic;
 
 namespace IMWebAPI
 {
