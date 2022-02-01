@@ -1,9 +1,4 @@
-﻿/**
- * This file defines the model class for a Dashboard.
- * Written by Steven Carpadakis, U of U School of Computing, Senior Capstone 2021
- **/
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;

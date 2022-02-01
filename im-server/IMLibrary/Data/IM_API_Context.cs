@@ -1,9 +1,4 @@
-﻿/**
- * This file defines the database context used by this application.
- * Written by Steven Carpadakis, U of U School of Computing, Senior Capstone 2021
- **/
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using IMLibrary.Models;
 using Microsoft.AspNetCore.Identity;
+using IMLibrary.Models.Authorization;
 
 namespace IMLibrary.Data
 {
@@ -28,6 +24,7 @@ namespace IMLibrary.Data
         public DbSet<IMLibrary.Models.Supporter> Supporters { get; set; }
         public DbSet<IMLibrary.Models.Report> Reports { get; set; }
         public DbSet<IMLibrary.Models.Dashboard> Dashboards { get; set; }
+        public DbSet<RuntimeConfigItem> RuntimeConfigItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -38,6 +35,7 @@ namespace IMLibrary.Data
             modelBuilder.Entity<Supporter>().ToTable("Supporters");
             modelBuilder.Entity<Report>().ToTable("Reports");
             modelBuilder.Entity<Dashboard>().ToTable("Dashboards");
+            modelBuilder.Entity<RuntimeConfigItem>().ToTable("RuntimeConfigItems");
 
             // fields should default empty not null
             modelBuilder.Entity<Observation>(entity => entity.Property(m => m.StudentFirstName).HasDefaultValue(""));

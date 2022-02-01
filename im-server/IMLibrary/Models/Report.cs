@@ -1,9 +1,4 @@
-﻿/**
- * This file defines the model class for a Report.
- * Written by Steven Carpadakis, U of U School of Computing, Senior Capstone 2021
- **/
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;

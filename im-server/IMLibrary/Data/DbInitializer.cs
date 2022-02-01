@@ -1,9 +1,4 @@
-﻿/**
- * This file initializes the database using various seeding files.
- * Written by Steven Carpadakis, U of U School of Computing, Senior Capstone 2021
- **/
-
-using IMLibrary.Models;
+﻿using IMLibrary.Models;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;

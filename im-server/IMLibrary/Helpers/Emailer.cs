@@ -1,9 +1,4 @@
-﻿/**
- * This file defines a helper class for sending emails to application users
- * Written by Tanner Jorgensen, U of U School of Computing, Senior Capstone 2021
- **/
-
-using MailKit.Net.Smtp;
+﻿using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Configuration;
 using MimeKit;

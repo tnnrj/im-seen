@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using IMLibrary.Data;
-using IMLibrary.Helpers;
 using IMLibrary.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -43,12 +42,6 @@ namespace IMWebAPI
             services.AddIdentity<ApplicationUser, IdentityRole>()
                     .AddEntityFrameworkStores<IM_API_Context>();
 
-            // custom services for dependency injection
-            services.AddScoped<IEmailer, Emailer>();
-            services.AddScoped<IQueryRunner, QueryRunner>();
-            services.AddScoped<IObservationLogic, ObservationLogic>();
-
-
             services.Configure<IdentityOptions>(options =>
             {
                 // Default Password settings.
@@ -62,7 +55,6 @@ namespace IMWebAPI
 
 
             // configure settings for jwt bearer tokens
-
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -94,6 +86,9 @@ namespace IMWebAPI
             // Register JwtSettings from appsettings.json to JwtSettings options pattern
             var jwtSettingsSection = Configuration.GetSection("JwtSettings");
             services.Configure<JwtSettings>(jwtSettingsSection);
+
+            // Library dependencies
+            IMLibrary.Helpers.DependencyConfig.AddDependencies(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

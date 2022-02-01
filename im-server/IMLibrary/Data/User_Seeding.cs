@@ -1,9 +1,4 @@
-﻿/**
- * This file contains methods for seeding the Users table of the IM_API_Context
- * Written by Steven Carpadakis & Tanner Jorgensen, U of U School of Computing, Senior Capstone 2021
- **/
-
-using IMLibrary.Models;
+﻿using IMLibrary.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using System;

@@ -1,9 +1,4 @@
-﻿/**
- * This file contains several API endpoints involving the creation, modification, retrieval, and deletion of individual and collections of StudentGroups
- * Written by Steven Carpadakis, U of U School of Computing, Senior Capstone 2021
- **/
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;

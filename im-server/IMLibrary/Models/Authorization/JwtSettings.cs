@@ -1,10 +1,4 @@
-﻿/**
- * This file defines a config pattern for various settings necessary for a JWT bearer token implementation.
- * Values for these settings can be adjusted in the appsettings.json file.
- * Written by Steven Carpadakis, U of U School of Computing, Senior Capstone 2021
- **/
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;

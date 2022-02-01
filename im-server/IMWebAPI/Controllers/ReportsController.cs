@@ -1,9 +1,4 @@
-﻿/**
- * This file contains several API endpoints involving the creation, modification, retrieval, and deletion of individual and collections of Reports
- * Written by Steven Carpadakis, U of U School of Computing, Senior Capstone 2021
- **/
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -24,13 +19,13 @@ namespace IMWebAPI.Controllers
     public class ReportsController : ControllerBase
     {
         private readonly IM_API_Context _context;
-        private readonly QueryRunner _queryRunner;
+        private readonly IQueryRunner _queryRunner;
         private readonly string _supportingReportJoin = @"
 JOIN Delegations ON Delegations.StudentID = Observations.StudentID
 JOIN Supporters ON Supporters.StudentGroupID = Delegations.StudentGroupID
 WHERE Supporters.UserName = '{UserName}'";
 
-        public ReportsController(IM_API_Context context, QueryRunner queryRunner)
+        public ReportsController(IM_API_Context context, IQueryRunner queryRunner)
         {
             _context = context;
             _queryRunner = queryRunner;
