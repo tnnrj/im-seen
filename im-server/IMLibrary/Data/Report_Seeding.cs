@@ -48,7 +48,15 @@ namespace IMLibrary.Data
                     Axis1Name = "Severity",
                     Axis2Name = "Proportion",
                     AvailableChartTypes = "Bar,Pie,BubbleCloud"
-                }
+                },
+                new Report
+                {
+                    ReportName = "Students Grouped by Total Observation Score",
+                    Query = "SELECT TRIM(CONCAT(StudentFirstName, ' ', StudentLastName)) as name, SUM(WeightedScore) AS value, Observations.StudentID as id FROM Observations {joinAndWhere} GROUP BY name, id",
+                    Axis1Name = "Student",
+                    Axis2Name = "Total Observation Severity",
+                    AvailableChartTypes = "Bar,Pie,BubbleCloud"
+                },
             };
 
             context.Reports.AddRange(reports);

@@ -1,4 +1,5 @@
 ﻿using IMLibrary.Data;
+using System.Runtime.Caching;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -20,11 +21,19 @@ namespace IMLibrary.Helpers
 
         public Dictionary<string, string> GetConfigDictionary()
         {
+            var cached = MemoryCache.Default.Get("RuntimeConfig");
+            if (cached != null)
+            {
+                return (Dictionary<string, string>)cached;
+            }
+
             var dict = new Dictionary<string, string>();
             foreach (var rci in _context.RuntimeConfigItems)
             {
                 dict.Add(rci.Key, rci.Value);
             }
+
+            MemoryCache.Default.Set("RuntimeConfig", dict, DateTimeOffset.Now.AddMinutes(15));
             return dict;
         }
     }

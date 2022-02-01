@@ -1,6 +1,9 @@
 using BatchService.Jobs;
+using IMLibrary.Data;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Configuration;
 using Quartz;
 using System;
 using System.Collections.Generic;
@@ -32,6 +35,10 @@ namespace BatchService
                     services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 
                     // other config
+                    services.AddDbContext<IM_API_Context>(options =>
+                            options.UseMySQL(hostContext.Configuration.GetConnectionString("IM_API_Context")));
+
+                    IMLibrary.Helpers.DependencyConfig.AddDependencies(services);
                 });
     }
 }

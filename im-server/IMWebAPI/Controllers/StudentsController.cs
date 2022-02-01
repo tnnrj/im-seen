@@ -21,12 +21,9 @@ namespace IMWebAPI.Controllers
         private readonly IQueryable<Student> supporterQuery;
         private readonly IQueryable<Student> primaryQuery;
 
-        private readonly WeightedScoreCalculator calculator;
-
         public StudentsController(IM_API_Context context)
         {
             _context = context;
-            calculator = new WeightedScoreCalculator(context);
             supporterQuery =
                 from student in _context.Students
 
@@ -109,21 +106,6 @@ namespace IMWebAPI.Controllers
             }
 
             return student;
-        }
-
-        [HttpGet]
-        [Route("WeightedScore")]
-        public async Task<ActionResult<double>> GetWeightedScore(int id)
-        {
-            double score = 0;
-
-            List<Observation> observs = await _context.Observations.Where(o => o.StudentID == id).ToListAsync();
-
-            foreach (Observation observ in observs)
-                score += calculator.CalculateObservationWeightedScore(observ);
-
-            return score;
-
         }
 
         // PUT: api/Students/5

@@ -17,7 +17,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Http;
 using System.Text.Json;
-using IMLibrary.Logic;
 
 namespace IMWebAPI
 {

@@ -33,7 +33,7 @@ export default {
       }
 
       // sort data
-      let data = this.chartData;
+      let data = _.filter(this.chartData, cd => cd.value != 0);
       data.sort(function(b, a) {
         return a.value - b.value;
       });

@@ -20,7 +20,7 @@ namespace IMLibrary.Data
                 new RuntimeConfigItem
                 {
                     Key = "DaysToDecay",
-                    Value = "14"
+                    Value = "200"
                 },
                 new RuntimeConfigItem
                 {

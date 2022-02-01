@@ -19,6 +19,7 @@ namespace IMLibrary.Data
             Observation_Seeding.SeedObservations(context);
             Report_Seeding.SeedReports(context);
             Dashboard_Seeding.SeedDashboards(context);
+            Config_Seeding.SeedConfigs(context);
 
             Group_Seeding.SeedGroups(context);
             Group_Seeding.SeedDelegations(context);

@@ -26,9 +26,14 @@ namespace BatchService.Jobs
 
         public Task Execute(IJobExecutionContext context)
         {
-            _logger.LogInformation("Starting weighted score recalculation...");
-            _observationLogic.CalculateWeightedScore(new Observation());
-            return Task.CompletedTask;
+            return Task.Run(() =>
+            {
+                _logger.LogInformation("Starting weighted score recalculation...");
+                _observationLogic.RecalcAllScores(out int success, out int failure);
+                _logger.LogInformation("Finished weighted score recalculation.");
+                var result = success == 0 ? (failure == 0 ? BatchResult.NoData : BatchResult.Failure) : (failure == 0 ? BatchResult.Success : BatchResult.Partial);
+                _logger.LogInformation($"Result: {result}");
+            });
         }
     }
 }
