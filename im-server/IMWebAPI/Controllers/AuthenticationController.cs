@@ -1,17 +1,11 @@
-﻿/**
- * This file contains several API endpoints involving the registration, logging, and retrieval of user-role information
- * Written by Steven Carpadakis, U of U School of Computing, Senior Capstone 2021
- **/
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using IMWebAPI.Configuration;
-using IMWebAPI.Data;
-using IMWebAPI.Helpers;
-using IMWebAPI.Models;
+using IMLibrary.Data;
+using IMLibrary.Helpers;
+using IMLibrary.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;

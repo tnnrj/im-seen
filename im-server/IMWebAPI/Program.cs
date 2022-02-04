@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using IMWebAPI.Data;
-using IMWebAPI.Models;
+using IMLibrary.Data;
+using IMLibrary.Logic;
+using IMLibrary.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -35,6 +36,9 @@ namespace IMWebAPI
                     UserManager<ApplicationUser> um = services.GetRequiredService<UserManager<ApplicationUser>>();
                     RoleManager<IdentityRole> rm = services.GetRequiredService<RoleManager<IdentityRole>>();
                     DbInitializer.Initialize(context, um, rm);
+
+                    // perform initial score calculation (in case DB has just been seeded or server outage caused daily batch miss)
+                    services.GetRequiredService<IObservationLogic>().RecalcAllScores(out int success, out int fail);
                 }
                 catch (Exception ex)
                 {

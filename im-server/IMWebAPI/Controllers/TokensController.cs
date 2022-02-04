@@ -1,17 +1,11 @@
-﻿/**
- * This file contains API endpoints for refreshing JWT access tokens and revoking refresh tokens
- * Written by Steven Carpadakis, U of U School of Computing, Senior Capstone 2021
- **/
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using IMWebAPI.Configuration;
-using IMWebAPI.Data;
-using IMWebAPI.Helpers;
-using IMWebAPI.Models;
+using IMLibrary.Data;
+using IMLibrary.Helpers;
+using IMLibrary.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;

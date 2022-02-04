@@ -13,6 +13,7 @@
 
 <script>
 import * as d3 from "d3";
+import * as _ from "lodash";
 
 export default {
   name: "PieChart",
@@ -33,7 +34,7 @@ export default {
       }
 
       // sort data
-      let data = this.chartData;
+      let data = _.filter(this.chartData, cd => cd.value != 0);
       data.sort(function(b, a) {
         return a.value - b.value;
       });

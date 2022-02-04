@@ -1,15 +1,10 @@
-﻿/**
- * This file contains several API endpoints involving the creation, modification, retrieval, and deletion of individual and collections of StudentGroups
- * Written by Steven Carpadakis, U of U School of Computing, Senior Capstone 2021
- **/
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using IMWebAPI.Data;
-using IMWebAPI.Models;
-using IMWebAPI.Helpers;
+using IMLibrary.Data;
+using IMLibrary.Models;
+using IMLibrary.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

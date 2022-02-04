@@ -1,21 +1,17 @@
-﻿/**
- * This file contains several API endpoints involving the creation, modification, retrieval, and deletion of individual and collections of Observations
- * Written by Steven Carpadakis, U of U School of Computing, Senior Capstone 2021
- **/
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using IMWebAPI.Data;
-using IMWebAPI.Models;
+using IMLibrary.Data;
+using IMLibrary.Models;
 using Microsoft.AspNetCore.Cors;
-using IMWebAPI.Helpers;
+using IMLibrary.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using IMLibrary.Logic;
 
 namespace IMWebAPI.Controllers
 {
@@ -26,11 +22,13 @@ namespace IMWebAPI.Controllers
     public class ObservationsController : ControllerBase
     {
         private readonly IM_API_Context _context;
+        private readonly IObservationLogic _observationLogic;
         private readonly IQueryable<Observation> myObservQuery;
 
-        public ObservationsController(IM_API_Context context)
+        public ObservationsController(IM_API_Context context, IObservationLogic observationLogic)
         {
             _context = context;
+            _observationLogic = observationLogic;
 
             myObservQuery =
                 from observ in _context.Observations
@@ -57,7 +55,6 @@ namespace IMWebAPI.Controllers
         {
             if (User.IsInRole("SupportingActor"))
             {
-
                 return await myObservQuery.ToListAsync();
             }
 
@@ -170,18 +167,23 @@ namespace IMWebAPI.Controllers
             {
                 try
                 {
-                    var old_observ = await _context.Observations.FindAsync(id);
+                    var oldObs = await _context.Observations.FindAsync(id);
 
-                    old_observ.StudentID = observ.StudentID;
-                    old_observ.StudentFirstName = observ.StudentFirstName;
-                    old_observ.StudentLastName = observ.StudentLastName;
+                    if (_observationLogic.NeedsScoreRecalc(oldObs, observ))
+                    {
+                        oldObs.WeightedScore = _observationLogic.CalculateWeightedScore(observ);
+                    }
 
-                    old_observ.Severity = observ.Severity;
-                    old_observ.Action = observ.Action;
-                    old_observ.Event = observ.Event;
-                    old_observ.Status = observ.Status;
+                    oldObs.StudentID = observ.StudentID;
+                    oldObs.StudentFirstName = observ.StudentFirstName;
+                    oldObs.StudentLastName = observ.StudentLastName;
 
-                    _context.Update(old_observ);
+                    oldObs.Severity = observ.Severity;
+                    oldObs.Action = observ.Action;
+                    oldObs.Event = observ.Event;
+                    oldObs.Status = observ.Status;
+
+                    _context.Update(oldObs);
                     await _context.SaveChangesAsync();
                 }
 
