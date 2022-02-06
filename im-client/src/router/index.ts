@@ -43,7 +43,13 @@ const routes: Array<RouteRecordRaw> = [
     name: "Groups",
     component: () => import("@/views/Groups.vue"),
     meta: { requiresAuth: true, adminOnly: true }
-  }
+  },
+  {
+    path: "/students",
+    name: "Students",
+    component: () => import("@/views/Students.vue"),
+    meta: { requiresAuth: true, adminOnly: true }
+  },
 ];
 
 // create router singleton

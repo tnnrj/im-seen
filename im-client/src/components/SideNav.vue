@@ -60,6 +60,12 @@ export default defineComponent({
         link: '/groups',
         iconStyle: 'pi-th-large',
         show: isAdmin
+      },
+      {
+        title: 'Students',
+        link: '/students',
+        iconStyle: 'pi-search-plus',
+        show: isAdmin
       }];
     });
 
