@@ -12,9 +12,25 @@ namespace IMLibrary.Logic
 {
     public interface IObservationLogic
     {
+        /// <summary>
+        /// Recalculates scores for all recent observations
+        /// </summary>
         void RecalcAllScores(out int success, out int fail);
+
+        /// <summary>
+        /// Calculates the weighted score for an observation
+        /// </summary>
         double CalculateWeightedScore(Observation obs, IList<Observation> neighbors = null, IDictionary<string, string> cfg = null);
+
+        /// <summary>
+        /// Determines if a change to an observation requires recalculating its score
+        /// </summary>
         bool NeedsScoreRecalc(Observation oldObservation, Observation newObservation);
+
+        /// <summary>
+        /// Returns a student matching an incoming observation, or null if no match is found
+        /// </summary>
+        Student MatchingStudent(Observation obs);
     }
 
     public class ObservationLogic : IObservationLogic
@@ -119,6 +135,14 @@ namespace IMLibrary.Logic
             }
 
             return false;
+        }
+
+        public Student MatchingStudent(Observation obs)
+        {
+            // current logic is exact match by name
+            return _context.Students
+                .Where(s => (s.FirstName == obs.StudentFirstName) && (s.LastName == obs.StudentLastName))
+                .FirstOrDefault();
         }
     }
 }

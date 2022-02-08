@@ -24,31 +24,9 @@ namespace IMWebAPI.Controllers
             _context = context;
         }
 
-        // unused actions are commented for now
-
-        // GET: api/Dashboards
-        //[HttpGet]
-        //public async Task<ActionResult<IEnumerable<Dashboard>>> GetDashboard()
-        //{
-        //    return await _context.Dashboards.ToListAsync();
-        //}
-
-        //// GET: api/Dashboards/5
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<Dashboard>> GetDashboard(int id)
-        //{
-        //    var dashboard = await _context.Dashboards.FindAsync(id);
-
-        //    if (dashboard == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return dashboard;
-        //}
-
         // GET: api/GetMyDashboard
         [HttpGet]
+        [Authorize(Policy = "Dashboards.Read")]
         [Route("GetMyDashboard")]
         public ActionResult<Dashboard> GetMyDashboard()
         {
@@ -89,36 +67,34 @@ namespace IMWebAPI.Controllers
             return Ok();
         }
 
-        // POST: api/Dashboards
-        //[HttpPost]
-        //public async Task<ActionResult<Dashboard>> PostDashboard(Dashboard dashboard)
-        //{
-        //    _context.Dashboards.Add(dashboard);
-        //    await _context.SaveChangesAsync();
-
-        //    return CreatedAtAction("GetDashboard", new { id = dashboard.DashboardID }, dashboard);
-        //}
-
         // DELETE: api/Dashboards/5
-        //[HttpDelete("{id}")]
-        //public async Task<ActionResult<Dashboard>> DeleteDashboard(int id)
-        //{
-        //    var dashboard = await _context.Dashboards.FindAsync(id);
-        //    if (dashboard == null)
-        //    {
-        //        return NotFound();
-        //    }
+        [HttpDelete("{id}")]
+        [Authorize(Policy = "Dashboards.Delete")]
+        public async Task<ActionResult<Dashboard>> DeleteDashboard(int id)
+        {
+            var dashboard = await _context.Dashboards.FindAsync(id);
+            if (dashboard == null)
+            {
+                return NotFound();
+            }
 
-        //    _context.Dashboards.Remove(dashboard);
-        //    await _context.SaveChangesAsync();
+            _context.Dashboards.Remove(dashboard);
+            await _context.SaveChangesAsync();
 
-        //    return dashboard;
-        //}
+            return dashboard;
+        }
 
-        //private bool DashboardExists(int id)
-        //{
-        //    return _context.Dashboards.Any(e => e.DashboardID == id);
-        //}
+        /// <summary>
+        /// Policies to access endpoints in this controller
+        /// </summary>
+        public static void AddPolicies(AuthorizationOptions options)
+        {
+            options.AddPolicy("Dashboards.Create", policy => policy.RequireClaim("Dashboards.Create"));
+            options.AddPolicy("Dashboards.Read", policy => policy.RequireClaim("Dashboards.Read"));
+            options.AddPolicy("Dashboards.Update", policy => policy.RequireClaim("Dashboards.Update"));
+            options.AddPolicy("Dashboards.Delete", policy => policy.RequireClaim("Dashboards.Delete"));
+            options.AddPolicy("Dashboards.Archive", policy => policy.RequireClaim("Dashboards.Archive"));
+        }
     }
 }
 

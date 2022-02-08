@@ -85,8 +85,7 @@ namespace IMWebAPI
             services.AddAuthorization(options =>
             {
                 // role/claim based access control
-                // add permission policies for new actions here as necessary
-                options.AddPolicy("WebAppUser", policy => policy.RequireRole(ApplicationUser.Administrator, ApplicationUser.PrimaryActor, ApplicationUser.SupportingActor));
+                // each controller adds their own access policies
             });
 
             // Register JwtSettings from appsettings.json to JwtSettings options pattern

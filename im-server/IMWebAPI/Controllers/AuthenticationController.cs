@@ -182,5 +182,13 @@ namespace IMWebAPI.Controllers
         {
             return Ok(new { Message = "Logout Successful" });
         }
+
+        /// <summary>
+        /// Policies to access endpoints in this controller
+        /// </summary>
+        public static void AddPolicies(AuthorizationOptions options)
+        {
+            options.AddPolicy("WebAppUser", policy => policy.RequireClaim("WebAppUser"));
+        }
     }
 }

@@ -24,7 +24,6 @@ namespace IMWebAPI.Controllers
     public class ObservationsController : ControllerBase
     {
         private readonly IM_API_Context _context;
-        private readonly IQueryable<Observation> _myObservations;
         private readonly bool _allowAnonymous;
         private readonly IObservationLogic _observationLogic;
 
@@ -33,46 +32,22 @@ namespace IMWebAPI.Controllers
             _context = context;
             _allowAnonymous = configuration.GetSection("AppSettings").GetValue<bool>("AllowAnonymousObservation");
             _observationLogic = observationLogic;
-
-            _myObservations =
-                from observ in _context.Observations
-
-                join student in _context.Students
-                on observ.StudentID equals student.StudentID
-
-                join delegation in _context.Delegations
-                on student.StudentID equals delegation.Student.StudentID
-
-                join g in _context.StudentGroups
-                on delegation.StudentGroup.StudentGroupID equals g.StudentGroupID
-
-                join supporter in _context.Supporters
-                on g.StudentGroupID equals supporter.StudentGroup.StudentGroupID
-
-                where supporter.UserName == User.Identity.Name
-                select observ;
         }
 
         // GET: api/Observations
         [HttpGet]
+        [Authorize(Policy = "Observations.Read")]
         public async Task<ActionResult<IEnumerable<Observation>>> GetObservation()
         {
-            if (User.IsInRole("SupportingActor"))
-            {
-                return await _myObservations.ToListAsync();
-            }
-
-
-            return await _context.Observations.ToListAsync();
+            return await ObservationsForUser().ToListAsync();
         }
 
         // GET: api/Observations/5
         [HttpGet("{id}")]
+        [Authorize(Policy = "Observations.Read")]
         public async Task<ActionResult<Observation>> GetObservation(int id)
         {
-            var observ = User.IsInRole("SupportingActor")
-                ? await _myObservations.FirstOrDefaultAsync(o => o.ObservationID == id)
-                : await _context.Observations.FindAsync(id);
+            var observ = await ObservationsForUser().FirstOrDefaultAsync(o => o.ObservationID == id);
 
             if (observ == null)
             {
@@ -82,54 +57,18 @@ namespace IMWebAPI.Controllers
             return observ;
         }
 
-        // PUT: api/Observations/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutObservation(int id, Observation observ)
-        {
-            if (id != observ.ObservationID)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(observ).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ObservationExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
         // POST: api/Observations
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [AllowAnonymous]
         [HttpPost]
         public async Task<ActionResult<Observation>> PostObservation(Observation observ)
         {
-            if (!_allowAnonymous && (!User?.Claims.Any() ?? false))
+            if (!_allowAnonymous && (!User?.HasClaim("Observations.Create", "") ?? false))
             {
                 throw new NotAuthorizedException();
             }
 
             // Match to existing student by name if possible
-            var matchingStudent = _context.Students
-                .Where(s => (s.FirstName == observ.StudentFirstName) && (s.LastName == observ.StudentLastName))
-                .FirstOrDefault();
+            var matchingStudent = _observationLogic.MatchingStudent(observ);
             if (matchingStudent != null)
                 observ.StudentID = matchingStudent.StudentID;
 
@@ -157,6 +96,7 @@ namespace IMWebAPI.Controllers
 
         // POST: api/Observations/Update
         [HttpPost("{id}")]
+        [Authorize(Policy = "Observations.Update")]
         [Route("Update/{id}")]
         public async Task<ActionResult<Observation>> UpdateObservation(int id, [FromBody] Observation observ)
         {
@@ -209,8 +149,8 @@ namespace IMWebAPI.Controllers
 
 
         // DELETE: api/Observations/5
-        [Authorize(Roles = "Administrator, PrimaryActor")]
         [HttpDelete("{id}")]
+        [Authorize(Policy = "Observations.Delete")]
         public async Task<ActionResult<Observation>> DeleteObservation(int id)
         {
             var observ = await _context.Observations.FindAsync(id);
@@ -229,6 +169,46 @@ namespace IMWebAPI.Controllers
         {
             return _context.Observations.Any(e => e.ObservationID == id);
         }
-        
+
+        private IQueryable<Observation> ObservationsForUser(bool forceFilter = false)
+        {
+            // claim allows a user to see all students
+            // for now, admins never have students assigned
+            if (User.IsInRole("Administrator") || (User.HasClaim("Observations.SeeAll", "") && !forceFilter))
+            {
+                return from observ in _context.Observations
+                       select observ;
+            }
+
+            return from observ in _context.Observations
+
+                join student in _context.Students
+                on observ.StudentID equals student.StudentID
+
+                join delegation in _context.Delegations
+                on student.StudentID equals delegation.Student.StudentID
+
+                join g in _context.StudentGroups
+                on delegation.StudentGroup.StudentGroupID equals g.StudentGroupID
+
+                from s in _context.Supporters
+                where g.StudentGroupID == s.StudentGroup.StudentGroupID
+
+                where s.UserName == User.Identity.Name || g.PrimaryUserName == User.Identity.Name
+                select observ;
+        }
+
+        /// <summary>
+        /// Policies to access endpoints in this controller
+        /// </summary>
+        public static void AddPolicies(AuthorizationOptions options)
+        {
+            options.AddPolicy("Observations.Create", policy => policy.RequireClaim("Observations.Create"));
+            options.AddPolicy("Observations.Read", policy => policy.RequireClaim("Observations.Read"));
+            options.AddPolicy("Observations.Update", policy => policy.RequireClaim("Observations.Update"));
+            options.AddPolicy("Observations.Delete", policy => policy.RequireClaim("Observations.Delete"));
+            options.AddPolicy("Observations.Archive", policy => policy.RequireClaim("Observations.Archive"));
+            options.AddPolicy("Observations.SeeAll", policy => policy.RequireClaim("Observations.SeeAll"));
+        }
     }
 }

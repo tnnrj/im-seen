@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace IMWebAPI.Controllers
 {
-    [Authorize(Policy = "Delegations")]
+    [Authorize(Policy = "WebAppUser")]
     [Route("api/[controller]")]
     [ApiController]
     public class DelegationsController : ControllerBase
@@ -26,6 +26,7 @@ namespace IMWebAPI.Controllers
 
         // GET: api/Delegations
         [HttpGet]
+        [Authorize(Policy = "Delegations.Read")]
         public async Task<ActionResult<IEnumerable<Delegation>>> GetDelegation()
         {
             return await _context.Delegations.ToListAsync();
@@ -33,6 +34,7 @@ namespace IMWebAPI.Controllers
 
         // GET: api/Delegations/5
         [HttpGet("{id}")]
+        [Authorize(Policy = "Delegations.Read")]
         public async Task<ActionResult<Delegation>> GetDelegation(int id)
         {
             var delegation = await _context.Delegations.FindAsync(id);
@@ -45,42 +47,9 @@ namespace IMWebAPI.Controllers
             return delegation;
         }
 
-        // PUT: api/Delegations/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutDelegation(int id, Delegation delegation)
-        {
-            if (id != delegation.DelegationID)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(delegation).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!DelegationExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
         // POST: api/Delegations
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
+        [Authorize(Policy = "Delegations.Create")]
         public async Task<ActionResult<Delegation>> PostDelegation(Delegation delegation)
         {
             _context.Delegations.Add(delegation);
@@ -91,6 +60,7 @@ namespace IMWebAPI.Controllers
 
         // DELETE: api/Delegations/5
         [HttpDelete("{id}")]
+        [Authorize(Policy = "Delegations.Delete")]
         public async Task<ActionResult<Delegation>> DeleteDelegation(int id)
         {
             var delegation = await _context.Delegations.FindAsync(id);
@@ -105,9 +75,16 @@ namespace IMWebAPI.Controllers
             return delegation;
         }
 
-        private bool DelegationExists(int id)
+        /// <summary>
+        /// Policies to access endpoints in this controller
+        /// </summary>
+        public static void AddPolicies(AuthorizationOptions options)
         {
-            return _context.Delegations.Any(e => e.DelegationID == id);
+            options.AddPolicy("Delegations.Create", policy => policy.RequireClaim("Delegations.Create"));
+            options.AddPolicy("Delegations.Read", policy => policy.RequireClaim("Delegations.Read"));
+            options.AddPolicy("Delegations.Update", policy => policy.RequireClaim("Delegations.Update"));
+            options.AddPolicy("Delegations.Delete", policy => policy.RequireClaim("Delegations.Delete"));
+            options.AddPolicy("Delegations.Archive", policy => policy.RequireClaim("Delegations.Archive"));
         }
     }
 }

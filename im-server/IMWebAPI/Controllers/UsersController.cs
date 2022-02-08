@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace IMWebAPI.Controllers
 {
-    [Authorize(Roles = "Administrator")]
+    [Authorize(Policy = "WebAppUser")]
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
@@ -29,6 +29,7 @@ namespace IMWebAPI.Controllers
 
         // GET: api/Users
         [HttpGet]
+        [Authorize(Policy = "Users.Read")]
         public async Task<ActionResult<IEnumerable<ApplicationUser>>> GetUser()
         {
             return await _context.Users.ToListAsync();
@@ -36,6 +37,7 @@ namespace IMWebAPI.Controllers
 
         // GET: api/Users/5
         [HttpGet("{id}")]
+        [Authorize(Policy = "Users.Read")]
         public async Task<ActionResult<ApplicationUser>> GetUser(string id)
         {
             var user = await _context.Users.FindAsync(id);
@@ -48,42 +50,9 @@ namespace IMWebAPI.Controllers
             return user;
         }
 
-        // PUT: api/Users/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(string id, ApplicationUser user)
-        {
-            if (id != user.UserName)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(user).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UserExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
         // POST: api/Users
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
+        [Authorize(Policy = "Users.Create")]
         public async Task<ActionResult<ApplicationUser>> PostUser(ApplicationUser user)
         {
             _context.Users.Add(user);
@@ -93,9 +62,9 @@ namespace IMWebAPI.Controllers
         }
 
         // POST: api/Users/Update
-        [Authorize(Roles = "Administrator")]
         [HttpPost]
         [Route("Update")]
+        [Authorize(Policy = "Users.Update")]
         public async Task<ActionResult<Observation>> Update([FromBody] ApplicationUser user)
         {
             if (ModelState.IsValid)
@@ -142,8 +111,8 @@ namespace IMWebAPI.Controllers
         }
 
         // DELETE: api/Users/5
-        [Authorize(Roles = "Administrator")]
         [HttpDelete("{id}")]
+        [Authorize(Policy = "Users.Delete")]
         public async Task<ActionResult<ApplicationUser>> DeleteUser(string id)
         {
             var user = await _context.Users.FindAsync(id);
@@ -161,6 +130,18 @@ namespace IMWebAPI.Controllers
         private bool UserExists(string id)
         {
             return _context.Users.Any(e => e.UserName == id);
+        }
+
+        /// <summary>
+        /// Policies to access endpoints in this controller
+        /// </summary>
+        public static void AddPolicies(AuthorizationOptions options)
+        {
+            options.AddPolicy("Users.Create", policy => policy.RequireClaim("Users.Create"));
+            options.AddPolicy("Users.Read", policy => policy.RequireClaim("Users.Read"));
+            options.AddPolicy("Users.Update", policy => policy.RequireClaim("Users.Update"));
+            options.AddPolicy("Users.Delete", policy => policy.RequireClaim("Users.Delete"));
+            options.AddPolicy("Users.Archive", policy => policy.RequireClaim("Users.Archive"));
         }
     }
 }

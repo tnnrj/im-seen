@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace IMWebAPI.Controllers
 {
-    [Authorize(Roles = "Administrator, PrimaryActor, SupportingActor")]
+    [Authorize(Policy = "WebAppUser")]
     [Route("api/[controller]")]
     [ApiController]
     public class StudentGroupsController : ControllerBase
@@ -26,6 +26,7 @@ namespace IMWebAPI.Controllers
 
         // GET: api/StudentGroups
         [HttpGet]
+        [Authorize(Policy = "StudentGroups.Read")]
         public async Task<ActionResult<IEnumerable<StudentGroup>>> GetStudentGroup()
         {
             return await _context.StudentGroups.ToListAsync();
@@ -33,6 +34,7 @@ namespace IMWebAPI.Controllers
 
         // GET: api/StudentGroups/5
         [HttpGet("{id}")]
+        [Authorize(Policy = "StudentGroups.Read")]
         public async Task<ActionResult<StudentGroup>> GetStudentGroup(int id)
         {
             var @StudentGroup = await _context.StudentGroups.FindAsync(id);
@@ -45,42 +47,9 @@ namespace IMWebAPI.Controllers
             return @StudentGroup;
         }
 
-        // PUT: api/StudentGroups/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutStudentGroup(int id, StudentGroup @StudentGroup)
-        {
-            if (id != @StudentGroup.StudentGroupID)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(@StudentGroup).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!StudentGroupExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
         // POST: api/StudentGroups
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
+        [Authorize(Policy = "StudentGroups.Create")]
         public async Task<ActionResult<StudentGroup>> PostStudentGroup(StudentGroup @StudentGroup)
         {
             _context.StudentGroups.Add(@StudentGroup);
@@ -92,6 +61,7 @@ namespace IMWebAPI.Controllers
         // POST: api/StudentGroup/Update
         [HttpPost("{id}")]
         [Route("Update/{id}")]
+        [Authorize(Policy = "StudentGroups.Update")]
         public async Task<ActionResult<Observation>> Update(int id, [FromBody] StudentGroup group)
         {
             if (id != group.StudentGroupID)
@@ -135,6 +105,7 @@ namespace IMWebAPI.Controllers
 
         // DELETE: api/StudentGroups/5
         [HttpDelete("{id}")]
+        [Authorize(Policy = "StudentGroups.Delete")]
         public async Task<ActionResult<StudentGroup>> DeleteStudentGroup(int id)
         {
             var @StudentGroup = await _context.StudentGroups.FindAsync(id);
@@ -152,6 +123,18 @@ namespace IMWebAPI.Controllers
         private bool StudentGroupExists(int id)
         {
             return _context.StudentGroups.Any(e => e.StudentGroupID == id);
+        }
+
+        /// <summary>
+        /// Policies to access endpoints in this controller
+        /// </summary>
+        public static void AddPolicies(AuthorizationOptions options)
+        {
+            options.AddPolicy("StudentGroups.Create", policy => policy.RequireClaim("StudentGroups.Create"));
+            options.AddPolicy("StudentGroups.Read", policy => policy.RequireClaim("StudentGroups.Read"));
+            options.AddPolicy("StudentGroups.Update", policy => policy.RequireClaim("StudentGroups.Update"));
+            options.AddPolicy("StudentGroups.Delete", policy => policy.RequireClaim("StudentGroups.Delete"));
+            options.AddPolicy("StudentGroups.Archive", policy => policy.RequireClaim("StudentGroups.Archive"));
         }
     }
 }
