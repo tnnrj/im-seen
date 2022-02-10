@@ -56,7 +56,7 @@ namespace IMWebAPI.Controllers
             var newRefreshToken = jwtGenerator.GetRefreshToken();
 
             user.RefreshToken = newRefreshToken;
-            if (user.Role == "Observer")
+            if (user.Role == ApplicationUser.Observer)
             {
                 user.RefreshTokenExpiryTime = DateTime.UtcNow.AddSeconds(_jwtSettings.ObserverRefreshLifeInSecs);
             }

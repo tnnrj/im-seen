@@ -23,8 +23,9 @@ namespace IMWebAPI.Controllers
 
         private static readonly string s_supportingReportJoin = @"
 JOIN Delegations ON Delegations.StudentID = Observations.StudentID
+JOIN StudentGroups ON StudentGroups.StudentGroupID = Delegations.StudentGroupID
 JOIN Supporters ON Supporters.StudentGroupID = Delegations.StudentGroupID
-WHERE Supporters.UserName = '{UserName}'";
+WHERE Supporters.UserName = '{UserName}' OR StudentGroups.PrimaryUserName = '{UserName}'";
 
         public ReportsController(IM_API_Context context, IQueryRunner queryRunner)
         {

@@ -88,12 +88,12 @@ namespace IMLibrary.Data
                     _ = roleManager.AddClaimAsync(primaryRole, new Claim("Supporters.Read", ""));
                     _ = roleManager.AddClaimAsync(primaryRole, new Claim("Users.Read", ""));
                     #endregion
-                    _ = roleManager.AddClaimAsync(adminRole, new Claim("Students.SeeAll", ""));
-                    _ = roleManager.AddClaimAsync(adminRole, new Claim("Observations.SeeAll", ""));
+                    _ = roleManager.AddClaimAsync(primaryRole, new Claim("Students.SeeAll", ""));
+                    _ = roleManager.AddClaimAsync(primaryRole, new Claim("Observations.SeeAll", ""));
 
                     var supportingRole = new IdentityRole("SupportingActor");
                     roleManager.CreateAsync(supportingRole).Wait();
-                    _ = roleManager.AddClaimAsync(adminRole, new Claim("WebAppUser", ""));
+                    _ = roleManager.AddClaimAsync(supportingRole, new Claim("WebAppUser", ""));
                     // supporting only has what is necessary to view dash and observations, and update observations
                     #region Supporting Controller Roles
                     _ = roleManager.AddClaimAsync(supportingRole, new Claim("Dashboards.Read", ""));
