@@ -85,6 +85,16 @@ class APIProvider {
     });
   }
 
+  sendFile(resource: string, data: FormData, query: any = null) {
+    return http.post(resource, data, {
+      params: query
+    }).then(response => {
+      return response.data;
+    }, err => {
+      throw err;
+    });
+  }
+
   delete(resource: string, id: string) {
     return http.delete(resource + '/' + id)
     .then(response => {

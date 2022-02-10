@@ -9,6 +9,7 @@ using IMLibrary.Data;
 using IMLibrary.Models;
 using IMLibrary.Helpers;
 using Microsoft.AspNetCore.Authorization;
+using System.IO;
 
 namespace IMWebAPI.Controllers
 {
@@ -169,6 +170,27 @@ namespace IMWebAPI.Controllers
             await _context.SaveChangesAsync();
 
             return student;
+        }
+
+        // POST: api/Students
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
+        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [Authorize(Roles = "Administrator")]
+        [HttpPost]
+        [Route("CSVBulkUpload")]
+        public async Task<IActionResult> CSVBulkUpload(IFormFile file)
+        {
+            if (file.Length > 0)
+            {
+                var filePath = Path.GetTempFileName();
+
+                using (var stream = System.IO.File.Create(filePath))
+                {
+                    await file.CopyToAsync(stream);
+                }
+            }
+
+            return Ok(new { name = file.Name, size = file.Length});
         }
 
         private bool StudentExists(int id)

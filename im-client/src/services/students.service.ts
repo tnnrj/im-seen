@@ -4,7 +4,8 @@ import http from "@/services/base-api.service";
 export default {
   getMyStudentIds,
   getAllStudents,
-  getStudent
+  getStudent,
+  sendStudentsCSV
 }
 
 export function getMyStudentIds(): Promise<string[]> {
@@ -17,4 +18,8 @@ export function getAllStudents(): Promise<Student[]> {
 
 export function getStudent(id: string): Promise<Student> {
   return http.get('Students/' + id);
+}
+
+export async function sendStudentsCSV(file: FormData): Promise<any> {
+  return http.sendFile('Students/CSVBulkUpload', file);
 }
