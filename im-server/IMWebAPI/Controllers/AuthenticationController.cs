@@ -93,24 +93,15 @@ namespace IMWebAPI.Controllers
 
             var jwtGenerator = new JwtGenerator(_jwtSettings);
 
-            jwtGenerator.AddClaim(new Claim(ClaimTypes.Email, appUser.Email));
+            // we only store username in claim for authentication
+            // for security and to keep the jwt small, we fetch claims from the DB during authorization
             jwtGenerator.AddClaim(new Claim(ClaimTypes.Name, appUser.UserName));
-
-
-            // Add more claims as necessary (ROLES)
-            foreach (var role in await _userManager.GetRolesAsync(appUser))
-            {
-                jwtGenerator.AddClaim(new Claim(ClaimTypes.Role, role));
-            }
 
             var accessToken = jwtGenerator.GetAccessToken();
             var refreshToken = jwtGenerator.GetRefreshToken();
 
             appUser.RefreshToken = refreshToken;
-
-            var roles = await _userManager.GetRolesAsync(appUser);
-
-            if (roles.Contains("Observer"))
+            if (appUser.Role == ApplicationUser.Observer)
             {
                 appUser.RefreshTokenExpiryTime = DateTime.UtcNow.AddSeconds(_jwtSettings.ObserverRefreshLifeInSecs);
             }
@@ -163,7 +154,8 @@ namespace IMWebAPI.Controllers
             return Ok(new { Message = "Password changed successfully" });
         }
 
-        [HttpGet, Authorize(Roles = "Administrator, PrimaryActor, SupportingActor")]
+        [HttpGet]
+        [Authorize(Policy = "WebAppUser")]
         [Route("User")]
         public async Task<IActionResult> GetUserInfo()
         {
@@ -180,6 +172,14 @@ namespace IMWebAPI.Controllers
         public IActionResult Logout()
         {
             return Ok(new { Message = "Logout Successful" });
+        }
+
+        /// <summary>
+        /// Policies to access endpoints in this controller
+        /// </summary>
+        public static void AddPolicies(AuthorizationOptions options)
+        {
+            options.AddPolicy("WebAppUser", policy => policy.RequireClaim("WebAppUser"));
         }
     }
 }

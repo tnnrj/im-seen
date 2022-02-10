@@ -17,6 +17,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Http;
 using System.Text.Json;
+using IMWebAPI.Controllers;
+using System.Security.Claims;
 
 namespace IMWebAPI
 {
@@ -53,9 +55,10 @@ namespace IMWebAPI
             });
 
 
-            // configure settings for jwt bearer tokens
+            // authentication settings
             services.AddAuthentication(options =>
             {
+                // set schemes to jwt defaults
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -79,8 +82,41 @@ namespace IMWebAPI
                         RequireSignedTokens = true,
                         ClockSkew = TimeSpan.Zero // USED FOR TESTING
                     };
-
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnTokenValidated = async (ctx) =>
+                        {
+                            // add roles and role claims to principal, since we don't want to store them all in the jwt
+                            // note: a role MUST have at least one role claim to be added here
+                            var db = ctx.HttpContext.RequestServices.GetRequiredService<IM_API_Context>();
+                            string username = ctx.Principal.FindFirst(ClaimTypes.Name).Value;
+                            var result = await (from u in db.Users
+                                         where u.UserName == username
+                                         join ur in db.UserRoles on u.Id equals ur.UserId
+                                         join r in db.Roles on ur.RoleId equals r.Id
+                                         join rc in db.RoleClaims on r.Id equals rc.RoleId
+                                         select new { Role = r.Name, Claim = new Claim(rc.ClaimType, rc.ClaimValue) }).ToListAsync();
+                            var claims = result.Select(r => r.Claim).Append(new Claim(ClaimTypes.Role, result.FirstOrDefault()?.Role));
+                            ctx.Principal.AddIdentity(new ClaimsIdentity(claims));
+                        }
+                    };
                 });
+
+            services.AddAuthorization(options =>
+            {
+                // role/claim based access control
+                // each controller adds their own access policies
+                AuthenticationController.AddPolicies(options);
+                DashboardsController.AddPolicies(options);
+                DelegationsController.AddPolicies(options);
+                ObservationsController.AddPolicies(options);
+                ReportsController.AddPolicies(options);
+                StudentGroupsController.AddPolicies(options);
+                StudentsController.AddPolicies(options);
+                SupportersController.AddPolicies(options);
+                TokensController.AddPolicies(options);
+                UsersController.AddPolicies(options);
+            });
 
             // Register JwtSettings from appsettings.json to JwtSettings options pattern
             var jwtSettingsSection = Configuration.GetSection("JwtSettings");

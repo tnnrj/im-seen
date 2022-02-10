@@ -56,7 +56,7 @@ namespace IMWebAPI.Controllers
             var newRefreshToken = jwtGenerator.GetRefreshToken();
 
             user.RefreshToken = newRefreshToken;
-            if (user.Role == "Observer")
+            if (user.Role == ApplicationUser.Observer)
             {
                 user.RefreshTokenExpiryTime = DateTime.UtcNow.AddSeconds(_jwtSettings.ObserverRefreshLifeInSecs);
             }
@@ -74,8 +74,9 @@ namespace IMWebAPI.Controllers
 
 
 
-        [HttpPost, Authorize(Roles = "Administrator")]
+        [HttpPost]
         [Route("Revoke")]
+        [Authorize(Policy = "Tokens.Revoke")]
         public async Task<IActionResult> Revoke(string username)
         {
             var user = await userManager.FindByNameAsync(username);
@@ -85,6 +86,14 @@ namespace IMWebAPI.Controllers
             var result = await userManager.UpdateAsync(user);
 
             return Ok( new { Message = "Refresh Token Successfully Revoked" });
+        }
+
+        /// <summary>
+        /// Policies to access endpoints in this controller
+        /// </summary>
+        public static void AddPolicies(AuthorizationOptions options)
+        {
+            options.AddPolicy("Tokens.Revoke", policy => policy.RequireClaim("Tokens.Revoke"));
         }
     }
 }
