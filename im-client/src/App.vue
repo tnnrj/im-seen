@@ -111,4 +111,10 @@ body {
 .p-toast {
   z-index: 999999;
 }
+
+.icon-offset {
+  // bring in-line with text
+  top: 2px;
+  position: relative;
+}
 </style>
