@@ -45,7 +45,7 @@ export default defineComponent({
   setup() {
     const showUploadDialog = ref();
     const isUploading = ref(true);
-    let message = "";
+    let message = ref<string>();
 
     const sendFile = async (event) => {
       showUploadDialog.value = true;
@@ -54,12 +54,12 @@ export default defineComponent({
 
       StudentsService.sendStudentsCSV(formData)
         .then((respondData) => {         
-          message = "Uploaded successfully!";
+          message.value = "Uploaded successfully!";
         })
         .catch((err) => {
-          message = "Error occured. Failed!";
+          message.value = "Error occured. Failed!";
         });
-      isUploading.value = true;
+      isUploading.value = false;
     };
 
     return { sendFile, showUploadDialog, isUploading, message };

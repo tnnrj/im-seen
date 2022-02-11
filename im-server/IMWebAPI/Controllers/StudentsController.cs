@@ -195,16 +195,56 @@ namespace IMWebAPI.Controllers
             string[] lines = System.IO.File.ReadAllLines(filePath);
    
             List<Student> students = new List<Student>();
+
             // reads and adds to list
             for (int i = 1; i < lines.Length; i++)
             {
                 string[] columns = lines[i].Split(",");
                 Student s = new Student();
+
+                // checks empty fields
+                if (String.IsNullOrEmpty(columns[0]) || String.IsNullOrEmpty(columns[2]) || String.IsNullOrEmpty(columns[4]))
+                {
+                    return BadRequest("Incorrect format. First Name, Last Name, ExternalID cannot be empty.");
+                }
+
                 s.FirstName = columns[0];
                 s.MiddleName = columns[1];
                 s.LastName = columns[2];
-                s.DOB = DateTime.Parse(columns[3]);
-                s.ExternalID = int.Parse(columns[4]);
+
+                // checks date format
+                DateTime dob;
+                if (DateTime.TryParse(columns[3], out dob))
+                {
+                    s.DOB = dob;
+                }
+                else
+                {
+                    return BadRequest("Incorrect format. DateOfBirth not in correct format (mm/dd/yyyy).");
+                }
+
+                // checks number format
+                int extID;
+                if (int.TryParse(columns[4], out extID))
+                {
+                    s.ExternalID = extID;
+                }
+                else
+                {
+                    return BadRequest("Incorrect format. ExternalID must be a number.");
+                }
+
+                // checks boolean format
+                bool archived;
+                if (Boolean.TryParse(columns[5], out archived))
+                {
+                    s.IsArchived = archived;
+                }
+                else
+                {
+                    return BadRequest("Incorrect format. IsArchived accepts only 0 or 1.");
+                }
+
                 students.Add(s);
             }
 
