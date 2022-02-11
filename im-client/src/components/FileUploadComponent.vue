@@ -1,62 +1,70 @@
 <template>
-  <!-- <form class="form-upload" enctype="multipart/form-data" @submit.prevent="sendFile">
-        <Toast />
-        <h4>Student Preloading</h4>
-        <h5>Please upload a csv file of student information.</h5>
-        <input type="file" ref="file" @change="selectFile"/>
-        
-        <Button label="Upload" class="p-button-primary" @click="sendFile()"/>
-    </form> -->
   <div>
-    <Toast />
     <h4>Student Preloading</h4>
-    <h5>Please upload a csv file of student information.</h5>
+    <h5>Please upload a csv file (&#60; 50MB) of student information.</h5>
     <FileUpload
       name="file"
       :customUpload="true"
       @uploader="sendFile"
       :fileLimit="1"
       accept=".csv"
-      :maxFileSize="10000000"
+      :maxFileSize="50000000"
     >
       <template #empty>
         <p>Drag and drop files to here to upload.</p>
       </template>
     </FileUpload>
   </div>
+
+  <Dialog
+    class="uploading-dialog"
+    header="Uploading"
+    v-model:visible="showUploadDialog"
+    :modal="true"
+    :contentStyle="{ height: '40em', width: '40em' }"
+  >   
+    <template v-if="isUploading">
+      <Loader />
+      <p>Uploading...</p>
+    </template>
+    <template v-else>
+      {{ message }}
+    </template>
+  </Dialog>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import { useToast } from "primevue/usetoast";
+import { defineComponent, ref } from "vue";
 import FileUpload from "primevue/fileupload";
-import StudentsService from '@/services/students.service';
+import StudentsService from "@/services/students.service";
+import Loader from "@/components/Loader.vue";
 
 export default defineComponent({
   name: "FileUploadComponent",
-  components: { FileUpload },
-  data() {
-    return {
-      file: "",
-    };
-  },
+  components: { FileUpload, Loader },
   setup() {
-    const toast = useToast();
-    const sendFile = (event) => {
+    const showUploadDialog = ref();
+    const isUploading = ref(true);
+    let message = "";
+
+    const sendFile = async (event) => {
+      showUploadDialog.value = true;
       const formData = new FormData();
       formData.append("file", event.files[0]);
- 
-      StudentsService.sendStudentsCSV(formData).then((respondData) => {
-        toast.add({severity:'success', summary:'Success', detail:`File uploaded ${respondData.name} and ${respondData.size}`, life:3000});
-      }).catch((err) => {
-        toast.add({severity:'error', summary:'Error', detail:`${err.message}`, life:3000});
-      });
-    }
 
-    return { sendFile };
-  }
+      StudentsService.sendStudentsCSV(formData)
+        .then((respondData) => {         
+          message = "Uploaded successfully!";
+        })
+        .catch((err) => {
+          message = "Error occured. Failed!";
+        });
+      isUploading.value = true;
+    };
+
+    return { sendFile, showUploadDialog, isUploading, message };
+  },
 });
-
 </script>
 
 <style lang="scss">

@@ -180,15 +180,61 @@ namespace IMWebAPI.Controllers
         [Route("CSVBulkUpload")]
         public async Task<IActionResult> CSVBulkUpload(IFormFile file)
         {
+            // copy file to temp file
+            string filePath = null;
             if (file.Length > 0)
             {
-                var filePath = Path.GetTempFileName();
+                filePath = Path.GetTempFileName();
 
                 using (var stream = System.IO.File.Create(filePath))
                 {
                     await file.CopyToAsync(stream);
                 }
             }
+
+            string[] lines = System.IO.File.ReadAllLines(filePath);
+   
+            List<Student> students = new List<Student>();
+            // reads and adds to list
+            for (int i = 1; i < lines.Length; i++)
+            {
+                string[] columns = lines[i].Split(",");
+                Student s = new Student();
+                s.FirstName = columns[0];
+                s.MiddleName = columns[1];
+                s.LastName = columns[2];
+                s.DOB = DateTime.Parse(columns[3]);
+                s.ExternalID = int.Parse(columns[4]);
+                students.Add(s);
+            }
+
+            // adds and updates to db
+            foreach (Student s in students)
+            {
+                // checks if externalid exists in db
+                var stu = await _context.Students.FirstOrDefaultAsync(st => st.ExternalID == s.ExternalID);
+                if (stu is null)
+                {
+                    _context.Students.Add(s);
+                }
+                else
+                {
+                    // otherwise, update existing record
+                    s.StudentID = stu.StudentID;
+                    _context.Entry(stu).CurrentValues.SetValues(s);
+                }
+            }
+            
+            // archives missing records
+            foreach (Student s in _context.Students)
+            {
+                if (!students.Exists(el => el.ExternalID == s.ExternalID))
+                {
+                    _context.Students.Remove(s);
+                }
+            }
+
+            _context.SaveChanges();
 
             return Ok(new { name = file.Name, size = file.Length});
         }
