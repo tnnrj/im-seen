@@ -5,4 +5,5 @@ export type Student = {
   middleName: string;
   dob: Date;
   externalID: string;
+  isArchived: boolean;
 }

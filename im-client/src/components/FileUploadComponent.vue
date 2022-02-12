@@ -19,17 +19,17 @@
 
   <Dialog
     class="uploading-dialog"
-    header="Uploading"
+    header="Upload File"
     v-model:visible="showUploadDialog"
     :modal="true"
-    :contentStyle="{ height: '40em', width: '40em' }"
+    :contentStyle="{ height: '12em', width: '15em' }"
   >   
     <template v-if="isUploading">
-      <Loader />
+      <ProgressSpinner />
       <p>Uploading...</p>
     </template>
     <template v-else>
-      {{ message }}
+      <p>{{ message }}</p>     
     </template>
   </Dialog>
 </template>
@@ -38,12 +38,12 @@
 import { defineComponent, ref } from "vue";
 import FileUpload from "primevue/fileupload";
 import { useToast } from "primevue/usetoast";
+import ProgressSpinner from 'primevue/progressspinner';
 import StudentsService from "@/services/students.service";
-import Loader from "@/components/Loader.vue";
 
 export default defineComponent({
   name: "FileUploadComponent",
-  components: { FileUpload, Loader },
+  components: { FileUpload, ProgressSpinner },
   setup() {
     const toast = useToast();
 
@@ -52,19 +52,29 @@ export default defineComponent({
     let message = ref<string>();
 
     const sendFile = async (event) => {
+      isUploading.value = true;
       showUploadDialog.value = true;
       const formData = new FormData();
       formData.append("file", event.files[0]);
 
-      StudentsService.sendStudentsCSV(formData)
+      setTimeout(() => {
+        StudentsService.sendStudentsCSV(formData)
         .then((respondData) => {         
           message.value = "Uploaded successfully!";
+          setTimeout(() => {
+            message.value = "Refreshing...";
+            setTimeout(() => {
+              window.location.reload();
+            }, 2000);
+          }, 2000);
         })
         .catch((err) => {
           // TODO: cannot get error message from backend
           message.value = `Error occured. Failed! ${err.message}`;
+        }).finally(() => {
+          isUploading.value = false;
         });
-      isUploading.value = false;
+      }, 2000);    
     };
 
     const downloadCSVFile = async () => {
@@ -91,5 +101,8 @@ export default defineComponent({
 .p-fileupload {
   width: 50%;
   margin: auto;
+}
+.p-dialog-content {
+  text-align: center;
 }
 </style>
