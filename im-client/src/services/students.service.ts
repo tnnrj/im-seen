@@ -5,7 +5,8 @@ export default {
   getMyStudentIds,
   getAllStudents,
   getStudent,
-  sendStudentsCSV
+  sendStudentsCSV,
+  getFileCSV
 }
 
 export function getMyStudentIds(): Promise<string[]> {
@@ -22,4 +23,8 @@ export function getStudent(id: string): Promise<Student> {
 
 export async function sendStudentsCSV(file: FormData): Promise<any> {
   return http.sendFile('Students/CSVBulkUpload', file);
+}
+
+export async function getFileCSV(): Promise<any> {
+  return http.get('Students/CSVDownload', { responseType: 'blob' });
 }

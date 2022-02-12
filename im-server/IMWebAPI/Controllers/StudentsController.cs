@@ -10,6 +10,7 @@ using IMLibrary.Models;
 using IMLibrary.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using System.IO;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace IMWebAPI.Controllers
 {
@@ -242,7 +243,7 @@ namespace IMWebAPI.Controllers
                 }
                 else
                 {
-                    return BadRequest("Incorrect format. IsArchived accepts only 0 or 1.");
+                    return BadRequest("Incorrect format. IsArchived accepts TRUE or FALSE.");
                 }
 
                 students.Add(s);
@@ -277,6 +278,39 @@ namespace IMWebAPI.Controllers
             _context.SaveChanges();
 
             return Ok(new { name = file.Name, size = file.Length});
+        }
+
+        [Authorize(Roles = "Administrator")]
+        [HttpGet, DisableRequestSizeLimit]
+        [Route("CSVDownload")]
+        public async Task<IActionResult> CSVDownload()
+        {
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "Resources", "student_template.csv");
+
+            if (!System.IO.File.Exists(filePath))
+                return NotFound();
+
+            var memory = new MemoryStream();
+            await using (var stream = new FileStream(filePath, FileMode.Open))
+            {
+                await stream.CopyToAsync(memory);
+            }
+            memory.Position = 0;
+
+            return File(memory, GetContentType(filePath), filePath);
+        }
+
+        private string GetContentType(string path)
+        {
+            var provider = new FileExtensionContentTypeProvider();
+            string contentType;
+
+            if (!provider.TryGetContentType(path, out contentType))
+            {
+                contentType = "application/octet-stream";
+            }
+
+            return contentType;
         }
 
         private bool StudentExists(int id)
