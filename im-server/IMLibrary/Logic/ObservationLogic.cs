@@ -23,7 +23,7 @@ namespace IMLibrary.Logic
         double CalculateWeightedScore(Observation obs, IList<Observation> neighbors = null, IDictionary<string, string> cfg = null);
 
         /// <summary>
-        /// Determines if a change to an observation requires recalculating its score
+        /// Determines if a change to an observation requires recalculating its own score
         /// </summary>
         bool NeedsScoreRecalc(Observation oldObservation, Observation newObservation);
 
@@ -70,7 +70,7 @@ namespace IMLibrary.Logic
                 {
                     var start = obs.ObservationDate.AddDays(-relevantDaysWindow);
                     var end = obs.ObservationDate.AddDays(relevantDaysWindow);
-                    var neighbors = observations.Where(o => o.StudentID == obs.StudentID && o.ObservationDate >= start && o.ObservationDate <= end).ToList();
+                    var neighbors = observations.Where(o => o.StudentID == obs.StudentID && o.ObservationDate >= start && o.ObservationDate <= end && o.ObservationID != obs.ObservationID).ToList();
                     obs.WeightedScore = CalculateWeightedScore(obs, neighbors, cfg);
                     _context.SaveChanges();
                     success++;
@@ -103,9 +103,12 @@ namespace IMLibrary.Logic
             {
                 var start = obs.ObservationDate.AddDays(-relevantDaysWindow);
                 var end = obs.ObservationDate.AddDays(relevantDaysWindow);
-                neighbors = _context.Observations.Where(o => o.StudentID == obs.StudentID && o.ObservationDate >= start && o.ObservationDate <= end).ToList();
+                neighbors = _context.Observations.Where(o => o.StudentID == obs.StudentID && o.ObservationDate >= start && o.ObservationDate <= end && o.ObservationID != obs.ObservationID).ToList();
             }
-            // TODO: frequency modifier math
+            // moderate exponential decay on number of neighbors
+            var decayConstant = double.Parse(cfg["FrequencyDecayConstant"]);
+            score *= Math.Exp(-decayConstant * neighbors.Count());
+            
 
             // ------ STATUS MODIFIER ------
             var statusKey = obs.Status + "StatusModifier";
