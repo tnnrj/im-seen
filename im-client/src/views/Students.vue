@@ -4,24 +4,63 @@
   </div>
   <div class="students-content p-d-flex">
     <Toast />
-    <DataTable class="students-table" :value="students" dataKey="email" :scrollable="true" scrollHeight="flex">
-      <Column field="lastName" header="Last Name" :sortable="true" style="flex: 1 1 20%"></Column>
-      <Column field="firstName" header="First Name" :sortable="true" style="flex: 1 1 20%"></Column>
-      <Column field="externalID" header="External ID" :sortable="true" style="flex: 1 1 20%"></Column>
-      <Column field="dob" header="Date Of Birth" :sortable="true" style="flex: 1 1 25%"></Column>      
-      <Column field="middleName" header="Middle Name" :sortable="true" style="flex: 1 1 15%"></Column>
+    <DataTable
+      class="students-table"
+      :value="students"
+      dataKey="studentID"
+      :scrollable="true"
+      scrollHeight="flex"
+      :paginator="true"
+      :rows="20"
+    >
+      <Column
+        field="lastName"
+        header="Last Name"
+        :sortable="true"
+        style="flex: 1 1 20%"
+      ></Column>
+      <Column
+        field="firstName"
+        header="First Name"
+        :sortable="true"
+        style="flex: 1 1 20%"
+      ></Column>
+      <Column
+        field="externalID"
+        header="External ID"
+        :sortable="true"
+        style="flex: 1 1 20%"
+      ></Column>
+      <Column
+        field="dob"
+        header="Date Of Birth"
+        dataType="date"
+        :sortable="true"
+        style="flex: 1 1 25%"
+      >
+        <template #body="{ data }">
+          {{ formatDate(data.dob) }}
+        </template>
+      </Column>
+      <Column
+        field="middleName"
+        header="Middle Name"
+        :sortable="true"
+        style="flex: 1 1 15%"
+      ></Column>
       <Column style="flex: 1 1 5%">
         <template #body="slotProps">
-          <button class="p-row-toggler p-link" @click="openStudent(slotProps.data.studentID)">
+          <button
+            class="p-row-toggler p-link"
+            @click="openStudent(slotProps.data.studentID)"
+          >
             <span class="p-row-toggler-icon pi pi-pencil"></span>
           </button>
         </template>
       </Column>
       <template #empty>
-        <div style="height:100%; width:100%">
-          <template v-if="students">
-            No records to display
-          </template>
+        <div style="height: 100%; width: 100%">
+          <template v-if="students"> No records to display </template>
           <template v-else>
             <Loader />
           </template>
@@ -29,42 +68,74 @@
       </template>
     </DataTable>
   </div>
+  <Dialog
+    header="Student"
+    v-model:visible="showStudentDialog"
+    :modal="true"
+    :contentStyle="{ width: '45em', 'max-height': '80vh' }"
+  >
+    <StudentEditComponent :student="currentStudent" @exit="closeStudentDialog"/>
+  </Dialog>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, ref } from "vue";
 import { useToast } from "primevue/usetoast";
 import FileUploadComponent from "@/components/FileUploadComponent.vue";
+import StudentEditComponent from "@/components/StudentEdit.vue";
 import { Student } from "@/model/student.model";
 import StudentsService from "@/services/students.service";
 import * as _ from "lodash";
 
 export default defineComponent({
   name: "Students",
-  components: { FileUploadComponent },
+  components: { FileUploadComponent, StudentEditComponent },
   setup() {
     const toast = useToast();
 
     const students = ref();
 
+    // loads students list
     const loadStudents = async () => {
-      let data = await StudentsService.getAllStudents();
-      students.value = data.map(s => {
-        let obj = {
-          studentID: s.studentID,
-          firstName: s.firstName,
-          lastName: s.lastName,
-          middleName: s.middleName,
-          dob: new Date(s.dob).toLocaleDateString('en-US', {year: 'numeric', month: 'short', day: 'numeric'}),
-          externalID: s.externalID,
-          isArchived: s.isArchived,
-        };
-        return obj;
+      await StudentsService.getAllStudents().then((data) => {
+        students.value = data;
+        students.value.forEach((stu) => (stu.dob = new Date(stu.dob)));
       });
+
     };
     loadStudents();
 
-    return { students };
+    // handles student edit dialog
+    const currentStudent = ref<Student>();
+    const showStudentDialog = ref<boolean>(false);
+    const openStudent = (studentID) => {
+      currentStudent.value = _.find(
+        students.value,
+        (o) => o.studentID === studentID
+      );
+      showStudentDialog.value = true;
+    };
+
+    const formatDate = (value) => {
+      return value.toLocaleDateString("en-US", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      });
+    };
+
+    const closeStudentDialog = () => {
+      showStudentDialog.value = false;
+    };
+
+    return {
+      students,
+      currentStudent,
+      showStudentDialog,
+      openStudent,
+      formatDate,
+      closeStudentDialog
+    };
   },
 });
 </script>
@@ -84,6 +155,6 @@ export default defineComponent({
 
 .students-table {
   flex: 1;
-  margin-right: .5em;
+  margin-right: 0.5em;
 }
 </style>

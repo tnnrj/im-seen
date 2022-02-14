@@ -63,7 +63,7 @@ namespace IMWebAPI.Controllers
                 return await supporterQuery.ToListAsync();
             }
 
-            return await _context.Students.ToListAsync();
+            return await _context.Students.Where(s => s.IsArchived == false).ToListAsync();
         }
 
         // GET: api/Students/MyStudents
@@ -266,7 +266,7 @@ namespace IMWebAPI.Controllers
                 }
             }
             
-            // archives missing records
+            // deletes missing records
             foreach (Student s in _context.Students)
             {
                 if (!students.Exists(el => el.ExternalID == s.ExternalID))
