@@ -1,9 +1,9 @@
 export type Student = {
-  studentID: string;
+  studentID: number;
   firstName: string;
   lastName: string;
-  middleName: string;
+  middleName?: string;
   dob: Date;
-  externalID: string;
+  externalID?: number;
   isArchived: boolean;
 }

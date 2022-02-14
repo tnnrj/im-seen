@@ -1,7 +1,4 @@
 <template>
-  <div class="file-upload-section">
-    <file-upload-component />
-  </div>
   <div class="students-content p-d-flex">
     <Toast />
     <DataTable
@@ -11,8 +8,29 @@
       :scrollable="true"
       scrollHeight="flex"
       :paginator="true"
-      :rows="20"
+      :rows="25"
+      paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+      :rowsPerPageOptions="[10, 25, 50]"
+      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+      responsiveLayout="scroll"
     >
+      <template #header>
+        <div class="table-header">
+          <div>
+            <Button class="p-button-primary" label="New Student" icon="pi pi-user-plus" @click="openStudent(null)" />
+          </div>
+          <div>
+            <Button class="p-button-primary" label="Bulk Upload" icon="pi pi-upload" @click="openUpload()" />
+          </div>
+          <!-- <span class="p-input-icon-left">
+            <i class="pi pi-search" />
+            <InputText
+              
+              placeholder="Keyword Search"
+            />
+          </span> -->
+        </div>
+      </template>
       <Column
         field="lastName"
         header="Last Name"
@@ -74,7 +92,20 @@
     :modal="true"
     :contentStyle="{ width: '45em', 'max-height': '80vh' }"
   >
-    <StudentEditComponent :student="currentStudent" @exit="closeStudentDialog"/>
+    <StudentEditComponent
+      :student="currentStudent"
+      @exit="closeStudentDialog"
+      @refresh="loadStudents"
+    />
+  </Dialog>
+  <Dialog
+    header="Bulk Upload"
+    v-model:visible="showUploadDialog"
+    :modal="true"
+    :closeOnEscape="false"
+    :contentStyle="{ width: '45em', 'max-height': '80vh' }"
+  >
+    <file-upload-component />
   </Dialog>
 </template>
 
@@ -101,7 +132,6 @@ export default defineComponent({
         students.value = data;
         students.value.forEach((stu) => (stu.dob = new Date(stu.dob)));
       });
-
     };
     loadStudents();
 
@@ -128,24 +158,28 @@ export default defineComponent({
       showStudentDialog.value = false;
     };
 
+    // handles Bulk Upload dialog
+    const showUploadDialog = ref<boolean>(false);
+    const openUpload = () => {
+      showUploadDialog.value = true;
+    };
+
     return {
       students,
       currentStudent,
       showStudentDialog,
       openStudent,
       formatDate,
-      closeStudentDialog
+      closeStudentDialog,
+      loadStudents,
+      openUpload,
+      showUploadDialog
     };
   },
 });
 </script>
 
 <style lang="scss">
-.file-upload-section {
-  background: white;
-  margin: 1em;
-  padding: 1em;
-}
 
 .students-content {
   height: 100%;
@@ -156,5 +190,12 @@ export default defineComponent({
 .students-table {
   flex: 1;
   margin-right: 0.5em;
+}
+
+.table-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 </style>

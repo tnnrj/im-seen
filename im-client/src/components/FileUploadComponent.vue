@@ -1,6 +1,7 @@
 <template>
   <div>
     <Toast />
+    <ConfirmPopup></ConfirmPopup>
     <h4>Student Preloading</h4>
     <h5>Please use <a href="" @click.prevent="downloadCSVFile()">this template</a> for uploading. File size &#60; 50MB.</h5>
     <FileUpload
@@ -19,9 +20,11 @@
 
   <Dialog
     class="uploading-dialog"
-    header="Upload File"
+    header="Please wait..."
     v-model:visible="showUploadDialog"
+    :closeOnEscape="false"
     :modal="true"
+    :closable="!isUploading"
     :contentStyle="{ height: '12em', width: '15em' }"
   >   
     <template v-if="isUploading">
@@ -65,12 +68,11 @@ export default defineComponent({
             message.value = "Refreshing...";
             setTimeout(() => {
               window.location.reload();
-            }, 2000);
-          }, 2000);
+            }, 1000);
+          }, 1000);
         })
         .catch((err) => {
-          // TODO: cannot get error message from backend
-          message.value = `Error occured. Failed! ${err.message}`;
+          message.value = `${err.response.data}`;
         }).finally(() => {
           isUploading.value = false;
         });
@@ -99,7 +101,7 @@ export default defineComponent({
 
 <style lang="scss">
 .p-fileupload {
-  width: 50%;
+  width: 100%;
   margin: auto;
 }
 .p-dialog-content {

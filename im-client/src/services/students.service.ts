@@ -5,7 +5,9 @@ export default {
   getMyStudentIds,
   getAllStudents,
   getStudent,
+  newStudent,
   updateStudent,
+  deleteStudent,
   sendStudentsCSV,
   getFileCSV
 }
@@ -22,8 +24,16 @@ export function getStudent(id: string): Promise<Student> {
   return http.get('Students/' + id);
 }
 
+export function newStudent(student: Student): Promise<Student> {
+  return http.post('Students/', JSON.stringify(student));
+}
+
 export function updateStudent(id: string, student: Student): Promise<Student> {
   return http.put('Students/' + id, JSON.stringify(student));
+}
+
+export function deleteStudent(id: string): Promise<Student> {
+  return http.delete('Students', id);
 }
 
 export async function sendStudentsCSV(file: FormData): Promise<any> {
