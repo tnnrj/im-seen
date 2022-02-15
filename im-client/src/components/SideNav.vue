@@ -22,6 +22,7 @@ import { computed, defineComponent, ref } from "vue";
 import { useStore } from "@/store/index";
 import router from "@/router";
 import { UserRole } from "@/model/enums.model";
+import { PrimeIcons } from "primevue/api";
 
 interface NavItem {
   title: string;
@@ -40,25 +41,25 @@ export default defineComponent({
       return [{
         title: 'Dashboard',
         link: '/',
-        iconStyle: 'pi-chart-bar',
+        iconStyle: PrimeIcons.CHART_BAR,
         show: true
       },
       {
         title: 'Observations',
         link: '/observations',
-        iconStyle: 'pi-list',
+        iconStyle: PrimeIcons.LIST,
         show: true
       },
       {
         title: 'Users',
         link: '/users',
-        iconStyle: 'pi-users',
+        iconStyle: PrimeIcons.USER,
         show: isAdmin
       },
       {
         title: 'Groups',
         link: '/groups',
-        iconStyle: 'pi-th-large',
+        iconStyle: PrimeIcons.TH_LARGE,
         show: isAdmin
       },
       {

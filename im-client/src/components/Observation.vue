@@ -2,7 +2,8 @@
   <div class="observation-content">
     <template v-if="obs && !saving">
       <div class="p-d-flex observation-panel">
-        <Panel header="Student" class="p-mb-1" style="width:100%"><template #icons>
+        <Panel header="Student" class="p-mb-1" style="width:80%">
+          <template #icons>
             <button v-if="editingStudent" class="p-panel-header-icon p-link" @click="save" v-tooltip="'Save'"><i class="pi pi-check" /></button>
             <button v-else class="p-panel-header-icon p-link" @click="editingStudent = true"><i class="pi pi-pencil" /></button>
           </template>
@@ -13,8 +14,14 @@
             <span>{{(obs.studentFirstName + ' ' + obs.studentLastName).trim()}}</span>
           </template>
           <span v-if="!obs.studentID" class="unidentified-notice">
-            (unidentified <i class="pi pi-question-circle" v-tooltip="'Name on observation cannot be matched to a student, please assign to a known student'"/>)
+            (unidentified <i class="pi pi-question-circle icon-offset question-icon" v-tooltip="'Name on observation cannot be matched to a student, please assign to a known student'"/>)
           </span>
+        </Panel>
+        <Panel header="Score" class="p-mb-1 p-pl-1" style="width:20%">
+          <template #icons>
+            <i class="pi pi-question-circle icon-offset question-icon" v-tooltip="'Weighted score takes into account severity, recency, similar nearby observations, and current status to approximate an appropriate level of concern'"/>
+          </template>
+          <span>{{obs.weightedScore}}</span>
         </Panel>
         <Panel header="Description" class="p-mb-1" style="width:100%" :toggleable="true">
           <span>{{obs.description}}</span>
@@ -173,7 +180,9 @@ export default defineComponent({
   float: right;
   i {
     font-size: 10pt;
-    color: var(--blue-500);
   }
+}
+.pi-question-circle {
+  color: var(--blue-500);
 }
 </style>

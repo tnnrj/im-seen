@@ -12,9 +12,25 @@ namespace IMLibrary.Logic
 {
     public interface IObservationLogic
     {
+        /// <summary>
+        /// Recalculates scores for all recent observations
+        /// </summary>
         void RecalcAllScores(out int success, out int fail);
+
+        /// <summary>
+        /// Calculates the weighted score for an observation
+        /// </summary>
         double CalculateWeightedScore(Observation obs, IList<Observation> neighbors = null, IDictionary<string, string> cfg = null);
+
+        /// <summary>
+        /// Determines if a change to an observation requires recalculating its own score
+        /// </summary>
         bool NeedsScoreRecalc(Observation oldObservation, Observation newObservation);
+
+        /// <summary>
+        /// Returns a student matching an incoming observation, or null if no match is found
+        /// </summary>
+        Student MatchingStudent(Observation obs);
     }
 
     public class ObservationLogic : IObservationLogic
@@ -54,7 +70,7 @@ namespace IMLibrary.Logic
                 {
                     var start = obs.ObservationDate.AddDays(-relevantDaysWindow);
                     var end = obs.ObservationDate.AddDays(relevantDaysWindow);
-                    var neighbors = observations.Where(o => o.StudentID == obs.StudentID && o.ObservationDate >= start && o.ObservationDate <= end).ToList();
+                    var neighbors = observations.Where(o => o.StudentID == obs.StudentID && o.ObservationDate >= start && o.ObservationDate <= end && o.ObservationID != obs.ObservationID).ToList();
                     obs.WeightedScore = CalculateWeightedScore(obs, neighbors, cfg);
                     _context.SaveChanges();
                     success++;
@@ -87,9 +103,12 @@ namespace IMLibrary.Logic
             {
                 var start = obs.ObservationDate.AddDays(-relevantDaysWindow);
                 var end = obs.ObservationDate.AddDays(relevantDaysWindow);
-                neighbors = _context.Observations.Where(o => o.StudentID == obs.StudentID && o.ObservationDate >= start && o.ObservationDate <= end).ToList();
+                neighbors = _context.Observations.Where(o => o.StudentID == obs.StudentID && o.ObservationDate >= start && o.ObservationDate <= end && o.ObservationID != obs.ObservationID).ToList();
             }
-            // TODO: frequency modifier math
+            // moderate exponential decay on number of neighbors
+            var decayConstant = double.Parse(cfg["FrequencyDecayConstant"]);
+            score *= Math.Exp(-decayConstant * neighbors.Count());
+            
 
             // ------ STATUS MODIFIER ------
             var statusKey = obs.Status + "StatusModifier";
@@ -119,6 +138,14 @@ namespace IMLibrary.Logic
             }
 
             return false;
+        }
+
+        public Student MatchingStudent(Observation obs)
+        {
+            // current logic is exact match by name
+            return _context.Students
+                .Where(s => (s.FirstName == obs.StudentFirstName) && (s.LastName == obs.StudentLastName))
+                .FirstOrDefault();
         }
     }
 }

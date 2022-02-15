@@ -29,6 +29,11 @@ namespace IMLibrary.Data
                 },
                 new RuntimeConfigItem
                 {
+                    Key = "FrequencyDecayConstant",
+                    Value = ".5"
+                },
+                new RuntimeConfigItem
+                {
                     Key = "AssignedStatusModifier",
                     Value = "-1"
                 },
@@ -36,7 +41,7 @@ namespace IMLibrary.Data
                 {
                     Key = "ResolvedStatusModifier",
                     Value = "ZERO"
-                }
+                },
             };
 
             context.RuntimeConfigItems.AddRange(configs);

@@ -13,17 +13,19 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace IMWebAPI.Controllers
 {
-    [Authorize(Roles = "Administrator, PrimaryActor, SupportingActor")]
+    [Authorize(Policy = "WebAppUser")]
     [Route("api/[controller]")]
     [ApiController]
     public class ReportsController : ControllerBase
     {
         private readonly IM_API_Context _context;
         private readonly IQueryRunner _queryRunner;
-        private readonly string _supportingReportJoin = @"
+
+        private static readonly string s_supportingReportJoin = @"
 JOIN Delegations ON Delegations.StudentID = Observations.StudentID
+JOIN StudentGroups ON StudentGroups.StudentGroupID = Delegations.StudentGroupID
 JOIN Supporters ON Supporters.StudentGroupID = Delegations.StudentGroupID
-WHERE Supporters.UserName = '{UserName}'";
+WHERE Supporters.UserName = '{UserName}' OR StudentGroups.PrimaryUserName = '{UserName}'";
 
         public ReportsController(IM_API_Context context, IQueryRunner queryRunner)
         {
@@ -33,6 +35,7 @@ WHERE Supporters.UserName = '{UserName}'";
 
         // GET: api/Reports
         [HttpGet]
+        [Authorize(Policy = "Reports.Read")]
         public async Task<ActionResult<IEnumerable<Report>>> GetReport()
         {
             return await _context.Reports.ToListAsync();
@@ -40,6 +43,7 @@ WHERE Supporters.UserName = '{UserName}'";
 
         // GET: api/Reports/5
         [HttpGet("{id}")]
+        [Authorize(Policy = "Reports.Read")]
         public async Task<ActionResult<Report>> GetReport(int id)
         {
             var report = await _context.Reports.FindAsync(id);
@@ -54,6 +58,7 @@ WHERE Supporters.UserName = '{UserName}'";
 
         [HttpGet]
         [Route("GetDataForReport")]
+        [Authorize(Policy = "Reports.Read")]
         public async Task<ActionResult<string>> GetDataForReport(int id)
         {
             var report = await _context.Reports.FindAsync(id);
@@ -64,9 +69,9 @@ WHERE Supporters.UserName = '{UserName}'";
             }
 
             var sql = report.Query;
-            if (User.IsInRole("SupportingActor"))
+            if (!User.HasClaim("Students.SeeAll", ""))
             {
-                sql = sql.Replace("{joinAndWhere}", _supportingReportJoin).Replace("{UserName}", User.Identity.Name);
+                sql = sql.Replace("{joinAndWhere}", s_supportingReportJoin).Replace("{UserName}", User.Identity.Name);
             }
             else
             {
@@ -83,42 +88,9 @@ WHERE Supporters.UserName = '{UserName}'";
             return Content(response.ToString(), "application/json");
         }
 
-        // PUT: api/Reports/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutReport(int id, Report report)
-        {
-            if (id != report.ReportID)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(report).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ReportExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
         // POST: api/Reports
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
+        [Authorize(Policy = "Reports.Create")]
         public async Task<ActionResult<Report>> PostReport(Report report)
         {
             _context.Reports.Add(report);
@@ -129,6 +101,7 @@ WHERE Supporters.UserName = '{UserName}'";
 
         // DELETE: api/Reports/5
         [HttpDelete("{id}")]
+        [Authorize(Policy = "Reports.Delete")]
         public async Task<ActionResult<Report>> DeleteReport(int id)
         {
             var report = await _context.Reports.FindAsync(id);
@@ -143,9 +116,16 @@ WHERE Supporters.UserName = '{UserName}'";
             return report;
         }
 
-        private bool ReportExists(int id)
+        /// <summary>
+        /// Policies to access endpoints in this controller
+        /// </summary>
+        public static void AddPolicies(AuthorizationOptions options)
         {
-            return _context.Reports.Any(e => e.ReportID == id);
+            options.AddPolicy("Reports.Create", policy => policy.RequireClaim("Reports.Create"));
+            options.AddPolicy("Reports.Read", policy => policy.RequireClaim("Reports.Read"));
+            options.AddPolicy("Reports.Update", policy => policy.RequireClaim("Reports.Update"));
+            options.AddPolicy("Reports.Delete", policy => policy.RequireClaim("Reports.Delete"));
+            options.AddPolicy("Reports.Archive", policy => policy.RequireClaim("Reports.Archive"));
         }
     }
 }

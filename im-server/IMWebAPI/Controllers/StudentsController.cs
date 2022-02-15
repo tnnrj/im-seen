@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.StaticFiles;
 
 namespace IMWebAPI.Controllers
 {
-    [Authorize(Roles = "Administrator, PrimaryActor, SupportingActor")]
+    [Authorize(Policy = "WebAppUser")]
     [Route("api/[controller]")]
     [ApiController]
     public class StudentsController : ControllerBase
@@ -56,6 +56,7 @@ namespace IMWebAPI.Controllers
 
         // GET: api/Students
         [HttpGet]
+        [Authorize(Policy = "Students.Read")]
         public async Task<ActionResult<IEnumerable<Student>>> GetStudent()
         {
             if (User.IsInRole("SupportingActor"))
@@ -69,85 +70,30 @@ namespace IMWebAPI.Controllers
         // GET: api/Students/MyStudents
         [HttpGet]
         [Route("MyStudents")]
+        [Authorize(Policy = "Students.Read")]
         public async Task<ActionResult<IEnumerable<int>>> GetMyStudents()
         {
-            if (User.IsInRole("SupportingActor"))
-            {
-                return await supporterQuery.Select(s => s.StudentID).ToListAsync();
-            }
-            else if (User.IsInRole("PrimaryActor"))
-            {
-                return await primaryQuery.Select(s => s.StudentID).ToListAsync();
-            }
-            else if (User.IsInRole("Administrator"))
-            {
-                return await _context.Students.Select(s => s.StudentID).ToListAsync();
-            }
-
-            return BadRequest();
+            return await StudentsForUser(true).Select(s => s.StudentID).ToListAsync();
         }
 
         // GET: api/Students/5
         [HttpGet("{id}")]
+        [Authorize(Policy = "Students.Read")]
         public async Task<ActionResult<Student>> GetStudent(int id)
         {
-            var student = await _context.Students.FindAsync(id);
+            var student = await StudentsForUser().FirstOrDefaultAsync(s => s.StudentID == id);
 
             if (student == null)
             {
                 return NotFound();
             }
 
-            if (User.IsInRole("SupportingActor"))
-            {
-                var myStudents = await supporterQuery.ToListAsync();
-                if (!myStudents.Contains(student))
-                {
-                    return NotFound();
-                }
-            }
-
             return student;
         }
 
-        // PUT: api/Students/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [Authorize(Roles = "Administrator")]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutStudent(int id, Student student)
-        {
-            if (id != student.StudentID)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(student).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!StudentExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
         // POST: api/Students
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [Authorize(Roles = "Administrator")]
         [HttpPost]
+        [Authorize(Policy = "Students.Create")]
         public async Task<ActionResult<Student>> PostStudent(Student student)
         {
             _context.Students.Add(student);
@@ -157,8 +103,8 @@ namespace IMWebAPI.Controllers
         }
 
         // DELETE: api/Students/5
-        [Authorize(Roles = "Administrator")]
         [HttpDelete("{id}")]
+        [Authorize(Policy = "Students.Delete")]
         public async Task<ActionResult<Student>> DeleteStudent(int id)
         {
             var student = await _context.Students.FindAsync(id);
@@ -173,9 +119,6 @@ namespace IMWebAPI.Controllers
             return student;
         }
 
-        // POST: api/Students
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [Authorize(Roles = "Administrator")]
         [HttpPost]
         [Route("CSVBulkUpload")]
@@ -313,9 +256,42 @@ namespace IMWebAPI.Controllers
             return contentType;
         }
 
-        private bool StudentExists(int id)
+        private IQueryable<Student> StudentsForUser(bool forceFilter = false)
         {
-            return _context.Students.Any(e => e.StudentID == id);
+            // claim allows a user to see all students
+            // for now, admins never have students assigned
+            if (User.IsInRole("Administrator") || (User.HasClaim("Students.SeeAll", "") && !forceFilter))
+            {
+                return from student in _context.Students
+                       select student;
+            }
+
+            return from student in _context.Students
+
+                join delegation in _context.Delegations
+                on student.StudentID equals delegation.Student.StudentID
+
+                join g in _context.StudentGroups
+                on delegation.StudentGroup.StudentGroupID equals g.StudentGroupID
+
+                from supporter in _context.Supporters
+                where g.StudentGroupID == supporter.StudentGroup.StudentGroupID
+
+                where supporter.UserName == User.Identity.Name || g.PrimaryUserName == User.Identity.Name
+                select student;
+        }
+
+        /// <summary>
+        /// Policies to access endpoints in this controller
+        /// </summary>
+        public static void AddPolicies(AuthorizationOptions options)
+        {
+            options.AddPolicy("Students.Create", policy => policy.RequireClaim("Students.Create"));
+            options.AddPolicy("Students.Read", policy => policy.RequireClaim("Students.Read"));
+            options.AddPolicy("Students.Update", policy => policy.RequireClaim("Students.Update"));
+            options.AddPolicy("Students.Delete", policy => policy.RequireClaim("Students.Delete"));
+            options.AddPolicy("Students.Archive", policy => policy.RequireClaim("Students.Archive"));
+            options.AddPolicy("Students.SeeAll", policy => policy.RequireClaim("Students.SeeAll"));
         }
     }
 }

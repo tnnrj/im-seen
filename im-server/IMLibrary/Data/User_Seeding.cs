@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace IMLibrary.Data
@@ -18,10 +19,96 @@ namespace IMLibrary.Data
             {
                 if (roleManager.Roles.Count() == 0)
                 {
-                    roleManager.CreateAsync(new IdentityRole("Administrator")).Wait();
-                    roleManager.CreateAsync(new IdentityRole("PrimaryActor")).Wait();
-                    roleManager.CreateAsync(new IdentityRole("SupportingActor")).Wait();
-                    roleManager.CreateAsync(new IdentityRole("Observer")).Wait();
+                    var adminRole = new IdentityRole("Administrator");
+                    roleManager.CreateAsync(adminRole).Wait();
+                    _ = roleManager.AddClaimAsync(adminRole, new Claim("WebAppUser", ""));
+                    // by default admin has all actions on all controllers
+                    #region Admin Controller Roles
+                    _ = roleManager.AddClaimAsync(adminRole, new Claim("Dashboards.Create", ""));
+                    _ = roleManager.AddClaimAsync(adminRole, new Claim("Dashboards.Read", ""));
+                    _ = roleManager.AddClaimAsync(adminRole, new Claim("Dashboards.Update", ""));
+                    _ = roleManager.AddClaimAsync(adminRole, new Claim("Dashboards.Delete", ""));
+                    _ = roleManager.AddClaimAsync(adminRole, new Claim("Dashboards.Archive", ""));
+                    _ = roleManager.AddClaimAsync(adminRole, new Claim("Delegations.Create", ""));
+                    _ = roleManager.AddClaimAsync(adminRole, new Claim("Delegations.Read", ""));
+                    _ = roleManager.AddClaimAsync(adminRole, new Claim("Delegations.Update", ""));
+                    _ = roleManager.AddClaimAsync(adminRole, new Claim("Delegations.Delete", ""));
+                    _ = roleManager.AddClaimAsync(adminRole, new Claim("Delegations.Archive", ""));
+                    _ = roleManager.AddClaimAsync(adminRole, new Claim("Observations.Create", ""));
+                    _ = roleManager.AddClaimAsync(adminRole, new Claim("Observations.Read", ""));
+                    _ = roleManager.AddClaimAsync(adminRole, new Claim("Observations.Update", ""));
+                    _ = roleManager.AddClaimAsync(adminRole, new Claim("Observations.Delete", ""));
+                    _ = roleManager.AddClaimAsync(adminRole, new Claim("Observations.Archive", ""));
+                    _ = roleManager.AddClaimAsync(adminRole, new Claim("Reports.Create", ""));
+                    _ = roleManager.AddClaimAsync(adminRole, new Claim("Reports.Read", ""));
+                    _ = roleManager.AddClaimAsync(adminRole, new Claim("Reports.Update", ""));
+                    _ = roleManager.AddClaimAsync(adminRole, new Claim("Reports.Delete", ""));
+                    _ = roleManager.AddClaimAsync(adminRole, new Claim("Reports.Archive", ""));
+                    _ = roleManager.AddClaimAsync(adminRole, new Claim("StudentGroups.Create", ""));
+                    _ = roleManager.AddClaimAsync(adminRole, new Claim("StudentGroups.Read", ""));
+                    _ = roleManager.AddClaimAsync(adminRole, new Claim("StudentGroups.Update", ""));
+                    _ = roleManager.AddClaimAsync(adminRole, new Claim("StudentGroups.Delete", ""));
+                    _ = roleManager.AddClaimAsync(adminRole, new Claim("StudentGroups.Archive", ""));
+                    _ = roleManager.AddClaimAsync(adminRole, new Claim("Students.Create", ""));
+                    _ = roleManager.AddClaimAsync(adminRole, new Claim("Students.Read", ""));
+                    _ = roleManager.AddClaimAsync(adminRole, new Claim("Students.Update", ""));
+                    _ = roleManager.AddClaimAsync(adminRole, new Claim("Students.Delete", ""));
+                    _ = roleManager.AddClaimAsync(adminRole, new Claim("Students.Archive", ""));
+                    _ = roleManager.AddClaimAsync(adminRole, new Claim("Supporters.Create", ""));
+                    _ = roleManager.AddClaimAsync(adminRole, new Claim("Supporters.Read", ""));
+                    _ = roleManager.AddClaimAsync(adminRole, new Claim("Supporters.Update", ""));
+                    _ = roleManager.AddClaimAsync(adminRole, new Claim("Supporters.Delete", ""));
+                    _ = roleManager.AddClaimAsync(adminRole, new Claim("Supporters.Archive", ""));
+                    _ = roleManager.AddClaimAsync(adminRole, new Claim("Users.Create", ""));
+                    _ = roleManager.AddClaimAsync(adminRole, new Claim("Users.Read", ""));
+                    _ = roleManager.AddClaimAsync(adminRole, new Claim("Users.Update", ""));
+                    _ = roleManager.AddClaimAsync(adminRole, new Claim("Users.Delete", ""));
+                    _ = roleManager.AddClaimAsync(adminRole, new Claim("Users.Archive", ""));
+                    #endregion
+                    _ = roleManager.AddClaimAsync(adminRole, new Claim("Students.SeeAll", ""));
+                    _ = roleManager.AddClaimAsync(adminRole, new Claim("Observations.SeeAll", ""));
+                    _ = roleManager.AddClaimAsync(adminRole, new Claim("Tokens.Revoke", ""));
+
+
+                    var primaryRole = new IdentityRole("PrimaryActor");
+                    roleManager.CreateAsync(primaryRole).Wait();
+                    _ = roleManager.AddClaimAsync(primaryRole, new Claim("WebAppUser", ""));
+                    // by default, primary gets read on all controllers and CRUA on observations
+                    #region Primary Controller Roles
+                    _ = roleManager.AddClaimAsync(primaryRole, new Claim("Dashboards.Read", ""));
+                    _ = roleManager.AddClaimAsync(primaryRole, new Claim("Dashboards.Update", ""));
+                    _ = roleManager.AddClaimAsync(primaryRole, new Claim("Delegations.Read", ""));
+                    _ = roleManager.AddClaimAsync(primaryRole, new Claim("Observations.Create", ""));
+                    _ = roleManager.AddClaimAsync(primaryRole, new Claim("Observations.Read", ""));
+                    _ = roleManager.AddClaimAsync(primaryRole, new Claim("Observations.Update", ""));
+                    _ = roleManager.AddClaimAsync(primaryRole, new Claim("Observations.Archive", ""));
+                    _ = roleManager.AddClaimAsync(primaryRole, new Claim("Reports.Read", ""));
+                    _ = roleManager.AddClaimAsync(primaryRole, new Claim("StudentGroups.Read", ""));
+                    _ = roleManager.AddClaimAsync(primaryRole, new Claim("Students.Read", ""));
+                    _ = roleManager.AddClaimAsync(primaryRole, new Claim("Supporters.Read", ""));
+                    _ = roleManager.AddClaimAsync(primaryRole, new Claim("Users.Read", ""));
+                    #endregion
+                    _ = roleManager.AddClaimAsync(primaryRole, new Claim("Students.SeeAll", ""));
+                    _ = roleManager.AddClaimAsync(primaryRole, new Claim("Observations.SeeAll", ""));
+
+                    var supportingRole = new IdentityRole("SupportingActor");
+                    roleManager.CreateAsync(supportingRole).Wait();
+                    _ = roleManager.AddClaimAsync(supportingRole, new Claim("WebAppUser", ""));
+                    // supporting only has what is necessary to view dash and observations, and update observations
+                    #region Supporting Controller Roles
+                    _ = roleManager.AddClaimAsync(supportingRole, new Claim("Dashboards.Read", ""));
+                    _ = roleManager.AddClaimAsync(supportingRole, new Claim("Dashboards.Update", ""));
+                    _ = roleManager.AddClaimAsync(supportingRole, new Claim("Observations.Create", ""));
+                    _ = roleManager.AddClaimAsync(supportingRole, new Claim("Observations.Read", ""));
+                    _ = roleManager.AddClaimAsync(supportingRole, new Claim("Observations.Update", ""));
+                    _ = roleManager.AddClaimAsync(supportingRole, new Claim("Reports.Read", ""));
+                    _ = roleManager.AddClaimAsync(supportingRole, new Claim("Students.Read", ""));
+                    #endregion
+
+                    var observerRole = new IdentityRole("Observer");
+                    roleManager.CreateAsync(observerRole).Wait();
+                    // observer can only do one thing
+                    _ = roleManager.AddClaimAsync(observerRole, new Claim("Observations.Create", ""));
                 }
 
             }

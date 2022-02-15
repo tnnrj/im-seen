@@ -11,6 +11,7 @@ export class Observation  {
   action: string;
   event: string;
   status: ObservationStatus;
+  weightedScore: number;
 
   studentFullName(): string {
     return (this.studentFirstName + ' ' + this.studentLastName).trim();
