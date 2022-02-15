@@ -61,6 +61,12 @@ export default defineComponent({
         link: '/groups',
         iconStyle: PrimeIcons.TH_LARGE,
         show: isAdmin
+      },
+      {
+        title: 'Students',
+        link: '/students',
+        iconStyle: 'pi-search-plus',
+        show: isAdmin
       }];
     });
 

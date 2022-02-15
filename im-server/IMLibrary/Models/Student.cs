@@ -13,6 +13,7 @@ namespace IMLibrary.Models
         public string MiddleName { get; set; }
         public DateTime DOB { get; set; }
         public int ExternalID { get; set; }
+        public bool IsArchived { get; set; }
 
     }
 }
