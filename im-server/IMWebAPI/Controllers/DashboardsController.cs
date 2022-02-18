@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace IMWebAPI.Controllers
 {
-    [Authorize(Roles = "Administrator, PrimaryActor, SupportingActor")]
+    [Authorize(Policy = "WebAppUser")]
     [Route("api/[controller]")]
     [ApiController]
     public class DashboardsController : ControllerBase
@@ -24,29 +24,9 @@ namespace IMWebAPI.Controllers
             _context = context;
         }
 
-        // GET: api/Dashboards
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Dashboard>>> GetDashboard()
-        {
-            return await _context.Dashboards.ToListAsync();
-        }
-
-        // GET: api/Dashboards/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Dashboard>> GetDashboard(int id)
-        {
-            var dashboard = await _context.Dashboards.FindAsync(id);
-
-            if (dashboard == null)
-            {
-                return NotFound();
-            }
-
-            return dashboard;
-        }
-
         // GET: api/GetMyDashboard
         [HttpGet]
+        [Authorize(Policy = "Dashboards.Read")]
         [Route("GetMyDashboard")]
         public ActionResult<Dashboard> GetMyDashboard()
         {
@@ -61,7 +41,9 @@ namespace IMWebAPI.Controllers
             return dashboard;
         }
 
+        // POST: api/UpdateMyDashboard
         [HttpPost]
+        [Authorize(Policy = "Dashboards.Update")]
         [Route("UpdateMyDashboard")]
         public async Task<IActionResult> UpdateMyDashboard([FromBody] string dashboardText)
         {
@@ -85,52 +67,9 @@ namespace IMWebAPI.Controllers
             return Ok();
         }
 
-        // PUT: api/Dashboards/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutDashboard(int id, Dashboard dashboard)
-        {
-            if (id != dashboard.DashboardID)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(dashboard).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!DashboardExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/Dashboards
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPost]
-        public async Task<ActionResult<Dashboard>> PostDashboard(Dashboard dashboard)
-        {
-            _context.Dashboards.Add(dashboard);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetDashboard", new { id = dashboard.DashboardID }, dashboard);
-        }
-
         // DELETE: api/Dashboards/5
         [HttpDelete("{id}")]
+        [Authorize(Policy = "Dashboards.Delete")]
         public async Task<ActionResult<Dashboard>> DeleteDashboard(int id)
         {
             var dashboard = await _context.Dashboards.FindAsync(id);
@@ -145,9 +84,16 @@ namespace IMWebAPI.Controllers
             return dashboard;
         }
 
-        private bool DashboardExists(int id)
+        /// <summary>
+        /// Policies to access endpoints in this controller
+        /// </summary>
+        public static void AddPolicies(AuthorizationOptions options)
         {
-            return _context.Dashboards.Any(e => e.DashboardID == id);
+            options.AddPolicy("Dashboards.Create", policy => policy.RequireClaim("Dashboards.Create"));
+            options.AddPolicy("Dashboards.Read", policy => policy.RequireClaim("Dashboards.Read"));
+            options.AddPolicy("Dashboards.Update", policy => policy.RequireClaim("Dashboards.Update"));
+            options.AddPolicy("Dashboards.Delete", policy => policy.RequireClaim("Dashboards.Delete"));
+            options.AddPolicy("Dashboards.Archive", policy => policy.RequireClaim("Dashboards.Archive"));
         }
     }
 }

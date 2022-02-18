@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace IMWebAPI.Controllers
 {
-    [Authorize(Roles = "Administrator, PrimaryActor")]
+    [Authorize(Policy = "WebAppUser")]
     [Route("api/[controller]")]
     [ApiController]
     public class SupportersController : ControllerBase
@@ -26,6 +26,7 @@ namespace IMWebAPI.Controllers
 
         // GET: api/Supporters
         [HttpGet]
+        [Authorize(Policy = "Supporters.Read")]
         public async Task<ActionResult<IEnumerable<Supporter>>> GetSupporter()
         {
             return await _context.Supporters.ToListAsync();
@@ -33,6 +34,7 @@ namespace IMWebAPI.Controllers
 
         // GET: api/Supporters/5
         [HttpGet("{id}")]
+        [Authorize(Policy = "Supporters.Read")]
         public async Task<ActionResult<Supporter>> GetSupporter(int id)
         {
             var supporter = await _context.Supporters.FindAsync(id);
@@ -45,42 +47,9 @@ namespace IMWebAPI.Controllers
             return supporter;
         }
 
-        // PUT: api/Supporters/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutSupporter(int id, Supporter supporter)
-        {
-            if (id != supporter.SupporterID)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(supporter).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!SupporterExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
         // POST: api/Supporters
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
+        [Authorize(Policy = "Supporters.Create")]
         public async Task<ActionResult<Supporter>> PostSupporter(Supporter supporter)
         {
             _context.Supporters.Add(supporter);
@@ -91,6 +60,7 @@ namespace IMWebAPI.Controllers
 
         // DELETE: api/Supporters/5
         [HttpDelete("{id}")]
+        [Authorize(Policy = "Supporters.Delete")]
         public async Task<ActionResult<Supporter>> DeleteSupporter(int id)
         {
             var supporter = await _context.Supporters.FindAsync(id);
@@ -105,9 +75,16 @@ namespace IMWebAPI.Controllers
             return supporter;
         }
 
-        private bool SupporterExists(int id)
+        /// <summary>
+        /// Policies to access endpoints in this controller
+        /// </summary>
+        public static void AddPolicies(AuthorizationOptions options)
         {
-            return _context.Supporters.Any(e => e.SupporterID == id);
+            options.AddPolicy("Supporters.Create", policy => policy.RequireClaim("Supporters.Create"));
+            options.AddPolicy("Supporters.Read", policy => policy.RequireClaim("Supporters.Read"));
+            options.AddPolicy("Supporters.Update", policy => policy.RequireClaim("Supporters.Update"));
+            options.AddPolicy("Supporters.Delete", policy => policy.RequireClaim("Supporters.Delete"));
+            options.AddPolicy("Supporters.Archive", policy => policy.RequireClaim("Supporters.Archive"));
         }
     }
 }

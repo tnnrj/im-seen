@@ -52,7 +52,7 @@ namespace IMLibrary.Data
                 new Report
                 {
                     ReportName = "Students Grouped by Total Observation Score",
-                    Query = "SELECT TRIM(CONCAT(StudentFirstName, ' ', StudentLastName)) as name, SUM(WeightedScore) AS value, Observations.StudentID as id FROM Observations {joinAndWhere} GROUP BY name, id",
+                    Query = "SELECT TRIM(CONCAT(StudentFirstName, ' ', StudentLastName)) as name, ROUND(SUM(WeightedScore), 2) AS value, Observations.StudentID as id FROM Observations {joinAndWhere} AND WeightedScore != 0 GROUP BY name, id",
                     Axis1Name = "Student",
                     Axis2Name = "Total Observation Severity",
                     AvailableChartTypes = "Bar,Pie,BubbleCloud"
