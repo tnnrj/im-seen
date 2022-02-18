@@ -7,7 +7,14 @@
             <button v-else class="p-panel-header-icon p-link" @click="editingStudent = true"><i class="pi pi-pencil" /></button>
           </template>
           <template v-if="editingStudent">
-            <AutoComplete v-model="selectedStudent" :suggestions="filteredStudents" @complete="searchStudents($event)" field="fullName" />
+            <AutoComplete v-model="selectedStudent" :suggestions="filteredStudents" @complete="searchStudents($event)" field="fullName" class="autocomplete-stuName">
+              <template #item="slotProps">
+                    <div class="autocomplete-item">                     
+                        <div class="autocomplete-col">{{slotProps.item.fullName}}</div>
+                        <div class="autocomplete-col">{{slotProps.item.externalID}}</div>
+                    </div>
+              </template>
+            </AutoComplete>
           </template>
           <template v-else>
             <span>{{(obs.studentFirstName + ' ' + obs.studentLastName).trim()}}</span>
@@ -175,5 +182,9 @@ export default defineComponent({
     font-size: 10pt;
     color: var(--blue-500);
   }
+}
+.autocomplete-item {
+  display: flex;
+  justify-content: space-between;
 }
 </style>
