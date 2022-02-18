@@ -8,7 +8,7 @@
             <button v-else class="p-panel-header-icon p-link" @click="editingStudent = true"><i class="pi pi-pencil" /></button>
           </template>
           <template v-if="editingStudent">
-            <AutoComplete v-model="selectedStudent" :suggestions="filteredStudents" @complete="searchStudents($event)" field="fullName" class="autocomplete-stuName">
+            <AutoComplete v-model="selectedStudent" :suggestions="filteredStudents" @complete="searchStudents($event)" field="fullName">
               <template #item="slotProps">
                     <div class="autocomplete-item">                     
                         <div class="autocomplete-col">{{slotProps.item.fullName}}</div>
@@ -21,6 +21,7 @@
             <span>{{(obs.studentFirstName + ' ' + obs.studentLastName).trim()}}</span>
           </template>
           <span v-if="!obs.studentID" class="unidentified-notice">
+            (unidentified <i class="pi pi-question-circle icon-offset question-icon" v-tooltip="'Name on observation cannot be matched to a student, please assign to a known student'"/>)
           </span>
         </Panel>
         <Panel header="Score" class="p-mb-1 p-pl-1" style="width:20%">
