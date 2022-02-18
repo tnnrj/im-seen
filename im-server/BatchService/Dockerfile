@@ -14,9 +14,6 @@ RUN dotnet build -c Release -o /app
 WORKDIR /src/BatchService
 RUN dotnet build -c Release -o /app
 
-ENV ASPNETCORE_URLS=http://+:5000
-EXPOSE 5000
-
 FROM build AS publish
 RUN dotnet publish -c Release -o /app
 

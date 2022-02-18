@@ -54,7 +54,7 @@ namespace IMLibrary.Data
                     ReportName = "Students Grouped by Total Observation Score",
                     Query = "SELECT TRIM(CONCAT(StudentFirstName, ' ', StudentLastName)) as name, ROUND(SUM(WeightedScore), 2) AS value, Observations.StudentID as id FROM Observations {joinAndWhere} AND WeightedScore != 0 GROUP BY name, id",
                     Axis1Name = "Student",
-                    Axis2Name = "Total Observation Severity",
+                    Axis2Name = "Total Observation Score",
                     AvailableChartTypes = "Bar,Pie,BubbleCloud"
                 },
             };
