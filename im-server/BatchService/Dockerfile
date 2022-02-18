@@ -11,7 +11,7 @@ COPY . .
 WORKDIR /src/IMLibrary
 RUN dotnet build -c Release -o /app
 
-WORKDIR /src/IMWebAPI
+WORKDIR /src/BatchService
 RUN dotnet build -c Release -o /app
 
 ENV ASPNETCORE_URLS=http://+:5000
@@ -24,4 +24,4 @@ RUN dotnet publish -c Release -o /app
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 as final
 WORKDIR /app
 COPY --from=publish /app .
-ENTRYPOINT ["dotnet", "IMWebAPI.dll"]
+ENTRYPOINT ["dotnet", "BatchService.dll"]
