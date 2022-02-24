@@ -1,5 +1,5 @@
 FirstName,MiddleName,LastName,DateOfBirth,ExternalID,IsArchived
-Alayna,,Blundell,1/1/2009,1,0
-Mica,,Mackay,1/2/2010,2,0
-Una,,Mcghee,2/3/2011,3,0
-Freddie,,Mcintyre,2/3/2011,4,0
+Alayna,,Blundell,1/1/2009,1,FALSE
+Mica,,Mackay,1/2/2010,2,FALSE
+Una,,Mcghee,2/3/2011,3,FALSE
+Freddie,,Mcintyre,2/3/2011,4,FALSE

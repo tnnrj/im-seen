@@ -22,7 +22,7 @@
           <label for="dob">Date of Birth</label>
         </span>
         <span class="input p-float-label">
-          <InputNumber id="externalid" v-model="stu.externalID" required />
+          <InputText id="externalid" v-model="stu.externalID" required />
           <label for="externalid">External ID *</label>
         </span>
         <span class="input">
@@ -56,7 +56,6 @@
 <script lang="ts">
 import { defineComponent, ref, watchEffect } from "vue";
 import { useConfirm } from "primevue/useconfirm";
-import InputNumber from 'primevue/inputnumber';
 import * as _ from "lodash";
 import Calendar from 'primevue/calendar';
 import { Student } from "@/model/student.model";
@@ -64,7 +63,7 @@ import StudentsService from "@/services/students.service";
 
 export default defineComponent({
   name: "StudentEdit",
-  components: { Calendar, InputNumber },
+  components: { Calendar },
   props: {
     student: Object,
   },

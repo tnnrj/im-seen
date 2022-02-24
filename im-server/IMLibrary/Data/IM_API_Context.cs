@@ -61,6 +61,9 @@ namespace IMLibrary.Data
             modelBuilder.Entity<IdentityRoleClaim<string>>(entity => entity.Property(m => m.Id).HasMaxLength(85));
             modelBuilder.Entity<IdentityRoleClaim<string>>(entity => entity.Property(m => m.RoleId).HasMaxLength(85));
 
+            // fields should be unique
+            modelBuilder.Entity<Student>(entity => entity.HasIndex(e => e.ExternalID).IsUnique());
+
             base.OnModelCreating(modelBuilder);
         }
     }

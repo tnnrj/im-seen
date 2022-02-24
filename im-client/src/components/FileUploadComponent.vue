@@ -85,7 +85,7 @@ export default defineComponent({
           const blob = new Blob([respondData], { type: 'text/csv' });
           const link = document.createElement('a');
           link.href = URL.createObjectURL(blob);
-          link.download = "template";
+          link.download = "template.csv";
           link.click();
           URL.revokeObjectURL(link.href);
         })
@@ -102,6 +102,9 @@ export default defineComponent({
 <style lang="scss">
 .p-fileupload {
   width: 100%;
+  margin: auto;
+}
+.uploading-dialog {
   margin: auto;
 }
 .p-dialog-content {
