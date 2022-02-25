@@ -64,7 +64,7 @@ namespace IMWebAPI.Controllers
                 return await supporterQuery.ToListAsync();
             }
 
-            return await _context.Students.Where(s => s.IsArchived == false).ToListAsync();
+            return await _context.Students.ToListAsync();
         }
 
         // GET: api/Students/MyStudents
@@ -174,6 +174,7 @@ namespace IMWebAPI.Controllers
                 s.FirstName = columns[0];
                 s.MiddleName = columns[1];
                 s.LastName = columns[2];
+                s.ExternalID = columns[4];
 
                 // checks date format
                 DateTime dob;

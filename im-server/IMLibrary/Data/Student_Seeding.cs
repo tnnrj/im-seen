@@ -52,6 +52,10 @@ namespace IMLibrary.Data
                 new Student {FirstName="Robert", LastName="Zubair", ExternalID="27"},
                 new Student {FirstName="Wendy", LastName="Arissa", ExternalID="28"},
                 new Student {FirstName="Hank", LastName="Astrid", ExternalID="29"},
+
+                new Student {FirstName="Laila", LastName="Zubair", ExternalID="30", IsArchived=true},
+                new Student {FirstName="Liu", LastName="Hayward", ExternalID="31", IsArchived=true},
+                new Student {FirstName="Kim", LastName="Cecily", ExternalID="32", IsArchived=true},
             };
 
             context.Students.AddRange(students);
