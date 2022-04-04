@@ -51,9 +51,9 @@ export default defineComponent({
         show: true
       },
       {
-        title: 'Users',
-        link: '/users',
-        iconStyle: PrimeIcons.USER,
+        title: 'Students',
+        link: '/students',
+        iconStyle: PrimeIcons.SEARCH_PLUS,
         show: isAdmin
       },
       {
@@ -63,9 +63,9 @@ export default defineComponent({
         show: isAdmin
       },
       {
-        title: 'Students',
-        link: '/students',
-        iconStyle: 'pi-search-plus',
+        title: 'Users',
+        link: '/users',
+        iconStyle: PrimeIcons.USER,
         show: isAdmin
       }];
     });

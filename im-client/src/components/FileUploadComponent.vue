@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="file-upload-content">
     <Toast />
     <ConfirmPopup></ConfirmPopup>
     <h4>Student Preloading</h4>
@@ -107,7 +107,7 @@ export default defineComponent({
 .uploading-dialog {
   margin: auto;
 }
-.p-dialog-content {
+.file-upload-content {  
   text-align: center;
 }
 </style>

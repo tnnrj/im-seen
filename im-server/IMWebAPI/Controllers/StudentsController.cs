@@ -20,38 +20,10 @@ namespace IMWebAPI.Controllers
     public class StudentsController : ControllerBase
     {
         private readonly IM_API_Context _context;
-        private readonly IQueryable<Student> supporterQuery;
-        private readonly IQueryable<Student> primaryQuery;
 
         public StudentsController(IM_API_Context context)
         {
             _context = context;
-            supporterQuery =
-                from student in _context.Students
-
-                join delegation in _context.Delegations
-                on student.StudentID equals delegation.Student.StudentID
-
-                join g in _context.StudentGroups
-                on delegation.StudentGroup.StudentGroupID equals g.StudentGroupID
-
-                join supporter in _context.Supporters
-                on g.StudentGroupID equals supporter.StudentGroup.StudentGroupID
-
-                where supporter.UserName == User.Identity.Name
-                select student;
-
-            primaryQuery =
-                from student in _context.Students
-
-                join delegation in _context.Delegations
-                on student.StudentID equals delegation.Student.StudentID
-
-                join g in _context.StudentGroups
-                on delegation.StudentGroup.StudentGroupID equals g.StudentGroupID
-
-                where g.PrimaryUserName == User.Identity.Name
-                select student;
         }
 
         // GET: api/Students
@@ -59,12 +31,7 @@ namespace IMWebAPI.Controllers
         [Authorize(Policy = "Students.Read")]
         public async Task<ActionResult<IEnumerable<Student>>> GetStudent()
         {
-            if (User.IsInRole("SupportingActor"))
-            {
-                return await supporterQuery.ToListAsync();
-            }
-
-            return await _context.Students.ToListAsync();
+            return await StudentsForUser().ToListAsync();
         }
 
         // GET: api/Students/MyStudents
@@ -138,7 +105,8 @@ namespace IMWebAPI.Controllers
             return student;
         }
 
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Policy = "Students.Update")]
+        [Authorize(Policy = "Students.SeeAll")]
         [HttpPost]
         [Route("CSVBulkUpload")]
         public async Task<IActionResult> CSVBulkUpload(IFormFile file)
@@ -233,7 +201,8 @@ namespace IMWebAPI.Controllers
             return Ok(new { name = file.Name, size = file.Length});
         }
 
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Policy = "Students.Update")]
+        [Authorize(Policy = "Students.SeeAll")]
         [HttpGet, DisableRequestSizeLimit]
         [Route("CSVDownload")]
         public async Task<IActionResult> CSVDownload()

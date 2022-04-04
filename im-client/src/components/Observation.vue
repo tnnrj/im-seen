@@ -28,7 +28,7 @@
           <template #icons>
             <i class="pi pi-question-circle icon-offset question-icon" v-tooltip="'Weighted score takes into account severity, recency, similar nearby observations, and current status to approximate an appropriate level of concern'"/>
           </template>
-          <span>{{obs.weightedScore}}</span>
+          <span>{{obs.weightedScore.toFixed(2)}}</span>
         </Panel>
         <Panel header="Description" class="p-mb-1" style="width:100%" :toggleable="true">
           <span>{{obs.description}}</span>
