@@ -69,6 +69,25 @@ namespace IMWebAPI.Controllers
             return CreatedAtAction("GetStudent", new { id = student.StudentID }, student);
         }
 
+        // PUT: api/Students/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
+        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [Authorize(Policy = "Students.Update")]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutStudent(int id, Student student)
+        {
+            if (id != student.StudentID)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(student).State = EntityState.Modified;
+
+            await _context.SaveChangesAsync();
+            
+            return NoContent();
+        }
+
         // DELETE: api/Students/5
         [HttpDelete("{id}")]
         [Authorize(Policy = "Students.Delete")]
@@ -123,6 +142,7 @@ namespace IMWebAPI.Controllers
                 s.FirstName = columns[0];
                 s.MiddleName = columns[1];
                 s.LastName = columns[2];
+                s.ExternalID = columns[4];
 
                 // checks date format
                 DateTime dob;
@@ -133,17 +153,6 @@ namespace IMWebAPI.Controllers
                 else
                 {
                     return BadRequest("Incorrect format. DateOfBirth not in correct format (mm/dd/yyyy).");
-                }
-
-                // checks number format
-                int extID;
-                if (int.TryParse(columns[4], out extID))
-                {
-                    s.ExternalID = extID;
-                }
-                else
-                {
-                    return BadRequest("Incorrect format. ExternalID must be a number.");
                 }
 
                 // checks boolean format
@@ -177,12 +186,13 @@ namespace IMWebAPI.Controllers
                 }
             }
             
-            // deletes missing records
+            // archives missing records
             foreach (Student s in _context.Students)
             {
                 if (!students.Exists(el => el.ExternalID == s.ExternalID))
                 {
-                    _context.Students.Remove(s);
+                    //_context.Students.Remove(s);
+                    s.IsArchived = true;
                 }
             }
 

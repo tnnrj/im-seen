@@ -9,6 +9,15 @@
       scrollHeight="flex"
       :paginator="true"
       :rows="25"
+      v-model:filters="filters1"
+      filterDisplay="row"
+      :globalFilterFields="[
+        'firstName',
+        'lastName',
+        'middleName',
+        'externalID',
+        'isArchived',
+      ]"
       paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
       :rowsPerPageOptions="[10, 25, 50]"
       currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
@@ -17,18 +26,28 @@
       <template #header>
         <div class="table-header">
           <div>
-            <Button class="p-button-primary" label="New Student" icon="pi pi-user-plus" @click="openStudent(null)" />
+            <span class="p-input-icon-left">
+              <i class="pi pi-search" />
+              <InputText
+                v-model="filters1['global'].value"
+                placeholder="Keyword Search"
+              />
+            </span>
           </div>
           <div>
-            <Button class="p-button-primary" label="Bulk Upload" icon="pi pi-upload" @click="openUpload()" />
-          </div>
-          <!-- <span class="p-input-icon-left">
-            <i class="pi pi-search" />
-            <InputText
-              
-              placeholder="Keyword Search"
+            <Button
+              class="p-button-primary"
+              label="New Student"
+              icon="pi pi-user-plus"
+              @click="openStudent(null)"
             />
-          </span> -->
+            <Button
+              class="p-button-primary p-ml-2"
+              label="Bulk Upload"
+              icon="pi pi-upload"
+              @click="openUpload()"
+            />
+          </div>
         </div>
       </template>
       <Column
@@ -36,28 +55,69 @@
         header="Last Name"
         :sortable="true"
         style="flex: 1 1 20%"
-      ></Column>
+      >
+        <template #filter="{ filterModel, filterCallback }">
+          <InputText
+            type="text"
+            v-model="filterModel.value"
+            @keydown.enter="filterCallback()"
+            class="p-column-filter"
+            :placeholder="`Search...`"
+            v-tooltip.top.focus="'Hit enter key to filter'"
+          />
+        </template>
+      </Column>
       <Column
         field="firstName"
         header="First Name"
         :sortable="true"
         style="flex: 1 1 20%"
-      ></Column>
+      >
+        <template #filter="{ filterModel, filterCallback }">
+          <InputText
+            type="text"
+            v-model="filterModel.value"
+            @keydown.enter="filterCallback()"
+            class="p-column-filter"
+            :placeholder="`Search...`"
+            v-tooltip.top.focus="'Hit enter key to filter'"
+          />
+        </template>
+      </Column>
       <Column
         field="externalID"
         header="External ID"
         :sortable="true"
-        style="flex: 1 1 20%"
-      ></Column>
+        style="flex: 1 1 10%"
+      >
+        <template #filter="{ filterModel, filterCallback }">
+          <InputText
+            type="text"
+            v-model="filterModel.value"
+            @keydown.enter="filterCallback()"
+            class="p-column-filter"
+            :placeholder="`Search...`"
+            v-tooltip.top.focus="'Hit enter key to filter'"
+          />
+        </template>
+      </Column>
       <Column
         field="dob"
         header="Date Of Birth"
         dataType="date"
         :sortable="true"
-        style="flex: 1 1 25%"
+        style="flex: 1 1 20%"
       >
         <template #body="{ data }">
           {{ formatDate(data.dob) }}
+        </template>
+        <template #filter="{ filterModel, filterCallback }">
+          <Calendar
+            v-model="filterModel.value"
+            dateFormat="mm/dd/yy"
+            @date-select="filterCallback()"
+            placeholder="mm/dd/yyyy"
+          />
         </template>
       </Column>
       <Column
@@ -65,7 +125,38 @@
         header="Middle Name"
         :sortable="true"
         style="flex: 1 1 15%"
-      ></Column>
+      >
+        <template #filter="{ filterModel, filterCallback }">
+          <InputText
+            type="text"
+            v-model="filterModel.value"
+            @keydown.enter="filterCallback()"
+            class="p-column-filter"
+            :placeholder="`Search...`"
+            v-tooltip.top.focus="'Hit enter key to filter'"
+          />
+        </template>
+      </Column>
+      <Column
+        field="isArchived"
+        header="Archived"
+        :sortable="true"
+        style="flex: 1 1 10%"
+      >
+        <template #filter="{ filterModel, filterCallback }">
+          <Dropdown
+            v-model="filterModel.value"
+            @change="filterCallback()"
+            :options="archivedOptions"
+            placeholder="Any"
+            class="p-column-filter"
+            :showClear="true"
+            optionLabel="name"
+            optionValue="value"
+          >
+          </Dropdown>
+        </template>
+      </Column>
       <Column style="flex: 1 1 5%">
         <template #body="slotProps">
           <button
@@ -110,21 +201,34 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from "vue";
+import { defineComponent, ref } from "vue";
 import { useToast } from "primevue/usetoast";
 import FileUploadComponent from "@/components/FileUploadComponent.vue";
 import StudentEditComponent from "@/components/StudentEdit.vue";
 import { Student } from "@/model/student.model";
 import StudentsService from "@/services/students.service";
 import * as _ from "lodash";
+import { FilterMatchMode } from "primevue/api";
+import Calendar from "primevue/calendar";
 
 export default defineComponent({
   name: "Students",
-  components: { FileUploadComponent, StudentEditComponent },
+  components: { FileUploadComponent, StudentEditComponent, Calendar },
   setup() {
     const toast = useToast();
 
     const students = ref();
+
+    // for filter
+    const filters1 = ref({
+      global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+      firstName: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+      lastName: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+      middleName: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+      dob: { value: null, matchMode: FilterMatchMode.DATE_IS },
+      externalID: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+      isArchived: { value: null, matchMode: FilterMatchMode.EQUALS },
+    });
 
     // loads students list
     const loadStudents = async () => {
@@ -164,6 +268,11 @@ export default defineComponent({
       showUploadDialog.value = true;
     };
 
+    const archivedOptions = [
+      { name: "true", value: true },
+      { name: "false", value: false },
+    ];
+
     return {
       students,
       currentStudent,
@@ -173,23 +282,27 @@ export default defineComponent({
       closeStudentDialog,
       loadStudents,
       openUpload,
-      showUploadDialog
+      showUploadDialog,
+      archivedOptions,
+      filters1,
     };
   },
 });
 </script>
 
 <style lang="scss">
-
 .students-content {
   height: 100%;
   padding: 1em;
-  //width: 100%;
 }
 
 .students-table {
   flex: 1;
   margin-right: 0.5em;
+
+  .p-column-filter-element {
+    width: 100%;
+  }
 }
 
 .table-header {

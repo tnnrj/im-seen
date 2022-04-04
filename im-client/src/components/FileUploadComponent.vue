@@ -104,6 +104,9 @@ export default defineComponent({
   width: 100%;
   margin: auto;
 }
+.uploading-dialog {
+  margin: auto;
+}
 .file-upload-content {  
   text-align: center;
 }
